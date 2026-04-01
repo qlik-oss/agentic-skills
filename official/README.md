@@ -17,9 +17,10 @@ If you find a bug or want to suggest an improvement to an official skill, open a
 | Skill | Description | Trigger phrases |
 |---|---|---|
 | [`qlik-app-analysis`](./qlik-app-analysis/) | Audit a Qlik Sense app for performance bottlenecks, unused fields, and data model issues | "review my Qlik app", "analyze app performance", "audit data model" |
+| [`qlik-data-pipeline`](./qlik-data-pipeline/) | Design and validate Qlik data pipeline workflows | "design a pipeline", "validate my data flow", "model this transformation" |
+| [`qlik-embed-api`](./qlik-embed-api/) | Build production-ready HTML pages embedding Qlik Sense objects using @qlik/embed-web-components (OAuth2 SPA) with custom D3/JS charts powered by live Qlik hypercubes | "qlik-embed web components", "OAuth2 embed", "custom D3 chart from Qlik", "embed Qlik without iframes" |
 | [`qlik-load-script`](./qlik-load-script/) | Write, review, and optimize Qlik load scripts | "write a load script", "optimize my QVD load", "review this script" |
 | [`qlik-set-analysis`](./qlik-set-analysis/) | Build and debug set analysis expressions | "write a set expression", "fix my set analysis", "explain this aggregation" |
-| [`qlik-data-pipeline`](./qlik-data-pipeline/) | Design and validate Qlik data pipeline workflows | "design a pipeline", "validate my data flow", "model this transformation" |
 
 ---
 
