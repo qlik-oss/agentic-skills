@@ -1,4 +1,4 @@
-# Qlik Agent Skills
+# Qlik Agentic Skills
 
 Reusable skills, plugins, and schemas that extend AI agents with Qlik-specific expertise — works across Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI, and 20+ other tools that support the open [Agent Skills standard](https://agentskills.io).
 
@@ -15,23 +15,26 @@ Think of a skill as an onboarding guide for a new hire — it tells the agent wh
 ## What's in this repository
 
 ```
-qlik-agent-skills/
-├── skills/
-│   ├── official/       # Qlik-owned and maintained skills
-│   └── community/      # Customer and partner contributions
-├── plugins/            # Claude Code plugins (bundled skills + agents + MCP)
-├── schemas/            # JSON/YAML schemas for manifests and APIs
+agentic-skills/
+├── official/            # Qlik-owned and maintained skills
+│   ├── skills/          # Agentic skills
+│   └── plugins/         # Claude Code plugins (bundled skills + agents + MCP)
+│   └── schema/          # JSON/YAML schemas for manifests and APIs
+├── community/           # Customer and partner contributions
+│   ├── skills/          # Agentic skills
+│   └── plugins/         # Claude Code plugins (bundled skills + agents + MCP)
+│   └── schema/          # JSON/YAML schemas for manifests and APIs
 └── .claude-plugin/
     └── marketplace.json
 ```
 
-### Official skills
+### Official folder
 
-Skills owned by Qlik engineering. Enabled by default in Qlik's agent environments. Covers core workflows across the Qlik platform — app analysis, data pipeline development, load script optimization, set analysis, and more.
+Skills, Claude plugins and schemas owned by Qlik engineering. Enabled by default in Qlik's agent environments. Covers core workflows across the Qlik platform — app analysis, data pipeline development, load script optimization, set analysis, and more.
 
-### Community skills
+### Community folder
 
-Skills contributed by Qlik customers, partners, and the developer community. Opt-in at the tenant level. Every community skill passes automated security scanning and a quality review before being merged.
+Skills, Claude plugins and schemas contributed by Qlik customers, partners, and the developer community. Opt-in at the tenant level. Every community skill passes automated security scanning and a quality review before being merged.
 
 ### Plugins
 
