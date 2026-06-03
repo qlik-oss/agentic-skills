@@ -155,7 +155,7 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 
 ## License
 
-Official skills are licensed under the terms in each skill's `license` field. Community skills default to [Apache 2.0](./LICENSE) unless stated otherwise in their SKILL.md frontmatter.
+All skills in this repository are licensed under [Apache 2.0](./LICENSE) unless stated otherwise in the skill's SKILL.md frontmatter.
 
 ---
 
