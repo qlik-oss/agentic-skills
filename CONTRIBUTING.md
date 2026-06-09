@@ -80,7 +80,6 @@ qlik-agent-skills/
 │   │   │   ├── SKILL.md
 │   │   │   ├── scripts/
 │   │   │   └── references/
-│   │   └── qlik-data-pipeline/
 │   └── community/              # Community-contributed skills
 │       └── your-skill-name/
 │           └── SKILL.md
@@ -110,7 +109,6 @@ Every skill is a folder containing a `SKILL.md` file. This is the open [Agent Sk
 
 ```markdown
 ---
-name: qlik-app-analysis
 description: >-
   Analyzes a Qlik Sense application to identify performance bottlenecks,
   unused fields, and optimization opportunities. Use when asked to review,
@@ -175,7 +173,6 @@ Helps with Qlik development tasks.
 Keep `SKILL.md` focused on activation logic and high-level steps. Move detailed reference material into `references/` subdirectory files and link to them from `SKILL.md`. The agent loads reference files only when needed — this keeps context usage efficient for everyone.
 
 ```
-qlik-app-analysis/
 ├── SKILL.md                    # Core instructions (~200 lines max)
 └── references/
     ├── set-analysis-patterns.md
@@ -188,7 +185,6 @@ qlik-app-analysis/
 If your skill needs to execute code, place scripts in `scripts/`. Scripts run but their source code never loads into the model's context — only their output does. This is efficient and avoids token waste.
 
 ```
-qlik-app-analysis/
 ├── SKILL.md
 └── scripts/
     └── validate-app.sh
@@ -287,10 +283,8 @@ Once merged, skills are automatically available via:
 npx skills add qlik/agent-skills
 
 # Install a specific skill
-npx skills add qlik/agent-skills --skill qlik-app-analysis
 
 # Install to a specific agent
-npx skills add qlik/agent-skills --skill qlik-app-analysis -a claude-code
 ```
 
 The `npx skills` CLI (maintained by Vercel / [skills.sh](https://skills.sh)) routes skills to the correct directory for each agent automatically — Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, and others.

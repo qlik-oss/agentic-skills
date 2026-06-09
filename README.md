@@ -16,16 +16,18 @@ Think of a skill as an onboarding guide for a new hire — it tells the agent wh
 
 ```
 agentic-skills/
-├── official/            # Qlik-owned and maintained skills
-│   ├── skills/          # Agentic skills
-│   └── plugins/         # Claude Code plugins (bundled skills + agents + MCP)
-│   └── schema/          # JSON/YAML schemas for manifests and APIs
-├── community/           # Customer and partner contributions
-│   ├── skills/          # Agentic skills
-│   └── plugins/         # Claude Code plugins (bundled skills + agents + MCP)
-│   └── schema/          # JSON/YAML schemas for manifests and APIs
-└── .claude-plugin/
-    └── marketplace.json
+├── official/                        # Qlik-owned and maintained skills
+│   ├── qlik-ai-readiness-optimizer/ # Analyze and optimize apps for Qlik Answers + MCP
+│   │   ├── SKILL.md
+│   │   └── references/
+│   └── README.md
+├── community/                       # Customer and partner contributions
+│   └── README.md
+├── .github/
+│   └── CODEOWNERS
+├── CONTRIBUTING.md
+├── LICENSE
+└── README.md
 ```
 
 ### Official folder

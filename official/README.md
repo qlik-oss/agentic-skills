@@ -17,10 +17,6 @@ If you find a bug or want to suggest an improvement to an official skill, open a
 | Skill | Description | Trigger phrases |
 |---|---|---|
 | [`qlik-ai-readiness-optimizer`](./qlik-ai-readiness-optimizer/) | Analyze and optimize a Qlik app for AI readiness (Qlik Answers and Qlik MCP) using the 6-Layer Model | "AI-ready", "optimize for Answers/MCP", "Qlik AI Health Check", "prepare app for AI" |
-| [`qlik-app-analysis`](./qlik-app-analysis/) | Audit a Qlik Sense app for performance bottlenecks, unused fields, and data model issues | "review my Qlik app", "analyze app performance", "audit data model" |
-| [`qlik-load-script`](./qlik-load-script/) | Write, review, and optimize Qlik load scripts | "write a load script", "optimize my QVD load", "review this script" |
-| [`qlik-set-analysis`](./qlik-set-analysis/) | Build and debug set analysis expressions | "write a set expression", "fix my set analysis", "explain this aggregation" |
-| [`qlik-data-pipeline`](./qlik-data-pipeline/) | Design and validate Qlik data pipeline workflows | "design a pipeline", "validate my data flow", "model this transformation" |
 
 ---
 
@@ -31,7 +27,6 @@ If you find a bug or want to suggest an improvement to an official skill, open a
 npx skills add qlik/agent-skills --skill '*' --agent '*'
 
 # Install a specific official skill
-npx skills add qlik/agent-skills --skill qlik-app-analysis
 ```
 
 ---
