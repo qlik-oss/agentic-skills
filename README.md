@@ -23,10 +23,19 @@ agentic-skills/
 │   └── README.md
 ├── community/                       # Customer and partner contributions
 │   └── README.md
+├── spec/
+│   └── README.md
+├── template/
+│   ├── README.md
+│   └── SKILL.md
+├── .claude-plugin/
+│   └── marketplace.json
 ├── .github/
 │   └── CODEOWNERS
+├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
 ├── LICENSE
+├── NOTICE
 └── README.md
 ```
 
