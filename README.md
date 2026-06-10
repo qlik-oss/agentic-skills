@@ -66,13 +66,13 @@ Skills are installed using the [`npx skills` CLI](https://skills.sh) — no setu
 npx skills add qlik/agent-skills
 
 # Install a specific skill
-npx skills add qlik/agent-skills --skill qlik-app-analysis
+npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer
 
 # Install to a specific agent
-npx skills add qlik/agent-skills --skill qlik-app-analysis -a claude-code
+npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer -a claude-code
 
 # Install to all detected agents at once
-npx skills add qlik/agent-skills --agent '*' --skill qlik-load-script
+npx skills add qlik/agent-skills --agent '*' --skill qlik-ai-readiness-optimizer
 ```
 
 The CLI automatically detects which AI tools you have installed and places skill files in the correct directory for each one.
@@ -104,10 +104,7 @@ Claude Code users can also install via the plugin system, which bundles skills w
 
 | Skill | Tier | Description |
 |---|---|---|
-| `qlik-app-analysis` | official | Audit a Qlik Sense app for performance bottlenecks and data model issues |
-| `qlik-load-script` | official | Write, review, and optimize Qlik load scripts |
-| `qlik-set-analysis` | official | Build and debug set analysis expressions |
-| `qlik-data-pipeline` | official | Design and validate Qlik data pipeline workflows |
+| `qlik-ai-readiness-optimizer` | official | Analyze and optimize a Qlik app for AI readiness (Qlik Answers and Qlik MCP) using the 6-Layer Model |
 | *(more coming)* | | |
 
 Community skills are listed under [`skills/community/`](./skills/community/).
