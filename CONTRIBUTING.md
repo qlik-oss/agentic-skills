@@ -109,6 +109,7 @@ Every skill is a folder containing a `SKILL.md` file. This is the open [Agent Sk
 
 ```markdown
 ---
+name: qlik-app-analysis
 description: >-
   Analyzes a Qlik Sense application to identify performance bottlenecks,
   unused fields, and optimization opportunities. Use when asked to review,
