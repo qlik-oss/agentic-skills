@@ -27,6 +27,7 @@ If you find a bug or want to suggest an improvement to an official skill, open a
 npx skills add qlik/agent-skills --skill '*' --agent '*'
 
 # Install a specific official skill
+npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer
 ```
 
 ---
