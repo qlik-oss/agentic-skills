@@ -20,7 +20,7 @@ Describe the situations where this skill should be activated.
 
 ## Instructions
 
-Step-by-step instructions Claude will follow.
+Step-by-step instructions the agent will follow.
 
 ## Examples
 
