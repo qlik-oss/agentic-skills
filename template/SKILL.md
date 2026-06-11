@@ -4,10 +4,12 @@ description: >-
   A complete description of what this skill does and when to use it.
   Write this for the agent, not a human reader. Include trigger phrases,
   what problems it solves, and what tools or context it requires.
-trust_tier: community
-author: Your Name or Organisation
-version: 1.0.0
-tags: []
+license: Apache-2.0
+metadata:
+  author: your-github-username
+  version: 1.0.0
+  tags: []
+allowed-tools: read
 ---
 
 # Your Skill Name
