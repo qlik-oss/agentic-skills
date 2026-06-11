@@ -13,42 +13,42 @@
 # -----------------------------------------------------------------------
 # Default: catch-all for anything not explicitly listed below
 # -----------------------------------------------------------------------
-*                                   @qlik-oss/ai-official-maintainers
+*                                   @qlik-oss/agentic-skills-official-maintainers
 
 
 # -----------------------------------------------------------------------
 # official/ — Qlik-owned artifacts
 # Only core maintainers can approve changes here
 # -----------------------------------------------------------------------
-/official/                          @qlik-oss/ai-official-maintainers
+/official/                          @qlik-oss/agentic-skills-official-maintainers
 
 
 # -----------------------------------------------------------------------
 # community/ — External contributions
 # Either core maintainers OR community maintainers can approve
 # -----------------------------------------------------------------------
-/community/                         @qlik-oss/ai-official-maintainers @qlik-oss/ai-community-maintainers
+/community/                         @qlik-oss/agentic-skills-official-maintainers @qlik-oss/agentic-skills-community-maintainers
 
 
 # -----------------------------------------------------------------------
 # schemas/ — Versioned schema definitions
 # Schema changes are high-impact; core maintainers only
 # -----------------------------------------------------------------------
-/schemas/                           @qlik-oss/ai-official-maintainers
+/schemas/                           @qlik-oss/agentic-skills-official-maintainers
 
 
 # -----------------------------------------------------------------------
 # registry/ — Auto-generated catalog
 # Should never be edited manually; core maintainers own it regardless
 # -----------------------------------------------------------------------
-/registry/                          @qlik-oss/ai-official-maintainers
+/registry/                          @qlik-oss/agentic-skills-official-maintainers
 
 
 # -----------------------------------------------------------------------
 # tools/ — CLI, validator, scaffold scripts
 # Core maintainers own the toolchain
 # -----------------------------------------------------------------------
-/tools/                             @qlik-oss/ai-official-maintainers
+/tools/                             @qlik-oss/agentic-skills-official-maintainers
 
 
 # -----------------------------------------------------------------------
@@ -56,20 +56,20 @@
 # Core maintainers own policy documents; community maintainers can
 # propose changes but core maintainers must approve
 # -----------------------------------------------------------------------
-/docs/                              @qlik-oss/ai-official-maintainers
+/docs/                              @qlik-oss/agentic-skills-official-maintainers
 
 
 # -----------------------------------------------------------------------
 # .github/ — CI workflows, PR templates, and this file itself
 # Tightly controlled: any change here affects the entire governance model
 # -----------------------------------------------------------------------
-/.github/                           @qlik-oss/ai-official-maintainers
+/.github/                           @qlik-oss/agentic-skills-official-maintainers
 
 
 # -----------------------------------------------------------------------
 # Root-level governance files
 # -----------------------------------------------------------------------
-/LICENSE                            @qlik-oss/ai-official-maintainers
-/CONTRIBUTING.md                    @qlik-oss/ai-official-maintainers
-/SECURITY.md                        @qlik-oss/ai-official-maintainers
-/README.md                          @qlik-oss/ai-official-maintainers
+/LICENSE                            @qlik-oss/agentic-skills-official-maintainers
+/CONTRIBUTING.md                    @qlik-oss/agentic-skills-official-maintainers
+/SECURITY.md                        @qlik-oss/agentic-skills-official-maintainers
+/README.md                          @qlik-oss/agentic-skills-official-maintainers
