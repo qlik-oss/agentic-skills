@@ -41,7 +41,7 @@ agentic-skills/
 
 ### Official folder
 
-Skills, Claude plugins and schemas owned by Qlik engineering. Enabled by default in Qlik's agent environments. Covers core workflows across the Qlik platform — app analysis, data pipeline development, load script optimization, set analysis, and more.
+Skills owned by Qlik engineering. Enabled by default in Qlik's agent environments. Currently includes `qlik-ai-readiness-optimizer` for analyzing and optimizing Qlik apps for AI readiness, with more skills coming.
 
 ### Community folder
 
@@ -107,7 +107,7 @@ Claude Code users can also install via the plugin system, which bundles skills w
 | `qlik-ai-readiness-optimizer` | official | Analyze and optimize a Qlik app for AI readiness (Qlik Answers and Qlik MCP) using the 6-Layer Model |
 | *(more coming)* | | |
 
-Community skills are listed under [`skills/community/`](./skills/community/).
+Community skills are listed under [`community/`](./community/).
 
 ---
 
@@ -149,7 +149,7 @@ Before opening a PR, run the official spec validator:
 
 ```bash
 uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-ref \
-  skills-ref validate skills/community/your-skill-name/
+  skills-ref validate community/your-skill-name/
 ```
 
 ---
