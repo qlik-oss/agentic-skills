@@ -17,9 +17,6 @@ Think of a skill as an onboarding guide for a new hire — it tells the agent wh
 ```
 agentic-skills/
 ├── official/                        # Qlik-owned and maintained skills
-│   ├── qlik-ai-readiness-optimizer/ # Analyze and optimize apps for Qlik Answers + MCP
-│   │   ├── SKILL.md
-│   │   └── references/
 │   └── README.md
 ├── community/                       # Customer and partner contributions
 │   └── README.md
@@ -30,8 +27,6 @@ agentic-skills/
 │   └── SKILL.md
 ├── .claude-plugin/
 │   └── marketplace.json
-├── .github/
-│   └── CODEOWNERS
 ├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
 ├── LICENSE
@@ -41,7 +36,7 @@ agentic-skills/
 
 ### Official folder
 
-Skills owned by Qlik engineering. Enabled by default in Qlik's agent environments. Currently includes `qlik-ai-readiness-optimizer` for analyzing and optimizing Qlik apps for AI readiness, with more skills coming.
+Skills owned by Qlik engineering. Enabled by default in Qlik's agent environments, with more skills coming.
 
 ### Community folder
 
@@ -66,13 +61,13 @@ Skills are installed using the [`npx skills` CLI](https://skills.sh) — no setu
 npx skills add qlik/agent-skills
 
 # Install a specific skill
-npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer
+npx skills add qlik/agent-skills --skill <skill-name>
 
 # Install to a specific agent
-npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer -a claude-code
+npx skills add qlik/agent-skills --skill <skill-name> -a claude-code
 
 # Install to all detected agents at once
-npx skills add qlik/agent-skills --agent '*' --skill qlik-ai-readiness-optimizer
+npx skills add qlik/agent-skills --agent '*' --skill <skill-name>
 ```
 
 The CLI automatically detects which AI tools you have installed and places skill files in the correct directory for each one.
@@ -102,12 +97,7 @@ Claude Code users can also install via the plugin system, which bundles skills w
 
 ## Available skills
 
-| Skill | Tier | Description |
-|---|---|---|
-| `qlik-ai-readiness-optimizer` | official | Analyze and optimize a Qlik app for AI readiness (Qlik Answers and Qlik MCP) using the 6-Layer Model |
-| *(more coming)* | | |
-
-Community skills are listed under [`community/`](./community/).
+See [`official/`](./official/) for the current list of official skills, and [`community/`](./community/) for community contributions.
 
 ---
 

@@ -14,9 +14,7 @@ If you find a bug or want to suggest an improvement to an official skill, open a
 
 ## Available skills
 
-| Skill | Description | Trigger phrases |
-|---|---|---|
-| [`qlik-ai-readiness-optimizer`](./qlik-ai-readiness-optimizer/) | Analyze and optimize a Qlik app for AI readiness (Qlik Answers and Qlik MCP) using the 6-Layer Model | "AI-ready", "optimize for Answers/MCP", "Qlik AI Health Check", "prepare app for AI" |
+Skills in this directory are listed by their folder name. Each folder contains a `SKILL.md` with the full description and trigger phrases.
 
 ---
 
@@ -27,7 +25,7 @@ If you find a bug or want to suggest an improvement to an official skill, open a
 npx skills add qlik/agent-skills --skill '*' --agent '*'
 
 # Install a specific official skill
-npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer
+npx skills add qlik/agent-skills --skill <skill-name>
 ```
 
 ---
