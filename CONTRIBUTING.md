@@ -21,13 +21,14 @@ Thank you for contributing to the Qlik Agent Skills repository. This repo is the
 
 ## What lives here
 
-This repository contains three types of artifacts:
+This repository contains four top-level areas:
 
 | Type | Location | Purpose |
 |---|---|---|
-| **Skills** | `skills/` | SKILL.md packages — reusable agent workflows and domain expertise |
-| **Plugins** | `plugins/` | Claude Code plugins — bundled skills, agents, hooks, MCP config |
-| **Schemas** | `schemas/` | JSON/YAML schemas for skill manifests, plugin configs, and APIs |
+| **Official skills** | `official/` | Qlik-owned SKILL.md packages maintained by Qlik engineering |
+| **Community skills** | `community/` | Community-contributed SKILL.md packages reviewed before merge |
+| **Specification docs** | `spec/` | Repository guidance for the Agent Skills format used here |
+| **Templates** | `template/` | Starter files contributors can copy when creating a new skill |
 
 Skills are the most commonly contributed artifact. If you're new here, start with a skill.
 
@@ -35,7 +36,7 @@ Skills are the most commonly contributed artifact. If you're new here, start wit
 
 ## Trust tiers
 
-Skills in this repository are organized into three trust tiers that determine how they are distributed and what review they require.
+Skills in this repository are organized into two trust tiers that determine how they are distributed and what review they require. Shared docs and templates live alongside those tiers in `spec/` and `template/`.
 
 ### `official/`
 Skills owned and maintained by Qlik engineering teams. These are the only skills enabled by default in Qlik's production agent environments. Changes require a PR review from a `@qlik/ai-platform` team member and pass all automated validation checks.
@@ -43,16 +44,13 @@ Skills owned and maintained by Qlik engineering teams. These are the only skills
 ### `community/`
 Skills contributed by Qlik customers, partners, or the broader developer community. These are opt-in at the tenant level and carry a **Community** badge in the UI. They must pass automated security scanning and a basic quality review before merging, but do not require Qlik engineering sign-off.
 
-### `schemas/`
-Shared schema definitions used by both tiers. Changes to schemas require backward-compatibility analysis and a version bump. Breaking changes must be flagged explicitly in the PR description.
-
 > **Note for enterprise users:** Tenant administrators control which community skills are available to their users. No community skill is silently enabled.
 
 ---
 
 ## Before you start
 
-1. **Check for an existing skill.** Search `skills/` before creating a new one — you may be able to extend an existing skill rather than duplicate it.
+1. **Check for an existing skill.** Search `official/` and `community/` before creating a new one — you may be able to extend an existing skill rather than duplicate it.
 
 2. **Open an issue first for large contributions.** If you're planning a skill that introduces new patterns, new schema fields, or a new category, open a GitHub issue to discuss the approach before writing code. This saves everyone time.
 
@@ -73,30 +71,21 @@ Shared schema definitions used by both tiers. Changes to schemas require backwar
 ## Repository structure
 
 ```
-qlik-agent-skills/
-├── skills/
-│   ├── official/               # Qlik-owned skills
-│   │   ├── qlik-analysis/
-│   │   │   ├── SKILL.md
-│   │   │   ├── scripts/
-│   │   │   └── references/
-│   │   └── qlik-data-pipeline/
-│   └── community/              # Community-contributed skills
-│       └── your-skill-name/
-│           └── SKILL.md
-├── plugins/                    # Claude Code plugins (bundles)
-│   └── qlik-dev-toolkit/
-│       ├── .claude-plugin/
-│       │   └── plugin.json
-│       ├── skills/
-│       ├── agents/
-│       ├── hooks/
-│       └── .mcp.json
-├── schemas/                    # JSON/YAML schema definitions
-│   ├── skill.schema.json
-│   └── plugin.schema.json
+agentic-skills/
+├── official/                        # Qlik-owned skills
+│   ├── qlik-ai-readiness-optimizer/
+│   │   ├── SKILL.md
+│   │   └── references/
+│   └── README.md
+├── community/                       # Community-contributed skills
+│   └── README.md
+├── spec/                            # Repository spec and format guidance
+│   └── README.md
+├── template/                        # Starter template for new skills
+│   ├── README.md
+│   └── SKILL.md
 ├── .claude-plugin/
-│   └── marketplace.json        # Claude Code marketplace manifest
+│   └── marketplace.json
 └── CONTRIBUTING.md
 ```
 
@@ -175,7 +164,6 @@ Helps with Qlik development tasks.
 Keep `SKILL.md` focused on activation logic and high-level steps. Move detailed reference material into `references/` subdirectory files and link to them from `SKILL.md`. The agent loads reference files only when needed — this keeps context usage efficient for everyone.
 
 ```
-qlik-app-analysis/
 ├── SKILL.md                    # Core instructions (~200 lines max)
 └── references/
     ├── set-analysis-patterns.md
@@ -188,7 +176,6 @@ qlik-app-analysis/
 If your skill needs to execute code, place scripts in `scripts/`. Scripts run but their source code never loads into the model's context — only their output does. This is efficient and avoids token waste.
 
 ```
-qlik-app-analysis/
 ├── SKILL.md
 └── scripts/
     └── validate-app.sh
@@ -208,13 +195,13 @@ Use the official validator to catch spec violations before opening a PR:
 uv tool install git+https://github.com/agentskills/agentskills#subdirectory=skills-ref
 
 # Validate your skill
-skills-ref validate skills/community/your-skill-name/
+skills-ref validate community/your-skill-name/
 ```
 
 Or with uvx (no install):
 ```bash
 uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-ref \
-  skills-ref validate skills/community/your-skill-name/
+  skills-ref validate community/your-skill-name/
 ```
 
 ---
@@ -224,7 +211,7 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 ### For community skills
 
 1. Fork the repository.
-2. Create your skill under `skills/community/your-skill-name/`.
+2. Create your skill under `community/your-skill-name/`.
 3. Validate it locally (see above).
 4. Open a pull request with the template provided — fill in all sections.
 5. The automated CI pipeline will run security scanning and spec validation.
@@ -258,7 +245,7 @@ Before opening a PR, confirm:
 
 - **Spec validation** — `skills-ref validate` must pass
 - **Security scan** — SkillCheck scans for prompt injection patterns, unexpected network calls, and credential exposure
-- **Schema validation** — frontmatter fields are validated against `schemas/skill.schema.json`
+- **Spec alignment** — skill structure and frontmatter must match the guidance in `spec/README.md`
 - **Name uniqueness** — skill names must be unique within their tier
 
 ### Human review (community tier)
@@ -287,10 +274,10 @@ Once merged, skills are automatically available via:
 npx skills add qlik/agent-skills
 
 # Install a specific skill
-npx skills add qlik/agent-skills --skill qlik-app-analysis
+npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer
 
 # Install to a specific agent
-npx skills add qlik/agent-skills --skill qlik-app-analysis -a claude-code
+npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer -a claude-code
 ```
 
 The `npx skills` CLI (maintained by Vercel / [skills.sh](https://skills.sh)) routes skills to the correct directory for each agent automatically — Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, and others.

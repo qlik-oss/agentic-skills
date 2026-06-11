@@ -16,21 +16,32 @@ Think of a skill as an onboarding guide for a new hire — it tells the agent wh
 
 ```
 agentic-skills/
-├── official/            # Qlik-owned and maintained skills
-│   ├── skills/          # Agentic skills
-│   └── plugins/         # Claude Code plugins (bundled skills + agents + MCP)
-│   └── schema/          # JSON/YAML schemas for manifests and APIs
-├── community/           # Customer and partner contributions
-│   ├── skills/          # Agentic skills
-│   └── plugins/         # Claude Code plugins (bundled skills + agents + MCP)
-│   └── schema/          # JSON/YAML schemas for manifests and APIs
-└── .claude-plugin/
-    └── marketplace.json
+├── official/                        # Qlik-owned and maintained skills
+│   ├── qlik-ai-readiness-optimizer/ # Analyze and optimize apps for Qlik Answers + MCP
+│   │   ├── SKILL.md
+│   │   └── references/
+│   └── README.md
+├── community/                       # Customer and partner contributions
+│   └── README.md
+├── spec/
+│   └── README.md
+├── template/
+│   ├── README.md
+│   └── SKILL.md
+├── .claude-plugin/
+│   └── marketplace.json
+├── .github/
+│   └── CODEOWNERS
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── LICENSE
+├── NOTICE
+└── README.md
 ```
 
 ### Official folder
 
-Skills, Claude plugins and schemas owned by Qlik engineering. Enabled by default in Qlik's agent environments. Covers core workflows across the Qlik platform — app analysis, data pipeline development, load script optimization, set analysis, and more.
+Skills owned by Qlik engineering. Enabled by default in Qlik's agent environments. Currently includes `qlik-ai-readiness-optimizer` for analyzing and optimizing Qlik apps for AI readiness, with more skills coming.
 
 ### Community folder
 
@@ -55,13 +66,13 @@ Skills are installed using the [`npx skills` CLI](https://skills.sh) — no setu
 npx skills add qlik/agent-skills
 
 # Install a specific skill
-npx skills add qlik/agent-skills --skill qlik-app-analysis
+npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer
 
 # Install to a specific agent
-npx skills add qlik/agent-skills --skill qlik-app-analysis -a claude-code
+npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer -a claude-code
 
 # Install to all detected agents at once
-npx skills add qlik/agent-skills --agent '*' --skill qlik-load-script
+npx skills add qlik/agent-skills --agent '*' --skill qlik-ai-readiness-optimizer
 ```
 
 The CLI automatically detects which AI tools you have installed and places skill files in the correct directory for each one.
@@ -93,13 +104,10 @@ Claude Code users can also install via the plugin system, which bundles skills w
 
 | Skill | Tier | Description |
 |---|---|---|
-| `qlik-app-analysis` | official | Audit a Qlik Sense app for performance bottlenecks and data model issues |
-| `qlik-load-script` | official | Write, review, and optimize Qlik load scripts |
-| `qlik-set-analysis` | official | Build and debug set analysis expressions |
-| `qlik-data-pipeline` | official | Design and validate Qlik data pipeline workflows |
+| `qlik-ai-readiness-optimizer` | official | Analyze and optimize a Qlik app for AI readiness (Qlik Answers and Qlik MCP) using the 6-Layer Model |
 | *(more coming)* | | |
 
-Community skills are listed under [`skills/community/`](./skills/community/).
+Community skills are listed under [`community/`](./community/).
 
 ---
 
@@ -141,7 +149,7 @@ Before opening a PR, run the official spec validator:
 
 ```bash
 uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-ref \
-  skills-ref validate skills/community/your-skill-name/
+  skills-ref validate community/your-skill-name/
 ```
 
 ---
