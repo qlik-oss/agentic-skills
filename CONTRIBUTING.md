@@ -6,16 +6,33 @@ Thank you for contributing to the Qlik Agent Skills repository. This repo is the
 
 ## Table of contents
 
-- [What lives here](#what-lives-here)
-- [Trust tiers](#trust-tiers)
-- [Before you start](#before-you-start)
-- [Repository structure](#repository-structure)
-- [Writing a skill](#writing-a-skill)
-- [Submitting a skill](#submitting-a-skill)
-- [Review process](#review-process)
-- [Publishing to the ecosystem](#publishing-to-the-ecosystem)
-- [Security](#security)
-- [Code of conduct](#code-of-conduct)
+- [Contributing to Qlik Agent Skills](#contributing-to-qlik-agent-skills)
+  - [Table of contents](#table-of-contents)
+  - [What lives here](#what-lives-here)
+  - [Trust tiers](#trust-tiers)
+    - [`official/`](#official)
+    - [`community/`](#community)
+  - [Before you start](#before-you-start)
+  - [Repository structure](#repository-structure)
+  - [Writing a skill](#writing-a-skill)
+    - [The SKILL.md format](#the-skillmd-format)
+    - [The description field is critical](#the-description-field-is-critical)
+    - [Spec constraints](#spec-constraints)
+    - [Progressive disclosure](#progressive-disclosure)
+    - [Scripts](#scripts)
+    - [Validate before submitting](#validate-before-submitting)
+  - [Submitting a skill](#submitting-a-skill)
+    - [For community skills](#for-community-skills)
+    - [For official skills](#for-official-skills)
+    - [PR checklist](#pr-checklist)
+  - [Review process](#review-process)
+    - [Automated checks (all PRs)](#automated-checks-all-prs)
+    - [Human review (community tier)](#human-review-community-tier)
+    - [Human review (official tier)](#human-review-official-tier)
+  - [Publishing to the ecosystem](#publishing-to-the-ecosystem)
+  - [Security](#security)
+  - [Code of conduct](#code-of-conduct)
+  - [Questions?](#questions)
 
 ---
 
@@ -73,9 +90,6 @@ Skills contributed by Qlik customers, partners, or the broader developer communi
 ```
 agentic-skills/
 ├── official/                        # Qlik-owned skills
-│   ├── qlik-ai-readiness-optimizer/
-│   │   ├── SKILL.md
-│   │   └── references/
 │   └── README.md
 ├── community/                       # Community-contributed skills
 │   └── README.md
@@ -219,7 +233,7 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 
 ### For official skills
 
-Official skills require a Qlik engineering team member as the PR author or reviewer. If you have a skill idea that should be official, open an issue to discuss with `@qlik/ai-platform` first.
+Official skills require a Qlik engineering team member as the PR author or reviewer. If you have a skill idea that should be official, open an issue to discuss with `@qlik-oss/ai-official-maintainers` first.
 
 ### PR checklist
 
@@ -258,7 +272,7 @@ A maintainer checks:
 
 ### Human review (official tier)
 
-In addition to the above, a `@qlik/ai-platform` member checks:
+In addition to the above, a `@qlik-oss/ai-official-maintainers` member checks:
 - Alignment with Qlik product terminology and APIs
 - Consistency with existing official skill patterns
 - No overlap with the Supervisor agent's built-in capabilities
@@ -274,10 +288,10 @@ Once merged, skills are automatically available via:
 npx skills add qlik/agent-skills
 
 # Install a specific skill
-npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer
+npx skills add qlik/agent-skills --skill <skill-name>
 
 # Install to a specific agent
-npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer -a claude-code
+npx skills add qlik/agent-skills --skill <skill-name> -a claude-code
 ```
 
 The `npx skills` CLI (maintained by Vercel / [skills.sh](https://skills.sh)) routes skills to the correct directory for each agent automatically — Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, and others.
@@ -314,7 +328,6 @@ This project follows Qlik's standard [Code of Conduct](./CODE_OF_CONDUCT.md). Be
 
 ## Questions?
 
-- **Slack:** `#ai-agent-skills` (internal)
 - **GitHub Discussions:** use the Discussions tab for design questions
 - **Issues:** use GitHub Issues for bugs and feature requests
 
