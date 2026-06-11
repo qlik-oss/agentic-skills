@@ -274,8 +274,10 @@ Once merged, skills are automatically available via:
 npx skills add qlik/agent-skills
 
 # Install a specific skill
+npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer
 
 # Install to a specific agent
+npx skills add qlik/agent-skills --skill qlik-ai-readiness-optimizer -a claude-code
 ```
 
 The `npx skills` CLI (maintained by Vercel / [skills.sh](https://skills.sh)) routes skills to the correct directory for each agent automatically — Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, and others.
