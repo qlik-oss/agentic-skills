@@ -18,10 +18,10 @@ Community skills are **opt-in**. They are never silently enabled in a Qlik envir
 
 ```bash
 # Install a specific community skill
-npx skills add qlik/agent-skills --skill your-skill-name
+npx skills add qlik/agent-skills/community --skill your-skill-name
 
 # Install to a specific agent
-npx skills add qlik/agent-skills --skill your-skill-name -a claude-code
+npx skills add qlik/agent-skills/community --skill your-skill-name -a claude-code
 ```
 
 ---
