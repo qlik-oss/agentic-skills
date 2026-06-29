@@ -46,7 +46,7 @@ npx skills add anthropics/skills --skill skill-creator
 ### 3. Create your skill folder
 
 ```
-skills/community/your-skill-name/
+community/your-skill-name/
 ├── SKILL.md            # Required
 ├── scripts/            # Optional
 ├── references/         # Optional
@@ -88,7 +88,7 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 
 ### 5. Open a pull request
 
-Fork the repo, add your skill under `skills/community/`, and open a PR using the provided template. The automated CI pipeline runs spec validation and security scanning. A maintainer will review within 5 business days.
+Fork the repo, add your skill under `community/`, and open a PR using the provided template. The automated CI pipeline runs spec validation and security scanning. A maintainer will review within 5 business days.
 
 ---
 
@@ -120,7 +120,7 @@ Once merged, skills are labelled in the repository to help users evaluate them:
 
 ## Getting promoted to official
 
-A community skill can be nominated for promotion to [`skills/official/`](../official/) if it meets the following criteria:
+A community skill can be nominated for promotion to [`official/`](../official/) if it meets the following criteria:
 
 - Significant install count via `skills.sh`
 - No open bug reports or security findings
