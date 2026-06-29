@@ -56,7 +56,7 @@ Skills are the most commonly contributed artifact. If you're new here, start wit
 Skills in this repository are organized into two trust tiers that determine how they are distributed and what review they require. Shared docs and templates live alongside those tiers in `spec/` and `template/`.
 
 ### `official/`
-Skills owned and maintained by Qlik engineering teams. These are the only skills enabled by default in Qlik's production agent environments. Changes require a PR review from a `@qlik/ai-platform` team member and pass all automated validation checks.
+Skills owned and maintained by Qlik engineering teams. These are the only skills enabled by default in Qlik's production agent environments. Changes require a PR review from a `@qlik-oss/agentic-skills-official-maintainers` team member and pass all automated validation checks.
 
 ### `community/`
 Skills contributed by Qlik customers, partners, or the broader developer community. These are opt-in at the tenant level and carry a **Community** badge in the UI. They must pass automated security scanning and a basic quality review before merging, but do not require Qlik engineering sign-off.
@@ -314,7 +314,7 @@ Skills are executable instructions. A malicious or poorly written skill can caus
 
 **Be explicit about scope.** Use `allowed-tools` in your frontmatter to declare the minimum set of tools your skill requires. Do not request `bash` or `write` access unless your skill genuinely needs it.
 
-**External dependencies.** If your script fetches from an external URL, that URL becomes a supply chain risk. Skills that fetch external content at runtime require explicit approval from `@qlik/ai-platform` regardless of tier.
+**External dependencies.** If your script fetches from an external URL, that URL becomes a supply chain risk. Skills that fetch external content at runtime require explicit approval from `@qlik-oss/agentic-skills-official-maintainers` regardless of tier.
 
 **Reporting a vulnerability.** If you discover a security issue in an existing skill, do not open a public GitHub issue. Email `security@qlik.com` with the subject line `[Agent Skills] Vulnerability Report`.
 

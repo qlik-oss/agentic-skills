@@ -113,7 +113,7 @@ Once merged, skills are labelled in the repository to help users evaluate them:
 | Badge | Meaning |
 |---|---|
 | **Community** | Contributed by a non-Qlik author, opt-in only |
-| **Verified partner** | Contributed by a Qlik technology partner, reviewed by `@qlik/ai-platform` |
+| **Verified partner** | Contributed by a Qlik technology partner, reviewed by `@qlik-oss/agentic-skills-official-maintainers` |
 | **Promoted** | Community skill under consideration for promotion to `official/` |
 
 ---
@@ -125,7 +125,7 @@ A community skill can be nominated for promotion to [`skills/official/`](../offi
 - Significant install count via `skills.sh`
 - No open bug reports or security findings
 - Covers a workflow relevant to a broad set of Qlik users
-- Author is willing to transfer maintenance to `@qlik/ai-platform`, or a team member agrees to adopt it
+- Author is willing to transfer maintenance to `@qlik-oss/agentic-skills-official-maintainers`, or a team member agrees to adopt it
 
 To nominate a skill, open a GitHub issue with the label `promotion-request`.
 
