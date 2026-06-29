@@ -58,16 +58,16 @@ Skills are installed using the [`npx skills` CLI](https://skills.sh) — no setu
 
 ```bash
 # Browse and install everything from this repo
-npx skills add qlik/agent-skills
+npx skills add qlik-oss/agentic-skills
 
 # Install a specific skill
-npx skills add qlik/agent-skills --skill <skill-name>
+npx skills add qlik-oss/agentic-skills --skill <skill-name>
 
 # Install to a specific agent
-npx skills add qlik/agent-skills --skill <skill-name> -a claude-code
+npx skills add qlik-oss/agentic-skills --skill <skill-name> -a claude-code
 
 # Install to all detected agents at once
-npx skills add qlik/agent-skills --agent '*' --skill <skill-name>
+npx skills add qlik-oss/agentic-skills --agent '*' --skill <skill-name>
 ```
 
 The CLI automatically detects which AI tools you have installed and places skill files in the correct directory for each one.
