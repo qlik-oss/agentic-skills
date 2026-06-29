@@ -22,10 +22,10 @@ Skills in this directory are listed by their folder name. Each folder contains a
 
 ```bash
 # Install all official skills
-npx skills add qlik/agent-skills --skill '*' --agent '*'
+npx skills add qlik/agent-skills/official --skill '*' --agent '*'
 
 # Install a specific official skill
-npx skills add qlik/agent-skills --skill <skill-name>
+npx skills add qlik/agent-skills/official --skill <skill-name>
 ```
 
 ---
@@ -70,6 +70,6 @@ To propose a change to an official skill:
 
 1. Open a GitHub issue describing the problem or improvement.
 2. A member of `@qlik-oss/agentic-skills-official-maintainers` will triage and, if approved, either implement it or invite you to submit a PR.
-3. PRs against `skills/official/` from non-team members will be closed and converted to issues.
+3. PRs against `official/` from non-team members will be closed and converted to issues.
 
-For net-new workflows that don't fit an existing skill, consider contributing to [`skills/community/`](../community/) first. Community skills can be promoted to official if they see significant adoption and meet quality standards.
+For net-new workflows that don't fit an existing skill, consider contributing to [`community/`](../community/) first. Community skills can be promoted to official if they see significant adoption and meet quality standards.
