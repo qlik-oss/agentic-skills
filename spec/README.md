@@ -16,9 +16,8 @@ This directory documents the `SKILL.md` frontmatter format used in this reposito
 
 | Field | Type | Description |
 |---|---|---|
-| metadata.tags | list | Searchable tags e.g. `["qlik", "analytics"]`. |
 | allowed-tools | string | Space-separated list of required tools (e.g. `read bash`). |
-| min_sdk_version | string | Minimum compatible agent SDK version. |
-| deprecated | boolean | Set to true to mark the skill as deprecated. |
+| metadata.tags | list | Searchable tags e.g. `["qlik", "analytics"]`. |
+| metadata.deprecated | boolean | Set to true to mark the skill as deprecated. |
 
 For the upstream Agent Skills spec, see https://agentskills.io/specification.
