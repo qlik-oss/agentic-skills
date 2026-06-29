@@ -6,9 +6,9 @@ Skills in this directory are owned and maintained by Qlik engineering. They are 
 
 ## Who maintains these skills
 
-Official skills are authored and reviewed by members of the Qlik AI Platform team (`@qlik/ai-platform`). Every change goes through a pull request, passes automated spec validation and security scanning, and requires at least one team member review before merging.
+Official skills are authored and reviewed by members of the `@qlik-oss/agentic-skills-official-maintainers` team. Every change goes through a pull request, passes automated spec validation and security scanning, and requires at least one team member review before merging.
 
-If you find a bug or want to suggest an improvement to an official skill, open a GitHub issue — do not open a PR directly against this directory unless you are a member of `@qlik/ai-platform`.
+If you find a bug or want to suggest an improvement to an official skill, open a GitHub issue — do not open a PR directly against this directory unless you are a member of `@qlik-oss/agentic-skills-official-maintainers`.
 
 ---
 
@@ -69,7 +69,7 @@ The version is set in the `metadata.version` field of `SKILL.md`. Changelog entr
 To propose a change to an official skill:
 
 1. Open a GitHub issue describing the problem or improvement.
-2. A member of `@qlik/ai-platform` will triage and, if approved, either implement it or invite you to submit a PR.
+2. A member of `@qlik-oss/agentic-skills-official-maintainers` will triage and, if approved, either implement it or invite you to submit a PR.
 3. PRs against `skills/official/` from non-team members will be closed and converted to issues.
 
 For net-new workflows that don't fit an existing skill, consider contributing to [`skills/community/`](../community/) first. Community skills can be promoted to official if they see significant adoption and meet quality standards.
