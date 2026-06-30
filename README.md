@@ -16,13 +16,13 @@ Think of a skill as an onboarding guide for a new hire — it tells the agent wh
 
 ```
 agentic-skills/
-├── official/                        # Qlik-owned and maintained skills
+├── official/skills                  # Qlik-owned and maintained skills
 │   └── README.md
-├── community/                       # Customer and partner contributions
+├── community/skills                 # Customer and partner contributions
 │   └── README.md
 ├── spec/
 │   └── README.md
-├── template/
+├── template/skill                   # Starter template for new skills
 │   ├── README.md
 │   └── SKILL.md
 ├── .claude-plugin/
@@ -97,7 +97,7 @@ Claude Code users can also install via the plugin system, which bundles skills w
 
 ## Available skills
 
-See [`official/`](./official/) for the current list of official skills, and [`community/`](./community/) for community contributions.
+See [`official/skills/`](./official/skills/) for the current list of official skills, and [`community/skills/`](./community/skills/) for community contributions.
 
 ---
 
@@ -139,7 +139,7 @@ Before opening a PR, run the official spec validator:
 
 ```bash
 uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-ref \
-  skills-ref validate community/your-skill-name/
+  skills-ref validate community/skills/your-skill-name/
 ```
 
 ---

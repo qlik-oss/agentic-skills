@@ -42,10 +42,10 @@ This repository contains four top-level areas:
 
 | Type | Location | Purpose |
 |---|---|---|
-| **Official skills** | `official/` | Qlik-owned SKILL.md packages maintained by Qlik engineering |
-| **Community skills** | `community/` | Community-contributed SKILL.md packages reviewed before merge |
+| **Official skills** | `official/skills/` | Qlik-owned SKILL.md packages maintained by Qlik engineering |
+| **Community skills** | `community/skills/` | Community-contributed SKILL.md packages reviewed before merge |
 | **Specification docs** | `spec/` | Repository guidance for the Agent Skills format used here |
-| **Templates** | `template/` | Starter files contributors can copy when creating a new skill |
+| **Templates** | `template/skill/` | Starter files contributors can copy when creating a new skill |
 
 Skills are the most commonly contributed artifact. If you're new here, start with a skill.
 
@@ -67,7 +67,7 @@ Skills contributed by Qlik customers, partners, or the broader developer communi
 
 ## Before you start
 
-1. **Check for an existing skill.** Search `official/` and `community/` before creating a new one — you may be able to extend an existing skill rather than duplicate it.
+1. **Check for an existing skill.** Search `official/skills/` and `community/skills/` before creating a new one — you may be able to extend an existing skill rather than duplicate it.
 
 2. **Open an issue first for large contributions.** If you're planning a skill that introduces new patterns, new schema fields, or a new category, open a GitHub issue to discuss the approach before writing code. This saves everyone time.
 
@@ -89,15 +89,18 @@ Skills contributed by Qlik customers, partners, or the broader developer communi
 
 ```
 agentic-skills/
-├── official/                        # Qlik-owned skills
-│   └── README.md
-├── community/                       # Community-contributed skills
-│   └── README.md
+├── official/
+│   └── skills/                      # Qlik-owned skills
+│       └── README.md
+├── community/
+│   └── skills/                      # Community-contributed skills
+│       └── README.md
 ├── spec/                            # Repository spec and format guidance
 │   └── README.md
-├── template/                        # Starter template for new skills
-│   ├── README.md
-│   └── SKILL.md
+├── template/
+│   └── skill/                       # Starter template for new skills
+│       ├── README.md
+│       └── SKILL.md
 ├── .claude-plugin/
 │   └── marketplace.json
 └── CONTRIBUTING.md
@@ -209,13 +212,13 @@ Use the official validator to catch spec violations before opening a PR:
 uv tool install git+https://github.com/agentskills/agentskills#subdirectory=skills-ref
 
 # Validate your skill
-skills-ref validate community/your-skill-name/
+skills-ref validate community/skills/your-skill-name/
 ```
 
 Or with uvx (no install):
 ```bash
 uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-ref \
-  skills-ref validate community/your-skill-name/
+  skills-ref validate community/skills/your-skill-name/
 ```
 
 ---
@@ -225,7 +228,7 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 ### For community skills
 
 1. Fork the repository.
-2. Create your skill under `community/your-skill-name/`.
+2. Create your skill under `community/skills/your-skill-name/`.
 3. Validate it locally (see above).
 4. Open a pull request with the template provided — fill in all sections.
 5. The automated CI pipeline will run security scanning and spec validation.
@@ -233,13 +236,13 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 
 ### For official skills
 
-Official skills require a Qlik engineering team member as the PR author or reviewer. If you have a skill idea that should be official, open an issue to discuss with `@qlik-oss/ai-official-maintainers` first.
+Official skills require a Qlik engineering team member as the PR author or reviewer. If you have a skill idea that should be official, open an issue to discuss with `@qlik-oss/agentic-skills-official-maintainers` first.
 
 ### PR checklist
 
 Before opening a PR, confirm:
 
-- [ ] Skill lives in the correct tier (`official/` or `community/`)
+- [ ] Skill lives in the correct tier (`official/skills/` or `community/skills/`)
 - [ ] `name` in frontmatter matches the folder name exactly
 - [ ] `description` includes concrete trigger phrases
 - [ ] `SKILL.md` is under 500 lines
@@ -272,7 +275,7 @@ A maintainer checks:
 
 ### Human review (official tier)
 
-In addition to the above, a `@qlik-oss/ai-official-maintainers` member checks:
+In addition to the above, a `@qlik-oss/agentic-skills-official-maintainers` member checks:
 - Alignment with Qlik product terminology and APIs
 - Consistency with existing official skill patterns
 - No overlap with the Supervisor agent's built-in capabilities
@@ -285,13 +288,13 @@ Once merged, skills are automatically available via:
 
 ```bash
 # Install any skill from this repo
-npx skills add qlik/agent-skills
+npx skills add qlik-oss/agentic-skills
 
 # Install a specific skill
-npx skills add qlik/agent-skills --skill <skill-name>
+npx skills add qlik-oss/agentic-skills --skill <skill-name>
 
 # Install to a specific agent
-npx skills add qlik/agent-skills --skill <skill-name> -a claude-code
+npx skills add qlik-oss/agentic-skills --skill <skill-name> -a claude-code
 ```
 
 The `npx skills` CLI (maintained by Vercel / [skills.sh](https://skills.sh)) routes skills to the correct directory for each agent automatically — Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, and others.
