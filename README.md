@@ -149,7 +149,7 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 - [Agent Skills open standard](https://agentskills.io) — specification and reference
 - [Anthropic official skills](https://github.com/anthropics/skills) — document, coding, and productivity skills
 - [skills.sh](https://skills.sh) — community directory and install leaderboard
-- [Qlik Developer Portal](https://developer.qlik.com) — Qlik APIs and platform documentation
+- [Qlik Developer Portal](https://qlik.dev) — Qlik APIs and platform documentation
 
 ---
 
