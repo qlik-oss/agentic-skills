@@ -53,7 +53,7 @@ Skills and Claude plugins contributed by Qlik customers, partners, and the devel
 
 ### Plugins
 
-Claude Code plugins that package the skills in each tier (`official/`, `community/`) into a single installable unit through Claude's plugin marketplace. The plugin format supports bundling agents, hooks, slash commands, and MCP server configuration alongside skills — the underlying skills themselves remain cross-platform regardless of how a given plugin is packaged.
+Claude Code plugins that package the skills in each tier (`official/`, `community/`) into a single installable unit through Claude's plugin marketplace. The plugin format supports bundling agents, hooks, slash commands, and MCP server configuration alongside skills, but the underlying skills themselves remain cross-platform regardless of how a given plugin is packaged.
 
 ---
 

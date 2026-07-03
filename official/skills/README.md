@@ -1,6 +1,6 @@
 # Official Skills
 
-Skills in this directory are owned and maintained by Qlik engineering. They are the only skills enabled by default in Qlik's production agent environments and represent the canonical way to interact with the Qlik platform through an AI agent.
+Skills in this directory are owned and maintained by Qlik engineering. They represent the standard, versioned way to interact with the Qlik platform through an AI agent.
 
 ---
 
@@ -46,7 +46,7 @@ All official skills:
 
 - Keep `SKILL.md` under 300 lines, with detailed material in `references/`
 - Declare `allowed-tools` explicitly in the frontmatter
-- Use Qlik's canonical product terminology
+- Use Qlik's official product terminology
 - Include at least one worked example in `SKILL.md` or `references/`
 - Are versioned using semver in `metadata.version`
 

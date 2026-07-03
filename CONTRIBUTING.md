@@ -1,6 +1,6 @@
 # Contributing to Qlik Agent Skills
 
-Thank you for contributing to the Qlik Agent Skills repository. This repo is the central source of truth for skills, plugins, and schemas that extend Qlik's AI agents — and through the open [Agent Skills standard](https://agentskills.io), they work across Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI, and 20+ other tools.
+Thank you for contributing to the Qlik Agent Skills repository. This repo is the central source of truth for skills and Claude plugins that extend Qlik's AI agents, and through the open [Agent Skills standard](https://agentskills.io), they work across Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI, and 20+ other tools.
 
 ---
 
@@ -56,7 +56,7 @@ Skills are the most commonly contributed artifact. If you're new here, start wit
 Skills in this repository are organized into two trust tiers that determine how they are distributed and what review they require. Shared docs and templates live alongside those tiers in `spec/` and `template/`.
 
 ### `official/`
-Skills owned and maintained by Qlik engineering teams. These are the only skills enabled by default in Qlik's production agent environments. Changes require a PR review from a `@qlik-oss/agentic-skills-official-maintainers` team member and pass all automated validation checks.
+Skills owned and maintained by Qlik engineering teams, the standard, versioned way to work with Qlik Cloud through an AI agent. Changes require a PR review from a `@qlik-oss/agentic-skills-official-maintainers` team member and pass all automated validation checks.
 
 ### `community/`
 Skills contributed by Qlik customers, partners, or the broader developer community. These are opt-in at the tenant level and carry a **Community** badge in the UI. They must pass automated security scanning and a basic quality review before merging, but do not require Qlik engineering sign-off.
@@ -90,19 +90,24 @@ Skills contributed by Qlik customers, partners, or the broader developer communi
 ```
 agentic-skills/
 ├── official/
-│   └── skills/                      # Qlik-owned skills
-│       └── README.md
+│   ├── skills/                      # Qlik-owned skills
+│   │   └── README.md
+│   └── .claude-plugin/plugin.json
 ├── community/
-│   └── skills/                      # Community-contributed skills
-│       └── README.md
+│   ├── skills/                      # Community-contributed skills
+│   │   └── README.md
+│   └── .claude-plugin/plugin.json
 ├── spec/                            # Repository spec and format guidance
 │   └── README.md
 ├── template/
 │   └── skill/                       # Starter template for new skills
 │       ├── README.md
 │       └── SKILL.md
+├── scripts/                         # CI validation scripts (SKILL.md spec + plugin manifest checks)
+├── .github/workflows/               # CI: runs the scripts above on relevant file changes
 ├── .claude-plugin/
 │   └── marketplace.json
+├── package.json / pnpm-lock.yaml    # Node tooling for the validation scripts
 └── CONTRIBUTING.md
 ```
 
@@ -112,7 +117,7 @@ agentic-skills/
 
 ### The SKILL.md format
 
-Every skill is a folder containing a `SKILL.md` file. This is the open [Agent Skills standard](https://agentskills.io) — the same format used by Anthropic, OpenAI, Google, and 26+ other tools.
+Every skill is a folder containing a `SKILL.md` file. This is the open [Agent Skills standard](https://agentskills.io), the same format used by Anthropic, OpenAI, Google, and 20+ other tools.
 
 ```markdown
 ---
@@ -230,7 +235,7 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 1. Fork the repository.
 2. Create your skill under `community/skills/your-skill-name/`.
 3. Validate it locally (see above).
-4. Open a pull request with the template provided — fill in all sections.
+4. Open a pull request describing the skill, what it does, and when it should activate - there's no PR template yet, so cover this in the description.
 5. CI runs the spec check automatically (see [Automated checks](#automated-checks-all-prs)). Run `skills-ref validate` and the SkillCheck security scan locally — not wired into CI yet.
 6. A maintainer will review within 5 business days.
 
