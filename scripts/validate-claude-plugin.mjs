@@ -4,7 +4,7 @@
 // across destinations. SKILL.md frontmatter is checked separately in
 // validate-skill-spec.mjs.
 import { existsSync, readFileSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { join, relative, resolve } from "node:path";
 import { ROOT, createReporter } from "./lib/reporter.mjs";
 
 function readJSON(path, { fail, relPath }) {
@@ -27,7 +27,17 @@ function validatePluginEntry(plugin, seenNames, ctx) {
   if (seenNames.has(plugin.name)) fail(`marketplace.json: duplicate plugin name "${plugin.name}"`);
   seenNames.add(plugin.name);
 
+  if (typeof plugin.source !== "string") {
+    fail(`marketplace.json plugin "${label}": "source" must be a string`);
+    return;
+  }
+
   const sourceDir = resolve(ROOT, plugin.source);
+  const rel = relative(ROOT, sourceDir);
+  if (rel.startsWith("..")) {
+    fail(`plugin "${plugin.name}": source "${plugin.source}" resolves outside the repo root`);
+    return;
+  }
   if (!existsSync(sourceDir) || !statSync(sourceDir).isDirectory()) {
     fail(`plugin "${plugin.name}": source directory "${plugin.source}" does not exist`);
     return;
