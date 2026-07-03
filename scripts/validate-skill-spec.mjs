@@ -20,7 +20,7 @@ function validateSkillMd(skillMdPath, folderName, { fail, warn, relPath }, seenN
   const label = relPath(skillMdPath);
   const raw = readFileSync(skillMdPath, "utf8");
 
-  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
+  const match = raw.match(/^(?:\uFEFF)?---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
   if (!match) {
     fail(`${label}: missing YAML frontmatter`);
     return;
