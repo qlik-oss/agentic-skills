@@ -90,7 +90,8 @@ If you prefer to install manually, clone or copy the skill folder into your agen
 Claude Code users can also install via the plugin system, which bundles skills with agents, MCP configuration, and slash commands:
 
 ```
-/plugin install qlik-dev-toolkit@qlik-agent-skills
+/plugin install qlik-cloud-skills@qlik-cloud-skills
+/plugin install qlik-cloud-community-skills@qlik-cloud-skills
 ```
 
 ---

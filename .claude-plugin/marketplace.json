@@ -1,19 +1,19 @@
 {
-  "name": "qlik-agentic-skills",
-  "description": "Official and community-contributed skills for Qlik agentic workflows",
+  "name": "qlik-cloud-skills",
+  "description": "Agent skills and Claude plugins for building, automating, and optimizing on Qlik Cloud — official skills built by Qlik plus reviewed community contributions",
   "owner": {
     "name": "QlikTech International AB",
     "url": "https://github.com/qlik-oss/agentic-skills"
   },
   "plugins": [
     {
-      "name": "official-skills",
-      "description": "Skills built and maintained by Qlik",
+      "name": "qlik-cloud-skills",
+      "description": "Skills for building, administering, and optimizing on Qlik Cloud — platform workflows and best practices built and maintained by Qlik staff.",
       "source": "./official/"
     },
     {
-      "name": "community-skills",
-      "description": "Skills contributed by partners and customers",
+      "name": "qlik-cloud-community-skills",
+      "description": "Community-contributed skills for Qlik Cloud — integration recipes, industry-specific workflows, and team conventions from partners and customers. Reviewed by community maintainers before publishing.",
       "source": "./community/"
     }
   ]

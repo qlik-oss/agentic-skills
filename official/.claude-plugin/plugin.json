@@ -1,6 +1,6 @@
 {
-  "name": "official-skills",
-  "description": "Skills built and maintained by Qlik",
+  "name": "qlik-cloud-skills",
+  "description": "Skills for building, administering, and optimizing on Qlik Cloud — platform workflows and best practices built and maintained by Qlik staff.",
   "version": "1.0.0",
   "author": {
     "name": "QlikTech International AB",
