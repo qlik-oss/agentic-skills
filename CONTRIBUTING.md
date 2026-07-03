@@ -231,7 +231,7 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 2. Create your skill under `community/skills/your-skill-name/`.
 3. Validate it locally (see above).
 4. Open a pull request with the template provided — fill in all sections.
-5. The automated CI pipeline will run security scanning and spec validation.
+5. CI runs the spec check automatically (see [Automated checks](#automated-checks-all-prs)). Run `skills-ref validate` and the SkillCheck security scan locally — not wired into CI yet.
 6. A maintainer will review within 5 business days.
 
 ### For official skills
@@ -260,10 +260,20 @@ Before opening a PR, confirm:
 
 ### Automated checks (all PRs)
 
-- **Spec validation** — `skills-ref validate` must pass
-- **Security scan** — SkillCheck scans for prompt injection patterns, unexpected network calls, and credential exposure
-- **Spec alignment** — skill structure and frontmatter must match the guidance in `spec/README.md`
-- **Name uniqueness** — skill names must be unique within their tier
+One CI check per destination, not one monolith:
+
+- **Frontmatter check** — [`validate-skill-spec.yml`](.github/workflows/validate-skill-spec.yml) validates every `SKILL.md` against the fields [`spec/README.md`](./spec/README.md) documents (name/description/license/metadata, naming, folder match, uniqueness). Same format across every destination, so one check covers all of them.
+- **Claude plugin check** — [`validate-claude-plugin.yml`](.github/workflows/validate-claude-plugin.yml) validates `.claude-plugin/marketplace.json` and each `plugin.json`. Claude-specific — it's the only destination with a plugin marketplace layer on top of `SKILL.md`, so it's a separate workflow, scoped to Claude-only files.
+
+New destination has its own manifest format? Give it its own `validate-<destination>.mjs` + workflow, don't fold it into either of the above.
+
+Two checks described elsewhere in this guide are **not yet wired into CI** —
+run them locally before opening a PR:
+- **`skills-ref validate`** — the fuller upstream `agentskills` spec validator
+  (Python/uv, not our Node CI); see [Validate before submitting](#validate-before-submitting).
+  Overlaps with the frontmatter check above but checks more of the spec.
+- **Security scan** — SkillCheck, for prompt injection patterns, unexpected
+  network calls, and credential exposure
 
 ### Human review (community tier)
 
@@ -300,8 +310,7 @@ npx skills add qlik-oss/agentic-skills --skill <skill-name> -a claude-code
 The `npx skills` CLI (maintained by Vercel / [skills.sh](https://skills.sh)) routes skills to the correct directory for each agent automatically — Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, and others.
 
 Official skills are also distributed through:
-- The Claude Code marketplace via `.claude-plugin/marketplace.json` (Claude Code only)
-- The Anthropic partner skills directory (pending partner approval)
+- The Claude marketplace via `.claude-plugin/marketplace.json` (Claude only)
 
 ---
 

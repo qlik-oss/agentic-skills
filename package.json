@@ -1,0 +1,13 @@
+{
+  "name": "agentic-skills",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.6.5",
+  "scripts": {
+    "validate:spec": "node scripts/validate-skill-spec.mjs",
+    "validate:claude": "node scripts/validate-claude-plugin.mjs"
+  },
+  "devDependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}

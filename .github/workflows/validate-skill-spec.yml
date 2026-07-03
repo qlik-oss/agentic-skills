@@ -1,0 +1,36 @@
+name: Validate skill spec
+
+# Shared across every destination — same SKILL.md format everywhere, so one
+# check, not one per destination. Claude's plugin packaging is validated
+# separately in validate-claude-plugin.yml.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "official/skills/**/SKILL.md"
+      - "community/skills/**/SKILL.md"
+      - "spec/**"
+      - "scripts/validate-skill-spec.mjs"
+      - "scripts/lib/**"
+      - ".github/workflows/validate-skill-spec.yml"
+  pull_request:
+    paths:
+      - "official/skills/**/SKILL.md"
+      - "community/skills/**/SKILL.md"
+      - "spec/**"
+      - "scripts/validate-skill-spec.mjs"
+      - "scripts/lib/**"
+      - ".github/workflows/validate-skill-spec.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run validate:spec
