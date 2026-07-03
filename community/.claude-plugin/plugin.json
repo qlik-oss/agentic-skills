@@ -1,0 +1,9 @@
+{
+  "name": "community-skills",
+  "description": "Skills contributed by partners and customers",
+  "version": "1.0.0",
+  "author": {
+    "name": "QlikTech International AB",
+    "url": "https://github.com/qlik-oss/agentic-skills"
+  }
+}

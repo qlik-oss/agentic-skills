@@ -1,0 +1,9 @@
+{
+  "name": "official-skills",
+  "description": "Skills built and maintained by Qlik",
+  "version": "1.0.0",
+  "author": {
+    "name": "QlikTech International AB",
+    "url": "https://github.com/qlik-oss/agentic-skills"
+  }
+}
