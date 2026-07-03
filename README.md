@@ -1,6 +1,8 @@
 # Qlik Agentic Skills
 
-Reusable skills, plugins, and schemas that extend AI agents with Qlik-specific expertise — works across Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI, and 20+ other tools that support the open [Agent Skills standard](https://agentskills.io).
+This is Qlik's public, open-source hub for AI agent skills - reusable skills and Claude plugins that extend AI agents with Qlik-specific expertise. Contributions from anyone are welcome; see [Contribute a skill](#contribute-a-skill) below.
+
+Skills here work across Anthropic (Claude & Claude Code), OpenAI (ChatGPT, Codex), GitHub Copilot, Cursor, Gemini CLI, and 20+ other tools that support the open [Agent Skills standard](https://agentskills.io).
 
 ---
 
@@ -8,7 +10,7 @@ Reusable skills, plugins, and schemas that extend AI agents with Qlik-specific e
 
 Agent skills are folders of instructions, scripts, and reference material that an AI agent loads on demand. Instead of repeating context in every conversation, you package your expertise once and let the agent discover and apply it automatically.
 
-Think of a skill as an onboarding guide for a new hire — it tells the agent what to do, when to do it, and how to do it correctly for your specific environment. The [SKILL.md format](https://agentskills.io/specification) is an open standard, so a skill you write here works the same way in every compatible tool.
+Think of a skill as an onboarding guide for a new hire - it tells the agent what to do, when to do it, and how to do it correctly for your specific environment. The [SKILL.md format](https://agentskills.io/specification) is an open standard, so a skill you write here works the same way in every compatible tool.
 
 ---
 
@@ -16,17 +18,24 @@ Think of a skill as an onboarding guide for a new hire — it tells the agent wh
 
 ```
 agentic-skills/
-├── official/skills                  # Qlik-owned and maintained skills
-│   └── README.md
-├── community/skills                 # Customer and partner contributions
-│   └── README.md
+├── official/                        # Qlik-owned and maintained skills
+│   ├── skills/
+│   │   └── README.md
+│   └── .claude-plugin/plugin.json
+├── community/                       # Customer and partner contributions
+│   ├── skills/
+│   │   └── README.md
+│   └── .claude-plugin/plugin.json
 ├── spec/
 │   └── README.md
 ├── template/skill                   # Starter template for new skills
 │   ├── README.md
 │   └── SKILL.md
+├── scripts/                          # CI validation scripts (SKILL.md spec + plugin manifest checks)
+├── .github/workflows/                # CI: runs the scripts above on relevant file changes
 ├── .claude-plugin/
 │   └── marketplace.json
+├── package.json / pnpm-lock.yaml     # Node tooling for the validation scripts
 ├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
 ├── LICENSE
@@ -36,19 +45,15 @@ agentic-skills/
 
 ### Official folder
 
-Skills owned by Qlik engineering. Enabled by default in Qlik's agent environments, with more skills coming.
+Skills owned and maintained by Qlik staff, reviewed by the official maintainers team before merging. These are the generic way to work with Qlik Cloud through an AI agent.
 
 ### Community folder
 
-Skills, Claude plugins and schemas contributed by Qlik customers, partners, and the developer community. Opt-in at the tenant level. Every community skill passes automated security scanning and a quality review before being merged.
+Skills and Claude plugins contributed by Qlik customers, partners, and the developer community. Every community skill passes automated security scanning and a quality review before being merged.
 
 ### Plugins
 
-Claude Code plugins that bundle multiple skills together with agents, hooks, slash commands, and MCP server configuration into a single installable unit. Richer experience for Claude Code users; the underlying skills remain cross-platform.
-
-### Schemas
-
-Shared JSON and YAML schema definitions for skill manifests, plugin configs, and Qlik API structures — used by both the CI validation pipeline and the `skills-ref` validator.
+Claude Code plugins that package the skills in each tier (`official/`, `community/`) into a single installable unit through Claude's plugin marketplace. The plugin format supports bundling agents, hooks, slash commands, and MCP server configuration alongside skills — the underlying skills themselves remain cross-platform regardless of how a given plugin is packaged.
 
 ---
 
@@ -87,7 +92,7 @@ If you prefer to install manually, clone or copy the skill folder into your agen
 
 ### Claude Code plugin marketplace
 
-Claude Code users can also install via the plugin system, which bundles skills with agents, MCP configuration, and slash commands:
+Claude Code users can also install via the plugin system, which packages each tier's skills into a single installable plugin:
 
 ```
 /plugin install qlik-cloud-skills@qlik-cloud-skills
@@ -114,7 +119,6 @@ This repository follows the open [Agent Skills specification](https://agentskill
 | Cursor | ✓ |
 | Gemini CLI | ✓ |
 | JetBrains Junie | ✓ |
-| Windsurf | ✓ |
 | Goose (Block) | ✓ |
 | OpenCode | ✓ |
 | Amp | ✓ |
