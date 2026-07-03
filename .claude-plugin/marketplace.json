@@ -1,20 +1,20 @@
 {
   "name": "qlik-agentic-skills",
   "description": "Official and community-contributed skills for Qlik agentic workflows",
-  "publisher": "QlikTech International AB",
-  "repository": "https://github.com/qlik-oss/agentic-skills",
+  "owner": {
+    "name": "QlikTech International AB",
+    "url": "https://github.com/qlik-oss/agentic-skills"
+  },
   "plugins": [
     {
-      "id": "official-skills",
-      "name": "Official Qlik Skills",
+      "name": "official-skills",
       "description": "Skills built and maintained by Qlik",
-      "path": "official/"
+      "source": "./official/"
     },
     {
-      "id": "community-skills",
-      "name": "Community Skills",
+      "name": "community-skills",
       "description": "Skills contributed by partners and customers",
-      "path": "community/"
+      "source": "./community/"
     }
   ]
 }
