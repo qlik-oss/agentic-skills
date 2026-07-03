@@ -12,6 +12,8 @@ on:
       - "spec/**"
       - "scripts/validate-skill-spec.mjs"
       - "scripts/lib/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/validate-skill-spec.yml"
   pull_request:
     paths:
@@ -20,6 +22,8 @@ on:
       - "spec/**"
       - "scripts/validate-skill-spec.mjs"
       - "scripts/lib/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/validate-skill-spec.yml"
 
 jobs:

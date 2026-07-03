@@ -3,7 +3,7 @@
 // Destination-agnostic — one check covers Claude, Codex, Copilot, Cursor,
 // Gemini CLI, and the rest. Claude's plugin marketplace is checked
 // separately in validate-claude-plugin.mjs.
-import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import yaml from "js-yaml";
 import { ROOT, createReporter } from "./lib/reporter.mjs";
@@ -57,8 +57,13 @@ function validateSkillMd(skillMdPath, folderName, { fail, warn, relPath }, seenN
     seenNamesInTier.add(frontmatter.name);
   }
 
-  if (frontmatter.description && frontmatter.description.length > 1024) {
-    fail(`${label}: description exceeds 1024 characters (${frontmatter.description.length})`);
+  const desc = frontmatter.description;
+  if (desc != null) {
+    if (typeof desc !== "string") {
+      fail(`${label}: frontmatter field "description" must be a string`);
+    } else if (desc.length > 1024) {
+      fail(`${label}: description exceeds 1024 characters (${desc.length})`);
+    }
   }
 
   const lineCount = raw.split("\n").length;
@@ -73,7 +78,9 @@ function main() {
     if (!existsSync(skillsDir)) continue;
 
     const seenNamesInTier = new Set();
-    const folders = readdirSync(skillsDir).filter((e) => statSync(join(skillsDir, e)).isDirectory());
+    const folders = readdirSync(skillsDir, { withFileTypes: true })
+      .filter((d) => d.isDirectory())
+      .map((d) => d.name);
     for (const folder of folders) {
       const skillMdPath = join(skillsDir, folder, "SKILL.md");
       if (!existsSync(skillMdPath)) continue; // supporting folder, not an installable skill

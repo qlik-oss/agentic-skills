@@ -11,6 +11,8 @@ on:
       - "community/.claude-plugin/**"
       - "scripts/validate-claude-plugin.mjs"
       - "scripts/lib/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/validate-claude-plugin.yml"
   pull_request:
     paths:
@@ -19,6 +21,8 @@ on:
       - "community/.claude-plugin/**"
       - "scripts/validate-claude-plugin.mjs"
       - "scripts/lib/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
       - ".github/workflows/validate-claude-plugin.yml"
 
 jobs:
