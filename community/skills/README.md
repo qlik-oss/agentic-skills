@@ -106,18 +106,6 @@ Skills that fail the automated checks or violate the security rules will not be 
 
 ---
 
-## Community skill badges
-
-Once merged, skills are labelled in the repository to help users evaluate them:
-
-| Badge | Meaning |
-|---|---|
-| **Community** | Contributed by a non-Qlik author, opt-in only |
-| **Verified partner** | Contributed by a Qlik technology partner, reviewed by `@qlik-oss/agentic-skills-official-maintainers` |
-| **Promoted** | Community skill under consideration for promotion to `/official/skills/` |
-
----
-
 ## Getting promoted to official
 
 A community skill can be nominated for promotion to [`/official/skills/`](../../official/skills/) if it meets the following criteria:
@@ -127,7 +115,7 @@ A community skill can be nominated for promotion to [`/official/skills/`](../../
 - Covers a workflow relevant to a broad set of Qlik users
 - Author is willing to transfer maintenance to `@qlik-oss/agentic-skills-official-maintainers`, or a team member agrees to adopt it
 
-To nominate a skill, open a GitHub issue with the label `promotion-request`.
+To nominate a skill, open a GitHub issue describing the skill and why it should be promoted.
 
 ---
 

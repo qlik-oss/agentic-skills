@@ -1,6 +1,6 @@
 # Contributing to Qlik Agent Skills
 
-Thank you for contributing to the Qlik Agent Skills repository. This repo is the central source of truth for skills, plugins, and schemas that extend Qlik's AI agents — and through the open [Agent Skills standard](https://agentskills.io), they work across Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI, and 20+ other tools.
+Thank you for contributing to the Qlik Agent Skills repository. This repo is the central source of truth for skills and Claude plugins that extend Qlik's AI agents, and through the open [Agent Skills standard](https://agentskills.io), they work across Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI, and 20+ other tools.
 
 ---
 
@@ -56,7 +56,7 @@ Skills are the most commonly contributed artifact. If you're new here, start wit
 Skills in this repository are organized into two trust tiers that determine how they are distributed and what review they require. Shared docs and templates live alongside those tiers in `spec/` and `template/`.
 
 ### `official/`
-Skills owned and maintained by Qlik engineering teams. These are the only skills enabled by default in Qlik's production agent environments. Changes require a PR review from a `@qlik-oss/agentic-skills-official-maintainers` team member and pass all automated validation checks.
+Skills owned and maintained by Qlik engineering teams, the standard, versioned way to work with Qlik Cloud through an AI agent. Changes require a PR review from a `@qlik-oss/agentic-skills-official-maintainers` team member and pass all automated validation checks.
 
 ### `community/`
 Skills contributed by Qlik customers, partners, or the broader developer community. These are opt-in at the tenant level and carry a **Community** badge in the UI. They must pass automated security scanning and a basic quality review before merging, but do not require Qlik engineering sign-off.
@@ -90,19 +90,24 @@ Skills contributed by Qlik customers, partners, or the broader developer communi
 ```
 agentic-skills/
 ├── official/
-│   └── skills/                      # Qlik-owned skills
-│       └── README.md
+│   ├── skills/                      # Qlik-owned skills
+│   │   └── README.md
+│   └── .claude-plugin/plugin.json
 ├── community/
-│   └── skills/                      # Community-contributed skills
-│       └── README.md
+│   ├── skills/                      # Community-contributed skills
+│   │   └── README.md
+│   └── .claude-plugin/plugin.json
 ├── spec/                            # Repository spec and format guidance
 │   └── README.md
 ├── template/
 │   └── skill/                       # Starter template for new skills
 │       ├── README.md
 │       └── SKILL.md
+├── scripts/                         # CI validation scripts (SKILL.md spec + plugin manifest checks)
+├── .github/workflows/               # CI: runs the scripts above on relevant file changes
 ├── .claude-plugin/
 │   └── marketplace.json
+├── package.json / pnpm-lock.yaml    # Node tooling for the validation scripts
 └── CONTRIBUTING.md
 ```
 
@@ -112,7 +117,7 @@ agentic-skills/
 
 ### The SKILL.md format
 
-Every skill is a folder containing a `SKILL.md` file. This is the open [Agent Skills standard](https://agentskills.io) — the same format used by Anthropic, OpenAI, Google, and 26+ other tools.
+Every skill is a folder containing a `SKILL.md` file. This is the open [Agent Skills standard](https://agentskills.io), the same format used by Anthropic, OpenAI, Google, and 20+ other tools.
 
 ```markdown
 ---
@@ -230,8 +235,8 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 1. Fork the repository.
 2. Create your skill under `community/skills/your-skill-name/`.
 3. Validate it locally (see above).
-4. Open a pull request with the template provided — fill in all sections.
-5. The automated CI pipeline will run security scanning and spec validation.
+4. Open a pull request describing the skill, what it does, and when it should activate - there's no PR template yet, so cover this in the description.
+5. CI runs the spec check automatically (see [Automated checks](#automated-checks-all-prs)). Run `skills-ref validate` and the SkillCheck security scan locally — not wired into CI yet.
 6. A maintainer will review within 5 business days.
 
 ### For official skills
@@ -260,10 +265,20 @@ Before opening a PR, confirm:
 
 ### Automated checks (all PRs)
 
-- **Spec validation** — `skills-ref validate` must pass
-- **Security scan** — SkillCheck scans for prompt injection patterns, unexpected network calls, and credential exposure
-- **Spec alignment** — skill structure and frontmatter must match the guidance in `spec/README.md`
-- **Name uniqueness** — skill names must be unique within their tier
+One CI check per destination, not one monolith:
+
+- **Frontmatter check** — [`validate-skill-spec.yml`](.github/workflows/validate-skill-spec.yml) validates every `SKILL.md` against the fields [`spec/README.md`](./spec/README.md) documents (name/description/license/metadata, naming, folder match, uniqueness). Same format across every destination, so one check covers all of them.
+- **Claude plugin check** — [`validate-claude-plugin.yml`](.github/workflows/validate-claude-plugin.yml) validates `.claude-plugin/marketplace.json` and each `plugin.json`. Claude-specific — it's the only destination with a plugin marketplace layer on top of `SKILL.md`, so it's a separate workflow, scoped to Claude-only files.
+
+New destination has its own manifest format? Give it its own `validate-<destination>.mjs` + workflow, don't fold it into either of the above.
+
+Two checks described elsewhere in this guide are **not yet wired into CI** —
+run them locally before opening a PR:
+- **`skills-ref validate`** — the fuller upstream `agentskills` spec validator
+  (Python/uv, not our Node CI); see [Validate before submitting](#validate-before-submitting).
+  Overlaps with the frontmatter check above but checks more of the spec.
+- **Security scan** — SkillCheck, for prompt injection patterns, unexpected
+  network calls, and credential exposure
 
 ### Human review (community tier)
 
@@ -300,8 +315,7 @@ npx skills add qlik-oss/agentic-skills --skill <skill-name> -a claude-code
 The `npx skills` CLI (maintained by Vercel / [skills.sh](https://skills.sh)) routes skills to the correct directory for each agent automatically — Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, and others.
 
 Official skills are also distributed through:
-- The Claude Code marketplace via `.claude-plugin/marketplace.json` (Claude Code only)
-- The Anthropic partner skills directory (pending partner approval)
+- The Claude marketplace via `.claude-plugin/marketplace.json` (Claude only)
 
 ---
 

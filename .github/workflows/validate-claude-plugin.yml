@@ -1,0 +1,41 @@
+name: Validate Claude plugin
+
+# Claude-only. Scoped to marketplace.json/plugin.json so it doesn't re-run
+# on every SKILL.md edit — see validate-skill-spec.yml for that.
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".claude-plugin/**"
+      - "official/.claude-plugin/**"
+      - "community/.claude-plugin/**"
+      - "scripts/validate-claude-plugin.mjs"
+      - "scripts/lib/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/validate-claude-plugin.yml"
+  pull_request:
+    paths:
+      - ".claude-plugin/**"
+      - "official/.claude-plugin/**"
+      - "community/.claude-plugin/**"
+      - "scripts/validate-claude-plugin.mjs"
+      - "scripts/lib/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/validate-claude-plugin.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.6.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run validate:claude
