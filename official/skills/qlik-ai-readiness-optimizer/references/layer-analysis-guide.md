@@ -17,7 +17,6 @@ Detailed checklists, severity classifications, scoring rubrics, and example outp
 - **Domain context where ambiguous**: `Order Date` not just `Date`, `Product Category` not just `Category`
 - **No ETL/developer prefixes**: no `dim_`, `fact_`, `stg_`, `tbl_` prefixes
 - **No system suffixes**: no `_ID`, `_KEY`, `_FK`, `_SK` unless intentionally visible
-- **Boolean/flag fields use proposition prefixes**: `Is Active`, `Has Churned` — not `Active`, `ChurnFlag`, or bare `Flag1`
 
 ### Severity tiers — classify every field
 
@@ -92,10 +91,8 @@ The AI sees every visible field as a potential candidate for answering questions
 - Calculated/derived fields where purpose is unclear without context
 - Fields in a language the user doesn't ask questions in
 
-**⚠️ Structural red flags — field-count threshold ladder** (same ladder used in Phase 0 PREFLIGHT, this is the finer-grained pass):
-- ≤ 60 visible fields → ideal
-- 61–200 visible fields → noisy, flag in this layer's scoring
-- > 200 visible fields → structural; if not already flagged in Phase 0 PREFLIGHT, flag it now
+**⚠️ Structural red flags**
+- Total visible field count > 100 → model is too noisy for optimal AI use
 - Synthetic keys present → data model needs restructuring (flag, don't just hide)
 - Multiple tables with overlapping field names → ambiguity risk for AI
 
@@ -154,11 +151,6 @@ Check for:
 **⚠️ Blocking check: Logic Disabled**
 - If "Logic Disabled" is set in the Logical Model → ALL Master Items are invisible regardless of grouping. Warn user to check this in the Qlik Hub UI (cannot be detected via MCP).
 
-**⚠️ Distinct blocking check: "invalid logical model" indexing failure**
-- Different from Logic Disabled — this is Logic *Enabled* but with custom business logic that Qlik Answers' indexer rejects, surfacing as an "invalid logical model" error or an indexing process that hangs indefinitely when the user tries to enable Qlik Answers on the app.
-- If the user reports "Answers won't turn on for this app" or indexing hangs, ask whether they see this specific error before assuming a Layer 3 grouping problem — the fix is different: Logical Model → Overview → "Reset to default," re-enable for Answers, reload, retest.
-- After any Logical Model fix (this one or a grouping fix), reindexing can take up to 24 hours — don't conclude a fix failed just because Answers hasn't picked it up yet in the same session (see Phase 6 VERIFY).
-
 ### Scoring rubric
 
 | Check | Weight | Scoring |
@@ -193,7 +185,7 @@ If `qlik_list_measures` and `qlik_list_dimensions` both return empty:
 2. **Shift to a creation workflow**:
    - Analyze fields from Layers 1/2 to identify likely business measures and dimensions
    - Propose a starter set of 10-15 Master Items (5-8 measures, 5-7 dimensions)
-   - For each: include name, expression, description (rich format), and suggested group — every proposed item must include a group, or it recreates the Layer 3 failure mode (Key Rule #1) on day one
+   - For each: include name, expression, description (rich format), and suggested group
    - Present for user approval before creating anything
 3. **Set expectations**: "This app has no Master Items, which means Qlik Answers has nothing to work with."
 
@@ -220,12 +212,6 @@ A rich description follows this pattern:
 
 💡 A single variable is fine. The optimization opportunity arises with 3+ variables, nested chains, or variables referencing other variables. Enrich descriptions to explain the full resolved logic.
 
-**C2. Set identifiers / alternate states — hard flag, independent of C's gradient**
-
-Qlik's documented Qlik Answers limitations: if a master measure's expression contains an inner set identifier — `{$<...>}` (current selection state), `{1<...>}` (full dataset), or `{StateName<...>}` (an alternate state) — Qlik Engine's set-analysis precedence rules make that inner identifier override any filter Qlik Answers tries to apply on top of it. This fails silently: no error, no warning, just a wrong-looking result. Example: `Sum({$<Car_Type={'SUV'}>}Price)` asked with a "Brand" filter returns all-brands SUV revenue, not the filtered brand's SUV revenue.
-
-This is categorically different from the variable-density gradient in C — a single, otherwise-simple set-analysis expression is enough to break filtering. Any master measure whose expression contains `{$<`, `{1<`, or `{`+any state name+`<` should be flagged 🔴 regardless of its C tier, with a note explaining the silent-failure risk and a recommendation to remove the inner set identifier (or restructure the measure so filtering happens outside the expression).
-
 **D. Group assignment:** Cross-reference with Layer 3.
 
 ### Scoring rubric
@@ -233,7 +219,7 @@ This is categorically different from the variable-density gradient in C — a si
 | Sub-dimension | Weight | Scoring |
 |---------------|--------|---------|
 | Description quality | 40% | Missing=0.0, Minimal=0.4, Rich=1.0 |
-| Expression complexity | 35% | Simple=1.0, Moderate=0.5, High=0.2, **contains a set identifier/alternate state=0.0 regardless of tier** |
+| Expression complexity | 35% | Simple=1.0, Moderate=0.5, High=0.2 |
 | Group assigned | 25% | Yes=1.0, No=0.0 |
 
 **Layer 4 Score** = weighted average across all Master Items × 100
@@ -270,7 +256,6 @@ This is categorically different from the variable-density gradient in C — a si
 **C. Fiscal year and custom calendar handling**
 - Non-January fiscal year? Is there a fiscal year field or fiscal quarter mapping?
 - Dual calendar needs (calendar year + fiscal year)?
-- ⚠️ **Where does the fiscal logic actually live?** Qlik Answers does not index content inside a Calendar Period object — if fiscal quarters/periods are defined there instead of as a real field or Master Dimension, they are invisible to Answers no matter how well the rest of the model is prepared. Worse, Calendar Period objects (along with Hierarchies, Behaviors, and Custom analysis) are removed entirely once a tenant is enabled for the agentic Qlik Answers experience — so this isn't just an indexing gap, it can be a breaking change for that tenant. If fiscal logic lives in a Calendar Period object, recommend re-expressing it as a loaded field or Master Dimension.
 
 **D. Relative date fields**
 - Relative time markers ("Current Month", "YTD", "Rolling 12 Months")?
@@ -316,11 +301,6 @@ This is categorically different from the variable-density gradient in C — a si
 - App used by people who ask questions in different languages?
 - Synonyms defined in all relevant languages?
 - Field names in one language but users ask in another?
-
-### Anti-patterns to flag, not just coverage gaps
-
-- **One synonym mapped to multiple fields** (e.g. "sales" assigned to two different measures) — ambiguous, forces Qlik Answers to guess which one the user meant.
-- **Vague relative-ranking terms** ("top", "bottom") — these can be interpreted multiple, conflicting ways and should not be used as synonyms.
 
 ### Prioritization guidance
 

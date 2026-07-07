@@ -60,15 +60,10 @@ Note: MCP cannot change field visibility directly. Requires load script or Logic
 
 ```
 Action: Create groups and assign fields/Master Items
-Tools: qlik_create_dimension (with group tag), qlik_update_dimension, qlik_update_measure,
-       qlik_list_measures, qlik_list_dimensions
-Note: Group assignment is done by tagging Master Items when creating or updating them.
-New Master Items can be created with groups via MCP (qlik_create_measure/qlik_create_dimension).
-Existing Master Items can also be regrouped directly via MCP using qlik_update_measure /
-qlik_update_dimension — no UI editing required.
-
-Every proposed Master Item must include a group — an ungrouped new item recreates the
-Layer 3 failure mode (Key Rule #1), whether it's newly created or being regrouped.
+Tools: qlik_create_dimension (with group tag), qlik_list_measures, qlik_list_dimensions
+Note: Group assignment is done by tagging Master Items when creating/updating them.
+New Master Items can be created with groups via MCP.
+Existing Master Items currently require UI editing (MCP edit feature in preview).
 ```
 
 ---
@@ -77,8 +72,7 @@ Layer 3 failure mode (Key Rule #1), whether it's newly created or being regroupe
 
 ```
 Action: Optimize Master Items with semantic descriptions; assess expression complexity
-Tools: qlik_create_measure, qlik_create_dimension, qlik_update_measure, qlik_update_dimension,
-       qlik_list_measures, qlik_list_dimensions
+Tools: qlik_create_measure, qlik_create_dimension, qlik_list_measures, qlik_list_dimensions
 ```
 
 ### Output to provide
@@ -86,7 +80,6 @@ Tools: qlik_create_measure, qlik_create_dimension, qlik_update_measure, qlik_upd
 1. A Master Item optimization report showing each item's description quality, expression complexity, and group status
 2. For items with 🔴 Missing or 🟠 Minimal descriptions: generate rich descriptions following the template:
    `"[Metric Name]: [What it calculates]. [What it excludes]. [When to use vs. similar metrics]. Also known as: [synonyms]."`
-   Apply the improved description to the existing item directly via `qlik_update_measure`/`qlik_update_dimension` — no need to recreate it as a new Master Item.
 3. For items with 🔴 High complexity expressions (especially heavy variable density):
    - Identify which expressions have the highest variable density and recommend enriching descriptions to explain the full resolved computation
    - For highest-impact Master Items: suggest simplified/inlined expression alternatives where feasible
