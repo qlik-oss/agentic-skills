@@ -5,7 +5,7 @@
 // separately in validate-claude-plugin.mjs.
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import yaml from "js-yaml";
+import { load as loadYaml } from "js-yaml";
 import { ROOT, createReporter } from "./lib/reporter.mjs";
 
 const NAME_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -28,7 +28,7 @@ function validateSkillMd(skillMdPath, folderName, { fail, warn, relPath }, seenN
 
   let frontmatter;
   try {
-    frontmatter = yaml.load(match[1]) || {};
+    frontmatter = loadYaml(match[1]) || {};
   } catch (e) {
     fail(`${label}: invalid YAML frontmatter — ${e.message}`);
     return;
