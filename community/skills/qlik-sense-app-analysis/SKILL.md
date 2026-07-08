@@ -11,16 +11,16 @@ description: >-
   warehouse questions, DW/BI-tool-agnostic data modelling, or requests with
   no Qlik MCP tool involved.
 license: Apache-2.0
+compatibility: Requires a Qlik Cloud tenant with the Qlik MCP server connected (see references/qlik-mcp-tool-reference.md for the tool list).
 metadata:
   author: nabeel-oz
-  version: 1.1.0
+  version: 1.2.0
   tags:
     - qlik
     - mcp
     - analytics
     - governance
     - data-visualization
-allowed-tools: read
 ---
 
 # Qlik Sense App Analysis Skill
@@ -255,6 +255,10 @@ and one they have to re-verify themselves:
 > expression] · **Trust score:** [if checked] · **Freshness:** [app's last
 > reload timestamp if known] · **App/owner:** [app name, owning space]
 
+Write the prose part of that answer per
+[`references/output-style.md`](references/output-style.md) — concise,
+BLUF, no filler — the same standard as the provenance line itself.
+
 ### 7. Knowledge bases
 
 If the tenant has Qlik Answers knowledge bases enabled, `qlik_search` with
@@ -323,5 +327,7 @@ See also:
 - [`references/visualization-guidelines.md`](references/visualization-guidelines.md) —
   chart-type selection, rendering fallbacks, hygiene rules, and the
   dashboard/report build pattern.
+- [`references/output-style.md`](references/output-style.md) — response
+  tone and formatting conventions for the prose part of an answer.
 - [`references/design-rationale.md`](references/design-rationale.md) — the
   reasoning behind this skill's structure, for "why" questions.
