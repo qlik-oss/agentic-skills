@@ -10,7 +10,7 @@ Community skills are **opt-in**. They are never silently enabled in a Qlik envir
 
 | Skill | Author | Description |
 |---|---|---|
-| *(be the first to contribute)* | | |
+| [qlik-load-script](qlik-load-script/) | [nabeel-oz](https://github.com/nabeel-oz) | Lightweight skill for coding agents (Claude Code, Cursor, etc.) to write, complete, and extend Qlik Sense load scripts (.qvs) — general authoring plus data prep for ML-ready datasets with Qlik Predict |
 
 ---
 
