@@ -93,13 +93,12 @@ The split produces a **held-out validation set** that simulates real-world unsee
 
 **Approach 1 — Random split (default for most use cases)**
 ```qlik
-// Random 80/20 split with fixed seed for reproducibility
-LET vSeed = 42;
+// Random 80/20 split (non-deterministic across reloads)
 
 WithSplit:
 LOAD
     *,
-    If(Rand($(vSeed)) <= 0.8, 'Train', 'Test') as SplitFlag
+    If(Rand() <= 0.8, 'Train', 'Test') as SplitFlag
 RESIDENT FinalFeatures;
 
 DROP TABLE FinalFeatures;
