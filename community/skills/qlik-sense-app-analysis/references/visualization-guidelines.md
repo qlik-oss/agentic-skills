@@ -24,7 +24,7 @@ one-row lookup.
 | Distribution | Histogram | Useful after `qlik_get_dataset_profile` to show what "outliers" actually means |
 | Correlation between two measures | Scatter | Label both axes with units |
 | Single KPI | Big-number / KPI tile | Pair with a trend arrow or sparkline if a prior period is available |
-| Geography | Choropleth/map only if the app already has one | Otherwise a sorted bar by region is clearer than a improvised map |
+| Geography | Choropleth/map only if the app already has one | Otherwise a sorted bar by region is clearer than an improvised map |
 
 ## How to render, depending on the environment
 
