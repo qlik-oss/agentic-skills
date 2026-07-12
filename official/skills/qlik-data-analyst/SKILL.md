@@ -4,7 +4,7 @@ description: Assist with Qlik Sense and QlikView data analysis tasks — authori
 license: Apache-2.0
 metadata:
   author: mreimitz
-  version: 1.0.0
+  version: 1.1.0
   tags:
     - qlik
     - analytics
@@ -36,24 +36,67 @@ Use this skill when the user:
 
 ## Working with the Qlik MCP server
 
-The server exposes ~60 tools — more than a model reliably picks among. Optimize:
+The server exposes ~60 tools — more than a model reliably picks among. Follow the initialization sequence and core toolkit below to avoid wrong-tool selection and keep context manageable.
 
-
-## Initialization Sequence
+## Initialization Sequence (MANDATORY - Do Not Skip)
 
 ### Step 1: Call qlik_search to locate and open the target app
 
-### Step 2: Call qlik_describe_app once
-Read and internalize the app metadata including fields, master dimensions, and master measures. **This is the primary schema orientation call.**
+### Step 2: ALWAYS call qlik_describe_app FIRST - NO EXCEPTIONS
+
+**This is mandatory.** Read and internalize the app metadata including fields, master dimensions, and master measures before making ANY data queries. This call returns:
+
+- All available fields with their exact names
+- Master dimensions with their libraryId values
+- Master measures with their libraryId values
+- Data model structure
+
+**CRITICAL: Never guess field names.** The exact field names vary by app:
+- Common time fields: `src_year`, `Year`, `=Year([field])`, `year`, `pickup_year`
+- Common location fields: `PULocationID.borough`, `Borough`, `PUBorough`, `zone`
+- ALWAYS use the exact names returned by `qlik_describe_app`
+
+**Field Name Validation Rule**: If a `qlik_create_data_object` call fails with "Invalid fields" error, do NOT retry with guessed variations. Instead:
+1. Re-check the exact field names from your `qlik_describe_app` result
+2. Look for master dimensions that cover the concept you need
+3. If the field truly does not exist, report it to the user
 
 ### Step 3: If needed, use targeted follow-up schema calls
 Use `qlik_get_fields`, `qlik_list_measures`, `qlik_list_dimensions`, or `qlik_search_field_values` only when the question needs extra precision beyond `qlik_describe_app`.
 
-### Step 4: Proceed directly to qlik_create_data_object for the first analytical question
+### Step 4: Execute queries SEQUENTIALLY (not in parallel)
 
-Do not run exploratory test queries before the first analytical query unless a prior call fails and requires targeted validation.
+**NO PARALLEL QUERIES to Qlik servers.** Execute `qlik_create_data_object` calls one at a time. Parallel queries often trigger 30-second timeouts and overwhelm the server.
 
-### Step 5: If a tool call fails, switch to recovery mode before retrying
+Good pattern:
+```
+1. qlik_describe_app
+2. qlik_create_data_object (year trends) - wait for response
+3. qlik_create_data_object (location breakdown) - wait for response
+```
+
+Bad pattern (DO NOT DO THIS):
+```
+1. qlik_describe_app
+2. Launch 4-6 qlik_create_data_object calls simultaneously
+```
+
+### Step 5: Timeout and error handling
+
+**30-second timeout rule**: If a query times out (30s), do NOT retry the exact same query. Instead:
+
+1. **First timeout**: Simplify the query
+   - Reduce number of dimensions (try 1-2 instead of 3-4)
+   - Reduce number of measures (try 2-3 instead of 5-6)
+   - Add a row limit if none exists
+   - Avoid datetime fields as direct dimensions; use derived fields like `src_year` or calculated dimensions
+
+2. **Second timeout**: Stop and report
+   - After 2 timeouts on similar queries, report the issue to the user
+   - Do not continue trying variations
+   - Suggest the server may need optimization or the data volume is too large
+
+**Recovery checklist before retry**:
 
 Run this checklist before any retry:
 
@@ -93,6 +136,32 @@ Use this as the baseline toolkit for analysis tasks on the live server.
 
 - **qlik_create_data_object** — run analytical queries with dimensions, measures, sorting, and limits
 
+**Master Item Priority Rule**: When building queries, ALWAYS prefer master items (using `libraryId`) over raw field references or ad-hoc expressions when available. Master items are:
+- Pre-tested and governed
+- Faster to execute (pre-calculated in some cases)
+- Consistent across all uses
+- Less prone to errors
+
+Example - PREFER THIS:
+```json
+{
+  "measures": [
+    {"label": "Trips", "libraryId": "167d7096-8647-4e46-8bbb-a79c0fae5b13"},
+    {"label": "TotalAmount", "libraryId": "f56fe084-34f8-48e6-be79-aa2190a9232c"}
+  ]
+}
+```
+
+Example - AVOID WHEN MASTER EXISTS:
+```json
+{
+  "measures": [
+    {"expression": "Count(1)", "label": "Trips"},
+    {"expression": "Sum(total_amount)", "label": "Revenue"}
+  ]
+}
+```
+
 ### Retrieval helpers
 
 - **qlik_get_chart_data** — read an existing chart instead of rebuilding logic
@@ -115,6 +184,28 @@ If the user gives names (not IDs):
 2. If multiple matches exist, prefer the exact app name and exact space name match.
 3. Confirm selected app identity by name and `appId` before querying.
 4. Use that resolved `appId` consistently for all following calls.
+
+## Performance Optimization
+
+### Target metrics for efficient runs:
+- **Tool calls**: Aim for 8-16 calls per analysis (not 30+)
+- **Turns**: Target 5-8 turns for complex questions (not 15-20)
+- **Context tokens**: Keep peak context under 40K tokens when possible
+- **Cost**: Typical analysis should cost $0.30-$0.50, not $0.80+
+
+### How to achieve this:
+1. **Call qlik_describe_app once** at the start, then reference that data throughout
+2. **Use master items** (libraryId) instead of creating ad-hoc expressions
+3. **Execute sequentially** - no parallel queries
+4. **Batch related metrics** in single queries when possible (multiple measures, one call)
+5. **Avoid field name guessing** - each failed validation adds cost and latency
+
+### Circuit breaker pattern:
+If you encounter 2+ consecutive timeouts or 3+ field validation errors:
+1. Stop the current approach
+2. Review the qlik_describe_app output again
+3. Simplify the query significantly
+4. If still failing, report the issue rather than continuing to retry
 
 ## Known Tooling Boundaries (live server)
 
