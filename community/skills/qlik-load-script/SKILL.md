@@ -240,6 +240,18 @@ When the user provides a starting script or prompt:
 
 ---
 
+## Example
+
+**User prompt:**
+> "I have `lib://DataFiles/transactions.qvd` (one row per transaction: `CustomerID`, `TransactionDate`, `Amount`, `ProductCategory`, `Returned`) and `lib://DataFiles/customers.qvd` (one row per customer: `CustomerID`, `SignupDate`, `Region`). Build an ML prep script that predicts whether a customer cancels (`CancellationDate` is populated) in the next 90 days. Output training/testing QVDs."
+
+**Expected response:**
+1. State back the task: target = binary flag derived from `CancellationDate` (leaky field to drop after deriving the target), grain = one row per customer, source = the two QVDs above.
+2. Write a script (following the [Script Template](#script-template)) that: loads both QVDs, aggregates `transactions` to customer grain (`TxnCount`, `TotalSpend`, `AvgSpend`, `Recency_Days`, `Count(DISTINCT ProductCategory)`, return rate — see [Feature Engineering Patterns](references/syntax-and-patterns.md#13-feature-engineering-patterns)), joins onto `customers`, derives `Churn_Flag` from `CancellationDate` then drops `CancellationDate` itself (leakage), applies the random 80/20 split from [Train/Test split approaches](#train-test-split-approaches), and stores `training_data.qvd` / `testing_data.qvd`.
+3. Flag any uncertain function calls with `// TODO: verify`, and call out the leakage check (`CancellationDate` removed) explicitly after the script.
+
+---
+
 ## Reference
 
 - **Syntax & patterns reference:** [references/syntax-and-patterns.md](references/syntax-and-patterns.md) — full Qlik load script syntax, common pitfalls, and feature engineering code patterns. **Read this before writing any script.**

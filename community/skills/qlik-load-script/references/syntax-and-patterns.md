@@ -110,7 +110,7 @@ LOAD * RESIDENT SomeTable;
 | **Conditional** | `If(condition, then, else)`, `Pick()`, `Match()`, `MixMatch()`, `WildMatch()` |
 | **String** | `Len()`, `Left()`, `Right()`, `Mid()`, `SubField()`, `Replace()`, `Upper()`, `Lower()`, `Trim()`, `PurgeChar()`, `KeepChar()`, `TextBetween()` |
 | **Date** | `Today()`, `Now()`, `Year()`, `Month()`, `Day()`, `WeekDay()`, `Week()`, `Date()`, `Date#()`, `Num()`, `Interval()`, `AddMonths()`, `YearStart()`, `MonthStart()` |
-| **Null/Missing** | `IsNull()`, `Null()`, `If(Len(Field)=0, ...)`, `Alt()`, `Coalesce()` |
+| **Null/Missing** | `IsNull()`, `Null()`, `If(Len(Field)=0, ...)`, `Alt()` (SQL `COALESCE()` equivalent — returns the first non-null argument) |
 | **Math** | `Ceil()`, `Floor()`, `Round()`, `Fabs()`, `Log()`, `Sqrt()`, `Mod()`, `Div()`, `RangeMin()`, `RangeMax()`, `RangeAvg()`, `RangeSum()` |
 | **Type** | `IsNum()`, `IsText()`, `Num()`, `Text()`, `Num#()`, `Date#()`, `Money#()` |
 | **Inter-record** | `Previous()`, `Peek()`, `FieldValue()`, `FieldValueCount()` |
