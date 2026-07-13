@@ -54,3 +54,14 @@ afterthought (see
 agent that only ever prints numbers is solving the retrieval problem but
 reintroducing a comprehension problem. Qlik's chart tools return structured,
 already-aggregated data specifically so it can be rendered, not just read.
+
+## When to split into a knowledge/workbook skill pair
+
+If you accumulate many app profiles across very different domains,
+consider splitting this into a pair of skills the way Anthropic's
+self-service analytics article describes: a thin **knowledge** skill
+that's just the `references/` router, and this file as the **workbook**
+skill that does the actual tool-calling. For most teams, one skill with a
+growing `references/` folder is simpler and enough — only split once
+profile count or domain diversity makes a single `references/` folder
+hard to navigate.

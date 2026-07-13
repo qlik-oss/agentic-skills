@@ -1,17 +1,18 @@
 # Visualization Guidelines
 
-Detail behind [`SKILL.md`](../SKILL.md)'s "Visualizing results" and "Offer a
-one-page dashboard/report" sections. Read this before rendering a chart or
-building a standalone report.
+Detail behind [`SKILL.md`](../SKILL.md)'s "Visualizing results & offering a
+report" section. Read this before rendering a chart or building a
+standalone report.
 
-## Default to visual, not text
+## For data, default to visual, not text
 
 A wall of text or numbers is a worse answer than a chart whenever the data has a
 shape — a trend, a comparison across categories, a distribution, a ranking.
 If a tool call (`qlik_get_chart_data`, `qlik_create_data_object`, a dataset
 profile) returns more than a couple of data points, render it rather than just
 listing it in prose. Text is fine for a single number, a yes/no, or a
-one-row lookup.
+one-row lookup — and always fine for your narrative commentary alongside
+a chart.
 
 ## Match the chart to the analytical task
 
@@ -43,18 +44,22 @@ one-row lookup.
   formatted markdown table: sorted meaningfully, rounded to sensible
   precision, units in the header row — and say plainly that this is a text
   fallback rather than silently under-delivering.
-- **Reuse before rebuilding.** If `qlik_get_sheet_details` shows this exact
-  cut of data already has a chart on a sheet in the app, pull it with
-  `qlik_get_chart_data` and tell the user where it already lives, rather
-  than only rendering a fresh one in chat. This is the same "governed answer
-  before ad hoc one" discipline the rest of this skill applies to queries.
+- **Reuse before rebuilding.** If a sheet from `qlik_list_sheets` has a
+  topical title/description — not a generic auto-title like "My new sheet
+  (2)" — check `qlik_get_sheet_details`; if it covers this exact cut, pull
+  it with `qlik_get_chart_data` and tell the user where it already lives,
+  rather than only rendering a fresh one in chat. Don't spend a round-trip
+  opening every generically-titled sheet on the offhand chance one matches
+  — that signal-free case isn't worth the extra call. This is the same
+  "governed answer before ad hoc one" discipline the rest of this skill
+  applies to queries.
 
 ## Chart hygiene
 
-- Aim for quick to scan, easily readable and comprehensible content. 
+- Aim for quick to scan, easily readable and comprehensible content.
 - Label axes with units — currency symbol, `%`, or the measure name; a bare
   number is ambiguous.
-- Label data points on charts like scatterplots and show values on barcharts 
+- Label data points on charts like scatterplots and show values on barcharts
   and line charts whenever density allows.
 - Sort meaningfully: rank order for comparisons/rankings, chronological for
   time series. Alphabetical sort is rarely the right default.
@@ -68,21 +73,21 @@ one-row lookup.
 
 ## Offering a one-page dashboard/report
 
-Some questions are complex enough that answering them well requires several
-charts and analyses stitched together — a multi-part ask, an "overview" or
-"summarize" request, an executive-style question spanning more than one
-metric or time period.
+Build a full dashboard only when [`SKILL.md`](../SKILL.md)'s gate is met —
+explicit ask, or 3+ independently chartable cuts that don't fit a short
+answer. Most multi-metric questions still resolve to prose with a couple of
+supporting charts, not a full artifact.
 
-**Offer, don't assume.** When you recognize this shape, say so and ask
-before building it: something like *"This touches four separate metrics —
+**Offer, don't assume.** When the gate is met, say so and ask before
+building it: something like *"This touches four separate metrics —
 would you like me to also put together a one-page HTML summary alongside the
 inline answers?"* Building a standalone report is a bigger deliverable than
 a normal chat answer, takes longer, and not every user wants one — so only
 build it after they confirm. Never produce one as a side effect of answering
 a simpler question, and never build it inside the Qlik app itself (that's a
 different, separately-confirmed action — see "Confirm intent" in
-[`governance-workflows.md`](governance-workflows.md) and `qlik_create_sheet`
-in [`qlik-mcp-tool-reference.md`](qlik-mcp-tool-reference.md)).
+[`SKILL.md`](../SKILL.md) and `qlik_create_sheet` in
+[`qlik-mcp-tool-reference.md`](qlik-mcp-tool-reference.md)).
 
 **Once confirmed**, build a single self-contained HTML file:
 
@@ -99,3 +104,6 @@ in [`qlik-mcp-tool-reference.md`](qlik-mcp-tool-reference.md)).
 - A summary/highlights section at the top if the report has more than
   ~3 sections — don't make the reader scroll through everything to find the
   headline number.
+- Restrained, professional visual design — no emoji in headers/titles, no
+  decorative gradients, glow, or drop-shadow chrome. Aim for the clean look
+  of a governed BI tool, not a maximalist "AI-generated" artifact.

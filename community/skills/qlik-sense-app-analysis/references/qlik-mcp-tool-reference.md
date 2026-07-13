@@ -2,11 +2,19 @@
 
 Full catalogue of Qlik MCP server tools by category, condensed from the [Qlik
 Cloud help documentation](https://help.qlik.com/en-US/cloud-services/Subsystems/Hub/Content/Sense_Hub/QlikMCP/Qlik-MCP-server-tools.htm) and the live tool schemas. Read this when the
-summary tables in `SKILL.md` aren't enough detail, or when you need an
-example prompt pattern for a category you haven't used yet.
+[tool categories overview in `SKILL.md`](../SKILL.md#tool-categories-then-governance--check-before-you-create)
+isn't enough detail, or when you need an example prompt pattern for a
+category you haven't used yet.
 
-Tool availability depends on the user's role permissions, space access, and
-tenant licensing — a tool may return "no access" even if it's listed here.
+**This catalogue can drift from the live tool surface.** Tool names,
+parameters, and availability can change as the Qlik MCP server evolves —
+confirm exact names and parameters via tool-search or the [Qlik Cloud help
+documentation](https://help.qlik.com/en-US/cloud-services/Subsystems/Hub/Content/Sense_Hub/QlikMCP/Qlik-MCP-server-tools.htm)
+before relying on this file for anything critical.
+
+Tool availability also depends on the user's role permissions, space
+access, and tenant licensing — a tool may return "no access" even if it's
+listed here.
 
 ## Table of contents
 

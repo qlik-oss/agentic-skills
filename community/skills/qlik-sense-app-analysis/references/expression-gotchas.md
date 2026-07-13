@@ -35,6 +35,18 @@ No whitespace inside the comparison value: `>=30` not `>= 30`. A space
 after the operator changes how Qlik parses the value and can produce wrong
 (not necessarily zero) results with no warning.
 
+### The row-count trap
+
+```
+Wrong:   Count(1)
+Correct: Count(RecNo())   Count([SomeNonNullKeyField])
+```
+
+`Count(1)` looks like SQL's `COUNT(*)`, but in Qlik it counts occurrences of
+the literal value `1` — which evaluates to `1`, not the row count, with no
+error. Use `Count(RecNo())` for an unconditional row count, or
+`Count(DISTINCT [KeyField])` when you want distinct rows.
+
 ## Verify before you filter
 
 Before applying a selection or writing set analysis against a specific
@@ -50,6 +62,15 @@ value actually exists in the data:
 Selecting or set-analysing on a value that doesn't exist doesn't error —
 it just returns nothing, or (for `qlik_select_values`) silently drops that
 field from the returned selection state.
+
+The highest-risk case is a proper-noun-shaped literal you typed from
+memory rather than copied from a tool result — a company, product, or
+category name. The full display name ("American Airlines") is often not
+the value actually stored in the field, which may be a shortened form
+("American"), a code, or an abbreviation. Treat any such value as an
+unverified guess until you've confirmed it via `qlik_get_field_values` or
+`qlik_search_field_values` in the same turn — don't wait for a suspicious
+result (e.g. an all-null column) to check afterward.
 
 ## Common expression patterns
 
