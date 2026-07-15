@@ -17,7 +17,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: JoshQlikDesign
-  version: 1.0.0
+  version: 1.1.0
   tags:
     - qlik
     - ai-readiness
@@ -45,7 +45,7 @@ The Qlik Engine world is deterministic and technical. The AI world is semantic a
 | 5 | Date Fields + AutoCalendar | 🟠 High | Time-based question accuracy |
 | 6 | Synonyms / Vocabulary | 🟡 Medium | Business jargon, multilingual support |
 
-Note: Knowledge Base is not part of the readiness score. It is an optional enhancement configured via the Qlik Answers admin UI.
+Note: Knowledge Base is not part of the readiness score. A Knowledge Base is a property of an **Assistant** (which combines one structured app with unstructured document sources), not of a single-app Qlik Answers session — if the user's context is "Qlik Answers on this one app" rather than a multi-app Assistant, Knowledge Base configuration doesn't apply and can be skipped without qualification.
 
 ## Workflow Overview
 
@@ -83,10 +83,12 @@ Attempt a lightweight MCP call (e.g., `qlik_search` or `qlik_describe_app`) to c
 Use `qlik_describe_app` and `qlik_get_fields` to check for:
 - **Synthetic keys** (`$Syn 1`, `$Syn 2`, etc.) — table join problems
 - **Circular references** or link tables suggesting unresolved many-to-many relationships
-- **Extreme field counts** (>200 visible fields) — may need model restructuring first
+- **Extreme field counts** (>200 visible fields) — structural, flag here before a full Layer 2 pass; see [references/layer-analysis-guide.md](references/layer-analysis-guide.md) Layer 2 for the full threshold ladder (≤60 ideal, 61–200 noisy, >200 structural)
 - **Zero tables or zero fields** — app may be empty or misconfigured
 
 **If critical structural issues are found:** present as a blocking warning, explain they undermine AI optimization, and let the user decide whether to proceed.
+
+**If the user is resuming a previous optimization session:** re-run a quick check (`qlik_list_measures`/`qlik_list_dimensions`) before proposing new Master Items, to avoid duplicating items already created in an earlier session.
 
 ---
 
@@ -96,11 +98,11 @@ Ask the user which app to analyze if not already specified.
 
 Use `qlik_search` (query: name of the app) and `qlik_describe_app` (app_id).
 
-Collect: App ID, App Name, number of tables, fields, sheets, and whether Qlik Answers is enabled.
+Collect: App ID, App Name, number of tables, fields, and sheets via `qlik_describe_app`. No Qlik MCP tool currently reports whether Qlik Answers is enabled for an app — ask the user directly, or note it as unknown and proceed with the technical assessment regardless (the 6-layer model applies whether or not Answers is currently turned on).
 
 ---
 
-## Phase 2: ANALYZE — IST-Zustand Assessment
+## Phase 2: ANALYZE — IST-Zustand (Current-State) Assessment
 
 Run a comprehensive analysis across all 6 layers. Batch tool calls where possible.
 
@@ -168,22 +170,18 @@ For detailed per-layer implementation steps, output templates, and copy-paste sc
 
 For the MCP capability matrix and reload requirements, see [references/mcp-capability-matrix.md](references/mcp-capability-matrix.md).
 
-**Summary of what MCP can vs. cannot do:**
-- ✅ Create new Master Measures/Dimensions (with groups + descriptions) — live immediately
-- ⚠️ Edit existing Master Items — in preview
-- ⚠️ Update load script — in preview, requires reload
-- ❌ Retrieve variable definitions — not available
-- ❌ Import synonyms/vocabulary — must be done via UI
+**Summary of what MCP can vs. cannot do:** create, edit, and delete Master Measures/Dimensions live immediately; load script updates are in preview; variable definitions and synonym import are not available at all. See [references/mcp-capability-matrix.md](references/mcp-capability-matrix.md) for the full tool-by-tool table.
 
 ---
 
 ## Phase 6: VERIFY
 
 After completing each layer:
-- Confirm what was changed
+- Confirm what was changed. If any approved change failed to apply (rate limit, validation error, stale app state), explicitly list which ones succeeded vs. failed before asking to continue — don't let a partial failure silently roll into the next layer's confirmation.
 - Note what required manual steps (and provide exact instructions)
 - Update the AI Readiness Score
 - Remind user about reload requirements for load script changes
+- If the change touched the Logical Model (grouping, or a fix to an "invalid logical model" indexing error), tell the user Qlik Answers can take up to 24 hours to reindex — this is separate from the app-engine "live immediately" behavior, and testing in Answers right away may still show stale results even though the fix applied correctly
 - Ask if user wants to continue to next layer
 
 See [references/mcp-capability-matrix.md](references/mcp-capability-matrix.md) for reload requirement details.
@@ -198,10 +196,12 @@ See [references/mcp-capability-matrix.md](references/mcp-capability-matrix.md) f
 4. **Don't give the AI more fields than necessary** — less noise = fewer errors
 5. **Descriptions are primary** — the AI uses them to decide which metric to use
 6. **High variable density in expressions reduces AI resolution confidence** — enrich descriptions or inline where feasible
-7. **Never delete existing Master Items** — it breaks dashboards. Create new ones alongside.
+7. **This skill never deletes existing Master Items** — its job is to assess and improve AI readiness, not to manage master-item lifecycle, so the IMPLEMENT phase only creates new items and edits/groups existing ones. Deletion is a real, sometimes-correct action (e.g. a true duplicate created in error), but it requires its own usage-verification and confirmation workflow — treat any delete request as out of scope for this skill and hand it off to whatever governs master-item lifecycle in your environment, rather than calling `qlik_delete_measure`/`qlik_delete_dimension` here.
 8. **Always get user confirmation** before making changes
 9. **MCP cannot retrieve variable definitions** — ask the user for resolved values if inlining
 10. **Load script changes require an app reload** — Master Item changes via MCP are live immediately
+11. **Only structured, named Master Items are indexed by Qlik Answers** — business glossary definitions, label expressions on Master Items, and content inside Packages, Hierarchies, Behaviors, Calendar Periods, Custom analysis, and Example questions are not indexed. On tenants enabled for the agentic Qlik Answers experience, those unindexed feature types are removed entirely, not just skipped — treat logic living in any of them as something that needs to be re-expressed as a real field or Master Item, not left in place.
+12. **If two users get different answers to the same question, check section access first** — Qlik Answers automatically inherits and enforces existing section access / row-level security with no extra configuration, so differing permissions are a common, expected cause of differing answers. Don't assume a data-model defect until access parity is ruled out.
 
 ## Communication Style
 

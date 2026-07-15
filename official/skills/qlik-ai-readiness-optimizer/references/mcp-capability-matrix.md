@@ -14,8 +14,11 @@ MCP tool availability and reload requirements. Referenced from the main [SKILL.m
 | List Master Dimensions | `qlik_list_dimensions` | ✅ Available | — |
 | Create new Master Measure (with group + description) | `qlik_create_measure` | ✅ Available | ❌ No — live immediately |
 | Create new Master Dimension (with group + description) | `qlik_create_dimension` | ✅ Available | ❌ No — live immediately |
+| Edit existing Master Measure | `qlik_update_measure` | ✅ Available | ❌ No — live immediately |
+| Edit existing Master Dimension | `qlik_update_dimension` | ✅ Available | ❌ No — live immediately |
+| Delete Master Measure | `qlik_delete_measure` | ✅ Available (this skill does not call it — see Key Rule #7) | ❌ No — live immediately |
+| Delete Master Dimension | `qlik_delete_dimension` | ✅ Available (this skill does not call it — see Key Rule #7) | ❌ No — live immediately |
 | Retrieve variable definitions | — | ❌ Not available | — |
-| Edit existing Master Item | — | ⚠️ In Preview (MCP Private Preview Tenant) | ❌ No |
 | Update load script | — | ⚠️ In Preview | ✅ Yes — reload after editing |
 | Import synonyms/vocabulary | — | ❌ Must be done via UI | ❌ No — live after UI save |
 | Set field visibility (hidden) | — | ⚠️ Via load script `%` prefix (manual) | ✅ Yes — reload after editing |
@@ -31,6 +34,7 @@ Not all changes are live immediately. Clearly tell the user what requires a relo
 | New Master Measure/Dimension created via MCP | Immediately | ❌ No |
 | Master Item description updated via MCP | Immediately | ❌ No |
 | Master Item group assignment via MCP | Immediately | ❌ No |
+| Master Item edited or deleted via MCP (`qlik_update_measure`/`qlik_update_dimension`/`qlik_delete_measure`/`qlik_delete_dimension`) | Immediately | ❌ No |
 | Load script field rename (`AS` alias) | After reload | ✅ Yes |
 | Load script field hide (`%` prefix) | After reload | ✅ Yes |
 | Load script date conversion | After reload | ✅ Yes |
