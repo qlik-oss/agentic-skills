@@ -10,7 +10,7 @@ Community skills are **opt-in**. They are never silently enabled in a Qlik envir
 
 | Skill | Author | Description |
 |---|---|---|
-| *(be the first to contribute)* | | |
+| [qlik-sense-app-analysis](qlik-sense-app-analysis/) | [nabeel-oz](https://github.com/nabeel-oz) | Explore, analyze, visualize, and govern Qlik Sense apps and Qlik Cloud analytics content (master items, business glossary, data products) via the Qlik MCP server. |
 
 ---
 
