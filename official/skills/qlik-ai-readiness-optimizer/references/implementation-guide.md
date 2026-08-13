@@ -54,7 +54,7 @@ Note: MCP cannot change field visibility directly. Requires load script or Logic
    **Never describe ID/key fields as "no business value", "surrogate keys", "ETL noise", or any other language that implies they are irrelevant.** They are analytically relevant until confirmed otherwise.
 4. For other 🟠 Review fields: present them to the user with context and ask for a decision before classifying
 5. A signal-to-noise summary: "Currently X visible fields → recommend reducing to Y by hiding Z fields"
-6. If synthetic keys are detected: flag as a separate data model issue — hiding them is a band-aid, not a fix
+6. If synthetic keys are detected: flag as a separate data model issue — hiding them is a band-aid, not a fix; it's better to migrate them to concatenated keys if they are used
 
 ---
 
