@@ -8,6 +8,6 @@
     "validate:claude": "node scripts/validate-claude-plugin.mjs"
   },
   "devDependencies": {
-    "js-yaml": "^5.2.3"
+    "js-yaml": "^5.3.0"
   }
 }
