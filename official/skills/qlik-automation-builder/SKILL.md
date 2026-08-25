@@ -14,7 +14,12 @@ allowed-tools:
   - qlik_get_automation_connector
   - qlik_list_automation_connections
 metadata: 
+  author: yeshQ
   version: 0.0.3
+  tags:
+  - qlik
+  - analytics
+  - workflow-automation
 ---
 
 # Create Automation Skill
