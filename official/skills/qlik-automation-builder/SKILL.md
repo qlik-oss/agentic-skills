@@ -1,7 +1,7 @@
 ---
 name: qlik-automation-builder
 description: >
-  Build Qlik Cloud Services (QCS) automations. Translate natural-language requests into automation workspace JSON and, when requested, create, update, or delete automations using the automation management tools exposed through qlik-mcp.
+  Build automations for Qlik Automate. Translate natural-language requests into automation workspace JSON and, when requested, create, update, or delete automations using the automation management tools exposed through qlik-mcp.
 license: Apache-2.0
 allowed-tools: qlik_skill_view qlik_search qlik_create_automation qlik_update_automation qlik_delete_automation qlik_get_automation_by_id qlik_list_automation_connectors qlik_get_automation_connector qlik_list_automation_connections bash
 metadata: 
@@ -183,7 +183,7 @@ These rules govern the workspace JSON emitted in the response. Violating any of 
 
 1. Final `workspace` JSON in one fenced ` ```json ` block.
 2. `Preflight` confirming each of:
-   - the workspace validates against `assets/schemas/workspace-schema.json` plus `assets/schemas/blocks/*.json` (ajv-cli command in [Validation](#validation), `-r` included, returns `valid`)
+   - the workspace validates against `assets/schemas/workspace-schema.json` plus `assets/schemas/blocks/*.json` (ajv-cli command in [Validation](#validation), `-r` included, returns `valid`), and its sole `StartBlock` has `inputs[0].id: "run_mode"`, `inputs[0].type: "select"`, and `inputs[0].value: "manual"`
    - every `EndpointBlock` / `SnippetBlock` `inputs[*].id` matches an `inputs[*].id` for that block in the `qlik_get_automation_connector` response, with none left out — including optional inputs, which carry `value: null`
    - every `EndpointBlock` / `SnippetBlock` `datasourcetype_guid` is the `id` of a connector returned by `qlik_list_automation_connectors` in this session (e.g. `61a87510-c7a3-11ea-95da-0fb0c241e75c` for Qlik Cloud Services), and matches the connector whose block detail supplied that block's `endpoint_guid` / `snippet_guid`
    - every `IfElseBlock` uses `type: "custom"` with `value.mode` and at least one `value.conditions` entry

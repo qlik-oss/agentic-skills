@@ -1,7 +1,7 @@
 {
   "$id": "https://qlik.com/schemas/automations/blocks/lists.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Qlik Application Automation block defs - lists",
+  "title": "Qlik Automate block defs - lists",
   "description": "Schema of the Lists blocks used when constructing an automation workspace: Merge Lists, Filter List, Lookup Item In List, Deduplicate List, Compare Lists, Replace Field Names In List, Transform List, Limit.",
   "$defs": {
     "MergeListsBlock": {

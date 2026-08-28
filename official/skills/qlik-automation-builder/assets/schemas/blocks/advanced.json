@@ -1,7 +1,7 @@
 {
   "$id": "https://qlik.com/schemas/automations/blocks/advanced.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Qlik Application Automation block defs - advanced",
+  "title": "Qlik Automate block defs - advanced",
   "description": "Structure of the Advanced blocks used when constructing an automation workspace: Update Run Title, List Pointers, Update Pointer, Delete Pointer, Compare Object, Redirect, Case, Go To Label, Label, Loop Batch, Exit Loop, Custom Code.",
   "$defs": {
     "UpdateRunTitleBlock": {

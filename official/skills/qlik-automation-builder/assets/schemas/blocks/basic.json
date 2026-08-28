@@ -1,7 +1,7 @@
 {
   "$id": "https://qlik.com/schemas/automations/blocks/basic.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Qlik Application Automation block defs - basic",
+  "title": "Qlik Automate block defs - basic",
   "description": "Structure of the Basic blocks used when constructing an automation workspace: Output, Inputs, Condition, Loop, Call URL, Stop, Sleep, Call Automation, Variable, Error.",
   "$defs": {
     "ShowBlock": {
@@ -232,10 +232,11 @@
         {
           "if": {"required": ["id"], "properties": {"id": {"const": "guid"}}},
           "then": {
+            "required": ["value"],
             "properties": {
               "type": {"const": "api-search"},
               "value": {
-                "type": ["string", "null"],
+                "type": "string",
                 "pattern": "^[A-Za-z0-9-]+$",
                 "description": "Target automation id. Letters, digits and dashes only - the backend rejects anything else, and rejects an empty value at save time."
               }

@@ -1,7 +1,7 @@
 {
   "$id": "https://qlik.com/schemas/automations/blocks/cloud-storage.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Qlik Application Automation block defs - cloud-storage",
+  "title": "Qlik Automate block defs - cloud-storage",
   "description": "Structure of the Cloud storage blocks used when constructing an automation workspace: Open File, Create File, Copy File, Read Data From File, Write Line To File, Save And Close File, Delete File, Move File, Check If File Exists, List Files.",
   "$defs": {
     "OpenFileBlock": {
