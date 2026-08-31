@@ -63,8 +63,6 @@ Lifecycle guidance:
 4. Do not fabricate ids. Ask for missing ids only when they cannot be discovered from prior results.
 5. After a successful `qlik_create_automation` (or `qlik_update_automation`), call `qlik_search` with `resourceType="automation"` and the automation's name as the query, match the result whose `id` equals the returned automation id, and share that result's `open` URL so the user can open the automation in the editor. Never hand-build or guess the URL — if no result matches, say the link could not be resolved and report the automation id instead.
 
-To run an automation after creating it, direct the user to the `qlik-run-automation-interactive` skill.
-
 ## No dedicated block: generic connectors and raw API
 
 When `qlik_list_automation_connectors` has no dedicated connector for the platform being called, or the resolved connector's blocks don't cover the needed operation, escalate in this order instead of stopping:
@@ -203,4 +201,4 @@ These rules govern the workspace JSON emitted in the response. Violating any of 
 1. `Action` summary: tool called, why, and what changed.
 2. `Inputs` used: ids, filters, or payload fields sent to the tool.
 3. `Result`: automation id, status, and key returned fields from the tool response. For a create or update, include the editor link resolved via `qlik_search` (lifecycle guidance step 5).
-4. `Next steps` only when additional input or actions are required (e.g., binding a connection before execution, or running the newly created automation via the `qlik-run-automation-interactive` skill).
+4. `Next steps` only when additional input or actions are required (e.g., binding a connection before execution).
