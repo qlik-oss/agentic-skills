@@ -219,6 +219,10 @@
           "then": {
             "properties": {"type": {"const": "checkbox"}, "value": {"type": ["boolean", "null"]}}
           }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "automations_censor_data"}}},
+          "then": {"$ref": "../workspace-schema.json#/$defs/CensorDataSetting"}
         }
       ]
     },
