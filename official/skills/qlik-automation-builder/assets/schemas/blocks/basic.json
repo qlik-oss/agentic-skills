@@ -118,7 +118,7 @@
       }
     },
     "CallUrlBlock": {
-      "description": "Makes a web request to any address, for services no connector covers. Nothing signs the request for it, so credentials have to be supplied as part of the call - prefer a connector block whenever one exists. Default block name: callURL.",
+      "description": "Makes a web request to any address, for services no connector covers. Nothing signs the request, so use it only for endpoints that need no authentication - never put an API key, password, token, or signed URL in `url`, `headers`, or `params`. If the call needs credentials, use a connection-bound connector block instead. Set `automations_censor_data: true` whenever `headers` or `params` carry values that could be sensitive. Default block name: callURL.",
       "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
       "required": ["type", "inputs"],
       "properties": {

@@ -77,7 +77,7 @@
       ]
     },
     "EditorType": {
-      "description": "Editor type tag for inputs and settings. Mirrors ValidInputTypes in the editor (automations-editor/src/editor/input/constants/ValidInputTypes.js). `table` and `number` are Variable types, not input types - see Variable.type.",
+      "description": "Editor type tag for inputs and settings. `table` and `number` are Variable types, not input types - see Variable.type.",
       "type": "string",
       "enum": [
         "string",
@@ -144,7 +144,7 @@
       "properties": {"id": {"const": "datasource"}, "type": {"const": "select"}, "value": {"type": ["string", "null"]}}
     },
     "CensorDataSetting": {
-      "description": "Exclude the block's inputs and outputs from run logs. The editor defines this as a checkbox (automations-editor/src/editor/blocks/addLogSettings.js), so `type` is `checkbox` and `value` is a boolean - not a select over \"yes\"/\"no\".",
+      "description": "Exclude the block's inputs and outputs from run logs. This is a checkbox, so `type` is `checkbox` and `value` is a boolean - not a select over \"yes\"/\"no\".",
       "allOf": [{"$ref": "#/$defs/SettingCommon"}],
       "required": ["value"],
       "properties": {

@@ -288,7 +288,7 @@
       }
     },
     "FileAdapterName": {
-      "description": "Value of a `datasourcetype` input on a file block. Not a guid and not a connector catalog name - it is the file **adapter** key from automations-editor/src/editor/blocks/adapters.js, spelled exactly as there. Extend this list when a new file connector adapter is added. `HTTP` is deliberately absent: only OpenFileBlock offers it (its getDatasourceTypes override appends it).",
+      "description": "Value of a `datasourcetype` input on a file block. Not a guid - it is the file **adapter** name, spelled exactly as listed here, and it matches the connector's catalog name (workflow step 1.3 uses that to resolve the connection). Extend this list when a new file connector adapter is added. `HTTP` is deliberately absent: only OpenFileBlock offers it.",
       "type": "string",
       "enum": [
         "Qlik Cloud Services",
@@ -305,7 +305,7 @@
       ]
     },
     "FileAdapterInput": {
-      "description": "The `datasourcetype` input on a file block: a `select` over adapter names, required, formulas disabled. Selecting it is what makes the editor append the adapter's own inputs (see FileAdapterExtraInput), so it is read **positionally** - each block's fromJSON calls loadDatasourceType on a fixed index.",
+      "description": "The `datasourcetype` input on a file block: a `select` over adapter names, required, formulas disabled. Selecting it is what makes the editor append the adapter's own inputs (see FileAdapterExtraInput), so it is read **positionally** and must stay first in the `inputs` array.",
       "allOf": [
         {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
         {
@@ -322,7 +322,7 @@
       "allOf": [{"$ref": "../workspace-schema.json#/$defs/InputCommon"}]
     },
     "FilePickerInput": {
-      "description": "A `file` (or `source`) input created by createFilePickerInput: a `select` whose value is the **block id of an earlier file block in this workspace** - not a path and not a `{$....}` reference. Required, formulas disabled. The candidate list is type-restricted: ReadDataFromFileBlock picks an OpenFileBlock, WriteLineToFileBlock and CloseFileBlock pick a CreateFileBlock, and CopyFileBlock's `source` accepts any block that returns a file (isFileOutput, or an endpoint/snippet with role `returns_file`).",
+      "description": "A `file` (or `source`) file-picker input: a `select` whose value is the **block id of an earlier file block in this workspace** - not a path and not a `{$....}` reference. Required, formulas disabled. The candidate list is type-restricted: ReadDataFromFileBlock picks an OpenFileBlock, WriteLineToFileBlock and CloseFileBlock pick a CreateFileBlock, and CopyFileBlock's `source` accepts any block that returns a file (isFileOutput, or an endpoint/snippet with role `returns_file`).",
       "allOf": [
         {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
         {
@@ -335,7 +335,7 @@
       ]
     },
     "FileFormatInput": {
-      "description": "One of the data-format inputs shared by ReadDataFromFileBlock and WriteLineToFileBlock. All of them are gated by Input.test, so an unconfigured block exports none of them: `mode` appears only once a file block is selected, `delimiter` / `csv_columns` only for `mode: csv`, `file_encoding` for `csv` or `raw`, and `csv_headers` for `csv` (on WriteLineToFileBlock also only once `csv_columns` has a value). `csv_headers` is a `yes`/`no` select, not a checkbox, and `delimiter` must be a single character.",
+      "description": "One of the data-format inputs shared by ReadDataFromFileBlock and WriteLineToFileBlock. All of them are conditional, so an unconfigured block exports none of them: `mode` appears only once a file block is selected, `delimiter` / `csv_columns` only for `mode: csv`, `file_encoding` for `csv` or `raw`, and `csv_headers` for `csv` (on WriteLineToFileBlock also only once `csv_columns` has a value). `csv_headers` is a `yes`/`no` select, not a checkbox, and `delimiter` must be a single character.",
       "allOf": [
         {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
         {
@@ -374,7 +374,7 @@
       ]
     },
     "FileConnectorSetting": {
-      "description": "Settings on a file block that picks its own adapter. `blendr_on_error` is always present. `datasource` is present for adapters that need a connection and is removed by setDatasourcetypeInputs for those with `needsDatasource: false` (Qlik Cloud Services, Microsoft OneDrive); as everywhere else its value must be null.",
+      "description": "Settings on a file block that picks its own adapter. `blendr_on_error` is always present. `datasource` is present for every adapter that needs a connection - all of them except Qlik Cloud Services, and HTTP on OpenFileBlock (Microsoft OneDrive keeps it); as everywhere else its value must be null.",
       "allOf": [{"$ref": "../workspace-schema.json#/$defs/ConnectorSetting"}],
       "properties": {"id": {"enum": ["blendr_on_error", "datasource", "automations_censor_data"]}}
     },

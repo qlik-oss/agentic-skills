@@ -6,7 +6,7 @@ license: Apache-2.0
 allowed-tools: qlik_skill_view qlik_search qlik_create_automation qlik_update_automation qlik_delete_automation qlik_get_automation_by_id qlik_list_automation_connectors qlik_get_automation_connector qlik_list_automation_connections bash
 metadata: 
   author: yeshQ
-  version: 0.0.3
+  version: 0.1.0
   tags:
   - qlik
   - analytics
@@ -30,7 +30,7 @@ Never draft scheduled, triggered, or webhook automations. StartBlock must always
 1. Resolve connectors via the MCP tool `qlik_list_automation_connectors`. It returns the live tenant connector list, each entry carrying `id`, `name`, `description` and other connector related information. Reference the returned `id` as `datasourcetype_guid` on connector blocks. ex: Filter syntax: `filter='name eq "Qlik Cloud Services"'`.
    - If the `qlik-mcp` is not connected, stop and ask the user to connect it. Do not guess or hardcode connector guids.
 2. Fetch full connector detail (blocks, parameters, snippet templates) with `qlik_get_automation_connector(connector_id=<connector-guid>)`. Each entry in `blocks` carries `id` (used as `endpoint_guid` / `snippet_guid`), `name`, `description`, `snippet` (`true` = `SnippetBlock`, `false` = `EndpointBlock`), `role`, `objectType`, and `inputs[]` (per-input `id`, `name`, `fieldType`, `optional`, `description`, `options`). On import the editor rebuilds each input list from connector metadata and pairs values by `id`, so emit every `id` exactly as returned — one missing or misspelled lands as an empty input. Filter blocks in-memory after fetching (e.g. `snippet == false and name matches /reload/i` for endpoint blocks, or pick an `id` and read its `inputs`).
-3. For external connector blocks (any block that carries a `datasource` setting — QCS-native blocks don't), resolve the connection: call `qlik_list_automation_connections` with `filter='connectorId eq "<connector-guid>"'`, once per distinct connector. Exactly one match → bind its `id` as the block's `datasource` value; warn when it reports `isConnected: false` (runs will fail at the service until the user reconnects it). Several matches → ask the user which to bind. None → leave `value: null` and record in `Assumptions` that the user must create and bind a connection before execution. The create/update API stores `datasource` verbatim — a null is never auto-bound on import, so an unbound block stays unbound.
+3. For external connector blocks (any block that carries a `datasource` setting — QCS-native blocks don't), resolve the connection: call `qlik_list_automation_connections` with `filter='connectorId eq "<connector-guid>"'`, once per distinct connector. Exactly one match → bind its `id` as the block's `datasource` value; warn when it reports `isConnected: false` (runs will fail at the service until the user reconnects it). Several matches → ask the user which to bind. None → leave `value: null` and record in `Assumptions` that the user must create and bind a connection before execution. For cloud-storage file blocks there is no `datasourcetype_guid` — their `datasourcetype` is an adapter name — so first get the connector guid with `qlik_list_automation_connectors` using `filter='name eq "<adapter name>"'` (the adapter name is the connector's catalog name), then resolve the connection as above. The create/update API stores `datasource` verbatim — a null is never auto-bound on import, so an unbound block stays unbound.
 4. If no connector or block fits, don't stop — see [No dedicated block: generic connectors and raw API](#no-dedicated-block-generic-connectors-and-raw-api).
 
 ### 2. Build workspace JSON
@@ -190,6 +190,7 @@ These rules govern the workspace JSON emitted in the response. Violating any of 
    - every `CaseBlock` keeps `statementChildrenIds` aligned with `inputs['statements'].value`, and every `GotoBlock` points to a real `LabelBlock.id` with matching `displayValue`
    - every `VariableBlock` is named after its variable, its `variableGuid` matches a real `variables[*].guid`, and every operation `id` is one its variable's `type` allows
    - every external connector block's `datasource` value is a connection `id` returned by `qlik_list_automation_connections` this session, or `null` with a matching `Assumptions` entry
+   - no `inputs[*].value` in the workspace holds a literal credential (API key, password, token, secret, signed URL) — authenticated calls go through a connection-bound connector block, and any `CallUrlBlock` with `headers` or `params` sets `automations_censor_data: true`
    - every `loopBlockId` sits on an iterable block — a built-in loop block, or an `EndpointBlock` / `SnippetBlock` whose connector-detail `role` is `list`, `search`, `listnew`, or `listupdated` — and each such `EndpointBlock` carries a matching `endpoint_role`
    - every reference made from inside a loop to the list-producing block that owns that loop goes through `item` (`{$.blockName.item...}`), not the bare list (`{$.blockName...}`), and the field after `item` is one the user named or the element demonstrably exposes — not an assumed `id`
    - no block has multiple parents
