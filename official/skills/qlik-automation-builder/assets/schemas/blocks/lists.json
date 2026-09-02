@@ -1,0 +1,713 @@
+{
+  "$id": "https://qlik.com/schemas/automations/blocks/lists.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Qlik Automate block defs - lists",
+  "description": "Schema of the Lists blocks used when constructing an automation workspace: Merge Lists, Filter List, Lookup Item In List, Deduplicate List, Compare Lists, Replace Field Names In List, Transform List, Limit.",
+  "$defs": {
+    "MergeListsBlock": {
+      "description": "Brings two lists together by matching them on a shared value, the way a join does in a database. Use it to enrich one set of records with details held in another - orders with customer names, users with their group. The result is either one combined record per match, or the second list's records nested inside the first's. Default block name: mergeLists.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/BlockBase"},
+        {
+          "if": {
+            "properties": {
+              "settings": {
+                "type": "array",
+                "contains": {
+                  "properties": {"id": {"const": "merge_strategy"}, "value": {"const": "merge"}},
+                  "required": ["id", "value"]
+                }
+              }
+            },
+            "required": ["settings"]
+          },
+          "then": {
+            "$comment": "merge_strategy=merge: the unique-key trio is exported, the set-only trio is not.",
+            "properties": {
+              "settings": {
+                "allOf": [
+                  {
+                    "contains": {"properties": {"id": {"const": "list1_unique_key"}}, "required": ["id"]}
+                  },
+                  {
+                    "contains": {"properties": {"id": {"const": "list2_unique_key"}}, "required": ["id"]}
+                  },
+                  {
+                    "contains": {"properties": {"id": {"const": "on_duplicate_key"}}, "required": ["id"]}
+                  },
+                  {
+                    "not": {
+                      "contains": {
+                        "properties": {"id": {"enum": ["children_key", "list1_key", "list2_key"]}},
+                        "required": ["id"]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "settings": {
+                "type": "array",
+                "contains": {
+                  "properties": {"id": {"const": "merge_strategy"}, "value": {"const": "set"}},
+                  "required": ["id", "value"]
+                }
+              }
+            },
+            "required": ["settings"]
+          },
+          "then": {
+            "$comment": "merge_strategy=set: the children/key trio is exported, the merge-only settings are not.",
+            "properties": {
+              "settings": {
+                "allOf": [
+                  {
+                    "contains": {"properties": {"id": {"const": "children_key"}}, "required": ["id"]}
+                  },
+                  {
+                    "contains": {"properties": {"id": {"const": "list1_key"}}, "required": ["id"]}
+                  },
+                  {
+                    "contains": {"properties": {"id": {"const": "list2_key"}}, "required": ["id"]}
+                  },
+                  {
+                    "not": {
+                      "contains": {
+                        "properties": {
+                          "id": {
+                            "enum": [
+                              "list1_unique_key",
+                              "list2_unique_key",
+                              "on_duplicate_key",
+                              "on_existing_item_key"
+                            ]
+                          }
+                        },
+                        "required": ["id"]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "settings": {
+                "type": "array",
+                "contains": {"properties": {"id": {"const": "on_existing_item_key"}}, "required": ["id"]}
+              }
+            },
+            "required": ["settings"]
+          },
+          "then": {
+            "$comment": "on_existing_item_key is only exported while on_duplicate_key is merge.",
+            "properties": {
+              "settings": {
+                "contains": {
+                  "properties": {"id": {"const": "on_duplicate_key"}, "value": {"const": "merge"}},
+                  "required": ["id", "value"]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "required": ["type", "inputs", "settings"],
+      "properties": {
+        "type": {"const": "MergeListsBlock"},
+        "loopBlockId": {"type": ["string", "null"]},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/MergeListsInput"},
+          "allOf": [
+            {"contains": {"properties": {"id": {"const": "list1"}}, "required": ["id"]}},
+            {"contains": {"properties": {"id": {"const": "list2"}}, "required": ["id"]}}
+          ]
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/MergeListsSetting"},
+          "contains": {"properties": {"id": {"const": "merge_strategy"}}, "required": ["id"]}
+        }
+      }
+    },
+    "MergeListsInput": {
+      "description": "An entry in a MergeListsBlock `inputs` array. Only `list1` and `list2` are valid ids; both are plain string references to a list.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {
+          "properties": {
+            "id": {"enum": ["list1", "list2"]},
+            "type": {"const": "string"},
+            "value": {"type": ["string", "null"]}
+          }
+        }
+      ]
+    },
+    "MergeListsSetting": {
+      "description": "An entry in a MergeListsBlock `settings` array. `merge_strategy: merge` combines a list 1 item and a list 2 item into one item and uses `list1_unique_key` / `list2_unique_key` (both `field` inputs naming a property inside a list item, not a `{$....}` reference), `on_duplicate_key`, and - only when that is `merge` - `on_existing_item_key`. `merge_strategy: set` instead nests list 2 items under list 1 items and uses `children_key` (the property on the list 1 item to hold them) plus `list1_key` / `list2_key`.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/SettingCommon"},
+        {
+          "properties": {
+            "id": {
+              "enum": [
+                "merge_strategy",
+                "list1_unique_key",
+                "list2_unique_key",
+                "on_duplicate_key",
+                "on_existing_item_key",
+                "children_key",
+                "list1_key",
+                "list2_key",
+                "case_insensitive",
+                "automations_censor_data"
+              ]
+            }
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "merge_strategy"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {"type": {"const": "select"}, "value": {"type": "string", "enum": ["merge", "set"]}}
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "on_duplicate_key"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {
+              "type": {"const": "select"},
+              "value": {"type": "string", "enum": ["ignore", "merge"]}
+            }
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "on_existing_item_key"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {
+              "type": {"const": "select"},
+              "value": {"type": "string", "enum": ["keep_list1", "keep_list2", "keep_both"]}
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["id"],
+            "properties": {"id": {"enum": ["list1_unique_key", "list2_unique_key", "list1_key", "list2_key"]}}
+          },
+          "then": {"properties": {"type": {"const": "field"}, "value": {"type": ["string", "null"]}}}
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "children_key"}}},
+          "then": {"properties": {"type": {"const": "string"}, "value": {"type": ["string", "null"]}}}
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "case_insensitive"}}},
+          "then": {
+            "properties": {"type": {"const": "checkbox"}, "value": {"type": ["boolean", "null"]}}
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "automations_censor_data"}}},
+          "then": {"$ref": "../workspace-schema.json#/$defs/CensorDataSetting"}
+        }
+      ]
+    },
+    "FilterListBlock": {
+      "description": "Narrows a list down to the records that meet a condition, and carries on with just those. Use it to act on part of a set - the failed reloads, the apps in one space, the rows above a threshold. Default block name: filterList.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "loopBlockId", "inputs"],
+      "properties": {
+        "type": {"const": "FilterListBlock"},
+        "loopBlockId": {"type": ["string", "null"]},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "allOf": [{"$ref": "../workspace-schema.json#/$defs/InputCommon"}],
+              "required": ["id", "type", "value"],
+              "properties": {
+                "id": {"const": "list"},
+                "type": {"const": "string"},
+                "value": {"type": "string", "minLength": 1}
+              }
+            },
+            {
+              "allOf": [{"$ref": "../workspace-schema.json#/$defs/InputCommon"}],
+              "required": ["id", "type", "value"],
+              "properties": {
+                "id": {"const": "conditions"},
+                "type": {"const": "custom"},
+                "value": {"$ref": "../workspace-schema.json#/$defs/ConditionGroup"}
+              }
+            }
+          ]
+        }
+      }
+    },
+    "LookupItemBlock": {
+      "description": "Finds one particular record in a list. Use it to pick out a single thing by name or id - the space you want, the user with a given email. It comes back empty when nothing matches, so check before relying on what it found. Default block name: lookupItemInList.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "LookupItemBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            {
+              "allOf": [{"$ref": "../workspace-schema.json#/$defs/InputCommon"}],
+              "required": ["id", "type", "value"],
+              "properties": {
+                "id": {"const": "list"},
+                "type": {"const": "string"},
+                "value": {"type": "string", "minLength": 1}
+              }
+            },
+            {
+              "allOf": [{"$ref": "../workspace-schema.json#/$defs/InputCommon"}],
+              "required": ["id", "type", "value"],
+              "properties": {
+                "id": {"const": "conditions"},
+                "type": {"const": "custom"},
+                "value": {"$ref": "../workspace-schema.json#/$defs/ConditionGroup"}
+              }
+            }
+          ]
+        },
+        "collapsed": {"type": "array", "maxItems": 0},
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "../workspace-schema.json#/$defs/CensorDataSetting"}
+        }
+      }
+    },
+    "DeduplicateListBlock": {
+      "description": "Removes repeated records from a list, either by comparing whole records or by one value they share. Use it to clean up a set gathered from several places before acting on it, so nothing is handled twice. Default block name: deduplicateList.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "DeduplicateListBlock"},
+        "loopBlockId": {"type": ["string", "null"]},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/DeduplicateListInput"},
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "required": ["id", "type"],
+                "properties": {"id": {"const": "list"}, "type": {"const": "string"}}
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["id", "type"],
+                "properties": {"id": {"const": "key"}, "type": {"const": "field"}}
+              }
+            }
+          ]
+        },
+        "settings": {"type": "array", "items": {"$ref": "#/$defs/DeduplicateListSetting"}}
+      }
+    },
+    "DeduplicateListInput": {
+      "description": "An entry in a DeduplicateListBlock `inputs` array. Only `list` and `key` are valid ids.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {"properties": {"id": {"enum": ["list", "key"]}}},
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "list"}}},
+          "then": {"properties": {"type": {"const": "string"}, "value": {"type": ["string", "null"]}}}
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "key"}}},
+          "then": {"properties": {"type": {"const": "field"}, "value": {"type": ["string", "null"]}}}
+        }
+      ]
+    },
+    "DeduplicateListSetting": {
+      "description": "An entry in a DeduplicateListBlock `settings` array. Only `case_insensitive` and `automations_censor_data` are valid ids.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/SettingCommon"},
+        {"properties": {"id": {"enum": ["case_insensitive", "automations_censor_data"]}}},
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "case_insensitive"}}},
+          "then": {
+            "properties": {"type": {"const": "checkbox"}, "value": {"type": ["boolean", "null"]}}
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "automations_censor_data"}}},
+          "then": {"$ref": "../workspace-schema.json#/$defs/CensorDataSetting"}
+        }
+      ]
+    },
+    "CompareListsBlock": {
+      "description": "Matches two lists against each other and returns either what they have in common or what only the first one has. Use it to work out what changed between two sets - which users are new, which records are missing on the other side. Default block name: compareLists.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/BlockBase"},
+        {
+          "if": {
+            "required": ["settings"],
+            "properties": {
+              "settings": {
+                "type": "array",
+                "contains": {
+                  "required": ["id", "value"],
+                  "properties": {"id": {"const": "compare_mode"}, "value": {"const": "diff"}}
+                }
+              }
+            }
+          },
+          "then": {
+            "$comment": "compare_mode=diff: the intersect-only settings are not exported.",
+            "properties": {
+              "settings": {
+                "not": {
+                  "contains": {
+                    "required": ["id"],
+                    "properties": {"id": {"enum": ["result_mode", "on_existing_item_key"]}}
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["settings"],
+            "properties": {
+              "settings": {
+                "type": "array",
+                "contains": {
+                  "required": ["id", "value"],
+                  "properties": {"id": {"const": "compare_mode"}, "value": {"const": "intersect"}}
+                }
+              }
+            }
+          },
+          "then": {
+            "$comment": "compare_mode=intersect: result_mode is exported (the worker defaults it to list1 when absent).",
+            "properties": {
+              "settings": {"contains": {"required": ["id"], "properties": {"id": {"const": "result_mode"}}}}
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["settings"],
+            "properties": {
+              "settings": {
+                "type": "array",
+                "contains": {"required": ["id"], "properties": {"id": {"const": "on_existing_item_key"}}}
+              }
+            }
+          },
+          "then": {
+            "$comment": "on_existing_item_key is only meaningful while merging an intersect. The editor's own test for it reads settings[3] (case_insensitive) instead of settings[4] (result_mode), an off-by-one that keeps the field hidden in the UI - but CollectionIntersect::createMergeGenerator does read it, so authored workspaces may set it.",
+            "properties": {
+              "settings": {
+                "allOf": [
+                  {
+                    "contains": {
+                      "required": ["id", "value"],
+                      "properties": {"id": {"const": "compare_mode"}, "value": {"const": "intersect"}}
+                    }
+                  },
+                  {
+                    "contains": {
+                      "required": ["id", "value"],
+                      "properties": {"id": {"const": "result_mode"}, "value": {"const": "merge"}}
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "required": ["type", "inputs", "settings"],
+      "properties": {
+        "type": {"const": "CompareListsBlock"},
+        "loopBlockId": {"type": ["string", "null"]},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/MergeListsInput"},
+          "allOf": [
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "list1"}}}},
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "list2"}}}}
+          ]
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/CompareListsSetting"},
+          "allOf": [
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "compare_mode"}}}},
+            {
+              "contains": {"required": ["id"], "properties": {"id": {"const": "list1_unique_key"}}}
+            },
+            {
+              "contains": {"required": ["id"], "properties": {"id": {"const": "list2_unique_key"}}}
+            }
+          ]
+        }
+      }
+    },
+    "CompareListsSetting": {
+      "description": "An entry in a CompareListsBlock `settings` array. Note `on_existing_item_key` allows only `keep_list1` and `keep_both` here - unlike MergeListsBlock, which also allows `keep_list2` - and the worker treats anything other than `keep_list1` as keep-both.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/SettingCommon"},
+        {
+          "properties": {
+            "id": {
+              "enum": [
+                "list1_unique_key",
+                "list2_unique_key",
+                "compare_mode",
+                "case_insensitive",
+                "result_mode",
+                "on_existing_item_key",
+                "automations_censor_data"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["id"],
+            "properties": {"id": {"enum": ["list1_unique_key", "list2_unique_key"]}}
+          },
+          "then": {"properties": {"type": {"const": "field"}, "value": {"type": ["string", "null"]}}}
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "compare_mode"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {
+              "type": {"const": "select"},
+              "value": {"type": "string", "enum": ["diff", "intersect"]}
+            }
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "result_mode"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {
+              "type": {"const": "select"},
+              "value": {"type": "string", "enum": ["list1", "merge"]}
+            }
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "on_existing_item_key"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {
+              "type": {"const": "select"},
+              "value": {"type": "string", "enum": ["keep_list1", "keep_both"]}
+            }
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "case_insensitive"}}},
+          "then": {
+            "properties": {"type": {"const": "checkbox"}, "value": {"type": ["boolean", "null"]}}
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "automations_censor_data"}}},
+          "then": {"$ref": "../workspace-schema.json#/$defs/CensorDataSetting"}
+        }
+      ]
+    },
+    "ReplaceFieldNamesBlock": {
+      "description": "Renames the fields on every record of a list, and can drop the ones you do not name. Use it to reshape data into the field names another system expects, or to keep only the handful of fields you actually need. Default block name: replaceFieldNamesInList.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs", "settings"],
+      "properties": {
+        "type": {"const": "ReplaceFieldNamesBlock"},
+        "loopBlockId": {"type": ["string", "null"]},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/ReplaceFieldNamesInput"},
+          "allOf": [
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "list"}}}},
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "mapping"}}}}
+          ]
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/ReplaceFieldNamesSetting"},
+          "contains": {"required": ["id"], "properties": {"id": {"const": "keepOtherFields"}}}
+        }
+      }
+    },
+    "ReplaceFieldNamesInput": {
+      "description": "An entry in a ReplaceFieldNamesBlock `inputs` array. Only `list` and `mapping` are valid ids.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {"properties": {"id": {"enum": ["list", "mapping"]}}},
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "list"}}},
+          "then": {"properties": {"type": {"const": "string"}, "value": {"type": ["string", "null"]}}}
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "mapping"}}},
+          "then": {
+            "properties": {
+              "type": {"const": "object"},
+              "mode": {"type": "string", "enum": ["keyValue", "raw"]},
+              "value": {
+                "type": ["array", "null"],
+                "items": {
+                  "type": "object",
+                  "required": ["key", "value"],
+                  "additionalProperties": true,
+                  "properties": {
+                    "key": {"type": "string", "minLength": 1},
+                    "value": {"type": "string", "minLength": 1}
+                  }
+                },
+                "description": "Array of { key: old field name, value: new field name } entries. Both sides are required and plain text - formulas are disabled on this input."
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ReplaceFieldNamesSetting": {
+      "description": "An entry in a ReplaceFieldNamesBlock `settings` array. Only `keepOtherFields` and `automations_censor_data` are valid ids. Note `keepOtherFields` is camelCase, unlike the snake_case ids on every other block.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/SettingCommon"},
+        {"properties": {"id": {"enum": ["keepOtherFields", "automations_censor_data"]}}},
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "keepOtherFields"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {
+              "type": {"const": "select"},
+              "value": {"type": "string", "enum": ["remove", "keep"]}
+            }
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "automations_censor_data"}}},
+          "then": {"$ref": "../workspace-schema.json#/$defs/CensorDataSetting"}
+        }
+      ]
+    },
+    "TransformListBlock": {
+      "description": "Rebuilds a list into a new shape, deciding what each record should contain and where each value comes from. Use it when a payload needs restructuring rather than just renaming - flattening nested data, combining fields, or computing a value per record. Default block name: transformList.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "TransformListBlock"},
+        "loopBlockId": {"type": ["string", "null"]},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/TransformListInput"},
+          "allOf": [
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "list"}}}},
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "mapping"}}}}
+          ]
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "../workspace-schema.json#/$defs/CensorDataSetting"}
+        }
+      }
+    },
+    "TransformListInput": {
+      "description": "An entry in a TransformListBlock `inputs` array. Only `list` and `mapping` are valid ids.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {"properties": {"id": {"enum": ["list", "mapping"]}}},
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "list"}}},
+          "then": {"properties": {"type": {"const": "string"}, "value": {"type": ["string", "null"]}}}
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "mapping"}}},
+          "then": {
+            "properties": {
+              "type": {"const": "object"},
+              "mode": {"type": "string", "enum": ["keyValue", "raw"]},
+              "value": {
+                "type": ["array", "null"],
+                "items": {
+                  "type": "object",
+                  "required": ["key", "value"],
+                  "additionalProperties": true,
+                  "properties": {"key": {"type": "string"}, "value": {"type": ["string", "null"]}}
+                },
+                "description": "Array of { key: output field name, value: expression } entries. Neither side is flagged required by the editor, and values may be formulas referencing the current item."
+              }
+            }
+          }
+        }
+      ]
+    },
+    "LimitBlock": {
+      "description": "Keeps only the first few records of a list. Use it to cap how much work follows, or to try an automation on a small sample before letting it loose on everything. Default block name: limit.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "LimitBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/LimitBlockInput"},
+          "allOf": [
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "list"}}}},
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "limit"}}}}
+          ]
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "../workspace-schema.json#/$defs/CensorDataSetting"}
+        }
+      }
+    },
+    "LimitBlockInput": {
+      "description": "An entry in a LimitBlock `inputs` array. Only `list` and `limit` are valid ids, and both are string inputs.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {
+          "properties": {
+            "id": {"enum": ["list", "limit"]},
+            "type": {"const": "string"},
+            "value": {"type": ["string", "null"]}
+          }
+        }
+      ]
+    }
+  }
+}

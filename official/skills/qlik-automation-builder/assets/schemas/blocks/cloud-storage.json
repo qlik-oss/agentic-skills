@@ -1,0 +1,387 @@
+{
+  "$id": "https://qlik.com/schemas/automations/blocks/cloud-storage.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Qlik Automate block defs - cloud-storage",
+  "description": "Structure of the Cloud storage blocks used when constructing an automation workspace: Open File, Create File, Copy File, Read Data From File, Write Line To File, Save And Close File, Delete File, Move File, Check If File Exists, List Files.",
+  "$defs": {
+    "OpenFileBlock": {
+      "description": "Opens an existing file on a cloud storage connector so its contents can be used later in the run. On its own it only opens the file - pair it with Read Data From File to turn the contents into data. It can also fetch a file over HTTP. Default block name: openFile.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "OpenFileBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            {
+              "allOf": [
+                {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+                {
+                  "properties": {
+                    "id": {"const": "datasourcetype"},
+                    "type": {"const": "select"},
+                    "value": {
+                      "anyOf": [{"$ref": "#/$defs/FileAdapterName"}, {"const": "HTTP"}, {"type": "null"}]
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "items": {"$ref": "#/$defs/FileAdapterExtraInput"}
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/FileConnectorSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "CreateFileBlock": {
+      "description": "Creates a new, empty file on a cloud storage connector, ready to be written into. Use it to start building a file the automation produces - a CSV export, a log, a report - then add the rows with Write Line To File and finish with Save And Close File. Default block name: createFile.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "CreateFileBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [{"$ref": "#/$defs/FileAdapterInput"}],
+          "items": {"$ref": "#/$defs/FileAdapterExtraInput"}
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/FileConnectorSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "CopyFileBlock": {
+      "description": "Copies a file the run already opened to another location, which can be on a different cloud storage connector. Use it to hand a file over between systems, such as putting a file fetched from one service into a bucket on another. Default block name: copyFile.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "CopyFileBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "allOf": [{"$ref": "#/$defs/FilePickerInput"}, {"properties": {"id": {"const": "source"}}}]
+            },
+            {
+              "allOf": [
+                {"$ref": "#/$defs/FileAdapterInput"},
+                {"not": {"properties": {"value": {"const": "Qlik Cloud Services"}}}}
+              ]
+            }
+          ],
+          "items": {"$ref": "#/$defs/FileAdapterExtraInput"}
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/FileConnectorSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "ReadDataFromFileBlock": {
+      "description": "Turns the contents of an opened file into data the automation can work with, reading CSV, JSON, or plain lines. It goes through the file record by record, so the blocks inside it run once for each row. This is the usual way to bring an uploaded or exported file into an automation. Default block name: readDataFromFile.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "ReadDataFromFileBlock"},
+        "loopBlockId": {"type": ["string", "null"]},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "items": {
+            "allOf": [
+              {"$ref": "#/$defs/FileFormatInput"},
+              {
+                "properties": {
+                  "id": {
+                    "enum": ["file", "mode", "delimiter", "file_encoding", "csv_headers", "csv_columns"]
+                  }
+                }
+              },
+              {
+                "if": {"required": ["id"], "properties": {"id": {"const": "file"}}},
+                "then": {"$ref": "#/$defs/FilePickerInput"}
+              }
+            ]
+          },
+          "contains": {"required": ["id"], "properties": {"id": {"const": "file"}}}
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/FileNoDatasourceSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "WriteLineToFileBlock": {
+      "description": "Adds one row to a file the run created. Put it inside a loop to build a file up record by record, then close the file once the loop is done. It writes CSV, JSON, or plain lines. Default block name: writeLineToFile.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "WriteLineToFileBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 7,
+          "items": {
+            "allOf": [
+              {"$ref": "#/$defs/FileFormatInput"},
+              {
+                "properties": {
+                  "id": {
+                    "enum": [
+                      "file",
+                      "data",
+                      "mode",
+                      "delimiter",
+                      "file_encoding",
+                      "csv_columns",
+                      "csv_headers"
+                    ]
+                  }
+                }
+              },
+              {
+                "if": {"required": ["id"], "properties": {"id": {"const": "file"}}},
+                "then": {"$ref": "#/$defs/FilePickerInput"}
+              }
+            ]
+          },
+          "allOf": [
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "file"}}}},
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "data"}}}}
+          ]
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/FileNoDatasourceSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "CloseFileBlock": {
+      "description": "Finishes a file the run created and stores it on the connector. Until this runs the file is still being written, so a run that adds rows but never closes the file leaves nothing usable behind. Default block name: saveAndCloseFile.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "CloseFileBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "allOf": [{"$ref": "#/$defs/FilePickerInput"}, {"properties": {"id": {"const": "file"}}}]
+          }
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/FileNoDatasourceSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "DeleteFileBlock": {
+      "description": "Deletes a file from a cloud storage connector - use it to clear away a file once it has been processed. Default block name: deleteFile.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "DeleteFileBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            {
+              "allOf": [
+                {"$ref": "#/$defs/FileAdapterInput"},
+                {"not": {"properties": {"value": {"const": "Qlik Cloud Services"}}}}
+              ]
+            }
+          ],
+          "items": {"$ref": "#/$defs/FileAdapterExtraInput"}
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/FileConnectorSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "MoveFileBlock": {
+      "description": "Moves a file to another location on the same cloud storage connector, which is also how you rename one. A common use is shifting a file into a processed or archive folder once the run has dealt with it. Default block name: moveFile.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "MoveFileBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            {
+              "allOf": [
+                {"$ref": "#/$defs/FileAdapterInput"},
+                {"not": {"properties": {"value": {"const": "Qlik Cloud Services"}}}}
+              ]
+            }
+          ],
+          "items": {"$ref": "#/$defs/FileAdapterExtraInput"}
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/FileConnectorSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "CheckFileExistsBlock": {
+      "description": "Reports whether a file is present on a cloud storage connector. Use it before reading a file that may not be there, or before writing one you do not want to overwrite, and branch on the answer with a condition. Default block name: checkIfFileExists.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "CheckFileExistsBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [{"$ref": "#/$defs/FileAdapterInput"}],
+          "items": {"$ref": "#/$defs/FileAdapterExtraInput"}
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/FileConnectorSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "ListFilesBlock": {
+      "description": "Lists what is in a folder on a cloud storage connector, going through the files one by one so the blocks inside it run once for each. Use it to work through everything dropped in a folder. Default block name: listFiles.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "ListFilesBlock"},
+        "loopBlockId": {"type": ["string", "null"]},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            {
+              "allOf": [
+                {"$ref": "#/$defs/FileAdapterInput"},
+                {"not": {"properties": {"value": {"const": "Qlik Cloud Services"}}}}
+              ]
+            }
+          ],
+          "items": {"$ref": "#/$defs/FileAdapterExtraInput"}
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/FileConnectorSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "FileAdapterName": {
+      "description": "Value of a `datasourcetype` input on a file block. Not a guid - it is the file **adapter** name, spelled exactly as listed here, and it matches the connector's catalog name (workflow step 1.3 uses that to resolve the connection). Extend this list when a new file connector adapter is added. `HTTP` is deliberately absent: only OpenFileBlock offers it.",
+      "type": "string",
+      "enum": [
+        "Qlik Cloud Services",
+        "FTP",
+        "SFTP",
+        "Amazon S3",
+        "Dropbox",
+        "Google Drive",
+        "Google Cloud Storage",
+        "Google Cloud Storage with service account",
+        "Azure Blob Storage",
+        "Microsoft SharePoint",
+        "Microsoft OneDrive"
+      ]
+    },
+    "FileAdapterInput": {
+      "description": "The `datasourcetype` input on a file block: a `select` over adapter names, required, formulas disabled. Selecting it is what makes the editor append the adapter's own inputs (see FileAdapterExtraInput), so it is read **positionally** and must stay first in the `inputs` array.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {
+          "properties": {
+            "id": {"const": "datasourcetype"},
+            "type": {"const": "select"},
+            "value": {"anyOf": [{"$ref": "#/$defs/FileAdapterName"}, {"type": "null"}]}
+          }
+        }
+      ]
+    },
+    "FileAdapterExtraInput": {
+      "description": "Any input a file block appends after `datasourcetype` is chosen. These are adapter-driven, so the id set is open and cannot be closed here: `path` on most blocks (`origin` and `destination` on MoveFileBlock), plus whatever the adapter declares - `bucket` and `region` and the `server_side_encryption` / `sse_kms_key_id` pair for Amazon S3, `container_name` for Azure Blob Storage, `drive_id` for OneDrive, `project_id` for Google Cloud Storage, `site_id` for SharePoint, `ttl` for Qlik Cloud Services, `encoding` / `headers` / `params` / `timeout` for HTTP. An unconfigured block exports none of them, since they only exist once an adapter is picked.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/InputCommon"}]
+    },
+    "FilePickerInput": {
+      "description": "A `file` (or `source`) file-picker input: a `select` whose value is the **block id of an earlier file block in this workspace** - not a path and not a `{$....}` reference. Required, formulas disabled. The candidate list is type-restricted: ReadDataFromFileBlock picks an OpenFileBlock, WriteLineToFileBlock and CloseFileBlock pick a CreateFileBlock, and CopyFileBlock's `source` accepts any block that returns a file (isFileOutput, or an endpoint/snippet with role `returns_file`).",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {
+          "properties": {
+            "id": {"enum": ["file", "source"]},
+            "type": {"const": "select"},
+            "value": {"type": ["string", "null"]}
+          }
+        }
+      ]
+    },
+    "FileFormatInput": {
+      "description": "One of the data-format inputs shared by ReadDataFromFileBlock and WriteLineToFileBlock. All of them are conditional, so an unconfigured block exports none of them: `mode` appears only once a file block is selected, `delimiter` / `csv_columns` only for `mode: csv`, `file_encoding` for `csv` or `raw`, and `csv_headers` for `csv` (on WriteLineToFileBlock also only once `csv_columns` has a value). `csv_headers` is a `yes`/`no` select, not a checkbox, and `delimiter` must be a single character.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "mode"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {
+              "type": {"const": "select"},
+              "value": {"type": "string", "enum": ["auto", "csv", "json", "raw"]}
+            }
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "csv_headers"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {"type": {"const": "select"}, "value": {"type": "string", "enum": ["yes", "no"]}}
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "delimiter"}}},
+          "then": {
+            "properties": {
+              "type": {"const": "string"},
+              "value": {"type": ["string", "null"], "pattern": "^.$"}
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["id"],
+            "properties": {"id": {"enum": ["file_encoding", "csv_columns", "data"]}}
+          },
+          "then": {"properties": {"type": {"const": "string"}, "value": {"type": ["string", "null"]}}}
+        }
+      ]
+    },
+    "FileConnectorSetting": {
+      "description": "Settings on a file block that picks its own adapter. `blendr_on_error` is always present. `datasource` is present for every adapter that needs a connection - all of them except Qlik Cloud Services, and HTTP on OpenFileBlock (Microsoft OneDrive keeps it); as everywhere else its value must be null.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/ConnectorSetting"}],
+      "properties": {"id": {"enum": ["blendr_on_error", "datasource", "automations_censor_data"]}}
+    },
+    "FileNoDatasourceSetting": {
+      "description": "Settings on a file block that inherits its connection from the file block it points at (ReadDataFromFileBlock, WriteLineToFileBlock, CloseFileBlock). These never carry a `datasource` setting - only `blendr_on_error` and `automations_censor_data`.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/ConnectorSetting"}],
+      "properties": {"id": {"enum": ["blendr_on_error", "automations_censor_data"]}}
+    }
+  }
+}

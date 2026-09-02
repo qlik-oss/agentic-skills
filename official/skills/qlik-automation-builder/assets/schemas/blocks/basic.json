@@ -1,0 +1,375 @@
+{
+  "$id": "https://qlik.com/schemas/automations/blocks/basic.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Qlik Automate block defs - basic",
+  "description": "Structure of the Basic blocks used when constructing an automation workspace: Output, Inputs, Condition, Loop, Call URL, Stop, Sleep, Call Automation, Variable, Error.",
+  "$defs": {
+    "ShowBlock": {
+      "description": "Puts a value into the run's output, so it can be seen in the run history and is handed back to whatever started the run. Use it to surface a result, or to report what an automation did to the tool or assistant that called it. Default block name: output.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "ShowBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "contains": {
+            "type": "object",
+            "required": ["id", "type"],
+            "properties": {"id": {"const": "input"}, "type": {"const": "string"}}
+          }
+        },
+        "settings": {
+          "type": "array",
+          "contains": {
+            "type": "object",
+            "required": ["id", "type", "value"],
+            "properties": {
+              "id": {"const": "display_mode"},
+              "type": {"const": "select"},
+              "value": {"type": "string", "enum": ["add", "set", "merge"]}
+            }
+          }
+        }
+      }
+    },
+    "FormBlock": {
+      "description": "Asks for values when the automation runs, rather than having them fixed in the workspace. The run pauses until the answers come back, so use it for the details that change from run to run - which app to reload, who to notify. The answers can be remembered so the next run starts from them. Default block name: inputs.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "form", "persistData"],
+      "properties": {
+        "type": {"const": "FormBlock"},
+        "persistData": {"type": "string", "enum": ["yes", "no"]},
+        "form": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/FormItem"}},
+        "settings": {
+          "type": "array",
+          "contains": {
+            "type": "object",
+            "required": ["id", "type", "value"],
+            "properties": {
+              "id": {"const": "persist_data"},
+              "type": {"const": "select"},
+              "value": {"type": "string", "enum": ["yes", "no"]}
+            }
+          }
+        }
+      }
+    },
+    "FormItem": {
+      "type": "object",
+      "required": ["id", "type", "label", "order"],
+      "additionalProperties": true,
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "type": {
+          "type": "string",
+          "enum": ["input", "select", "object", "multi_select", "field_mapping"],
+          "description": "Builder field types - not raw input editor types."
+        },
+        "label": {"type": "string"},
+        "order": {"type": "integer", "minimum": 0},
+        "helpText": {"type": ["string", "null"]},
+        "isRequired": {"type": "boolean"},
+        "values": {},
+        "options": {"type": "object"}
+      }
+    },
+    "IfElseBlock": {
+      "description": "Sends the run down one of two paths depending on a condition, with a branch for when it holds and a branch for when it does not. Use it to react to what earlier blocks found - a missing record, a failed reload, an empty list. Default block name: condition.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "childTrueId", "childFalseId", "inputs"],
+      "properties": {
+        "type": {"const": "IfElseBlock"},
+        "childTrueId": {"type": ["string", "null"]},
+        "childFalseId": {"type": ["string", "null"]},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            {
+              "allOf": [{"$ref": "../workspace-schema.json#/$defs/InputCommon"}],
+              "required": ["id", "type", "value"],
+              "properties": {
+                "id": {"const": "conditions"},
+                "type": {"const": "custom"},
+                "value": {"$ref": "../workspace-schema.json#/$defs/ConditionGroup"}
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ForEachBlock": {
+      "description": "Works through a list one item at a time, running the blocks inside it once for each. Use it to act on every row of data an earlier block returned. Anything placed after the loop instead of inside it waits until the whole list is done. Default block name: loop.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "loopBlockId", "inputs"],
+      "properties": {
+        "type": {"const": "ForEachBlock"},
+        "loopBlockId": {"type": ["string", "null"]},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "contains": {
+            "type": "object",
+            "required": ["id", "type"],
+            "properties": {"id": {"const": "input"}, "type": {"const": "string"}}
+          }
+        }
+      }
+    },
+    "CallUrlBlock": {
+      "description": "Makes a web request to any address, for services no connector covers. Nothing signs the request, so use it only for endpoints that need no authentication - never put an API key, password, token, or signed URL in `url`, `headers`, or `params`. If the call needs credentials, use a connection-bound connector block instead. Set `automations_censor_data: true` whenever `headers` or `params` carry values that could be sensitive. Default block name: callURL.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "CallUrlBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/$defs/CallUrlInput"},
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "required": ["id", "type"],
+                "properties": {"id": {"const": "url"}, "type": {"const": "string"}}
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["id", "type", "value"],
+                "properties": {
+                  "id": {"const": "method"},
+                  "type": {"const": "select"},
+                  "value": {"type": "string", "enum": ["GET", "PUT", "POST", "PATCH", "DELETE"]}
+                }
+              }
+            }
+          ]
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "../workspace-schema.json#/$defs/ConnectorSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "CallUrlInput": {
+      "description": "An entry in a CallUrlBlock `inputs` array. Only the six built-in ids are valid, and the two `object` inputs carry a `mode`.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {
+          "properties": {"id": {"enum": ["url", "method", "timeout", "params", "headers", "encoding"]}}
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"enum": ["params", "headers"]}}},
+          "then": {
+            "properties": {
+              "type": {"const": "object"},
+              "mode": {"type": "string", "enum": ["keyValue", "raw"]}
+            }
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"enum": ["timeout", "encoding"]}}},
+          "then": {"properties": {"type": {"const": "string"}, "value": {"type": ["string", "null"]}}}
+        }
+      ]
+    },
+    "StopBlock": {
+      "description": "Ends the run at that point, treating it as finished rather than failed. Use it to bow out early once there is nothing left worth doing, such as an empty list of records. Default block name: stop.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type"],
+      "properties": {"type": {"const": "StopBlock"}, "inputs": {"type": "array", "maxItems": 0}}
+    },
+    "SleepBlock": {
+      "description": "Waits for a while before the run carries on, five seconds by default. Use it to give a slow job time to progress before checking on it again. Default block name: sleep.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "SleepBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "contains": {
+            "type": "object",
+            "required": ["id", "type"],
+            "properties": {"id": {"const": "time"}, "type": {"const": "string"}}
+          }
+        }
+      }
+    },
+    "CallWidgetBlock": {
+      "description": "Runs another automation and brings its output back, so shared work can live in one automation and be reused by others instead of being rebuilt. An automation cannot call itself. Default block name: callAutomation.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "CallWidgetBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/CallWidgetInput"},
+          "contains": {
+            "type": "object",
+            "required": ["id", "type"],
+            "properties": {"id": {"const": "guid"}, "type": {"const": "api-search"}}
+          }
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/CallWidgetSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "CallWidgetInput": {
+      "description": "An entry in a CallWidgetBlock `inputs` array. Only `guid` and `widgetInputs` are valid ids.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {"properties": {"id": {"enum": ["guid", "widgetInputs"]}}},
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "guid"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {
+              "type": {"const": "api-search"},
+              "value": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9-]+$",
+                "description": "Target automation id. Letters, digits and dashes only - the backend rejects anything else, and rejects an empty value at save time."
+              }
+            }
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "widgetInputs"}}},
+          "then": {
+            "properties": {
+              "type": {"const": "object"},
+              "mode": {"type": "string", "enum": ["keyValue", "raw"]},
+              "value": {
+                "type": ["array", "string", "null"],
+                "description": "In keyValue mode an array of { key, value } entries keyed by the target's input prompts (exported entries may also carry `required` and `type`). Omit the whole input when it would be null or empty - that is what the editor exports."
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CallWidgetSetting": {
+      "description": "An entry in a CallWidgetBlock `settings` array. Adds the `cache` select on top of the shared connector setting shapes.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/ConnectorSetting"},
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "cache"}}},
+          "then": {
+            "properties": {
+              "type": {"const": "select"},
+              "value": {"type": ["string", "null"], "enum": ["enabled", "disabled", null]}
+            }
+          }
+        }
+      ]
+    },
+    "VariableBlock": {
+      "description": "Changes one of the workspace's variables as the run goes along - setting it, adding to it, or clearing it. Use it to carry a value between blocks, or to collect results across a loop and use them once it ends. Default block name: variable.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "variableGuid", "operations"],
+      "properties": {
+        "type": {"const": "VariableBlock"},
+        "variableGuid": {"$ref": "../workspace-schema.json#/$defs/Uuid"},
+        "operations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/VariableOperation"}}
+      }
+    },
+    "VariableOperation": {
+      "description": "Variable operation entry. `key` is a fresh UUIDv4 unique to the entry; `name` is the operation's editor label. Allowed `id`s depend on the target variable's `type`: string - empty, set_value, append; list - empty, add_item, merge; table - empty, add_row; object - empty, set, set_key_value, merge, rename_key, remove_key; number - set_value, add, subtract, multiply, divide (numbers have no empty). `value` is required for all operations except `empty`.",
+      "type": "object",
+      "required": ["id", "key", "name"],
+      "additionalProperties": true,
+      "if": {"required": ["id"], "properties": {"id": {"not": {"const": "empty"}}}},
+      "then": {"required": ["value"]},
+      "properties": {
+        "id": {
+          "type": "string",
+          "enum": [
+            "empty",
+            "set_value",
+            "append",
+            "add_item",
+            "merge",
+            "add_row",
+            "set",
+            "set_key_value",
+            "rename_key",
+            "remove_key",
+            "add",
+            "subtract",
+            "multiply",
+            "divide"
+          ]
+        },
+        "key": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "minLength": 1},
+        "value": {}
+      }
+    },
+    "ErrorBlock": {
+      "description": "Fails the run on purpose with a message you write, so a problem is reported plainly in the run history instead of passing unnoticed. Use it where the automation finds something it cannot sensibly continue with. It can also record the message as a warning and carry on. Default block name: error.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "ErrorBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/ErrorInput"},
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "required": ["id", "type"],
+                "properties": {"id": {"const": "message"}, "type": {"const": "string"}}
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["id", "type", "value"],
+                "properties": {
+                  "id": {"const": "action"},
+                  "type": {"const": "select"},
+                  "value": {"type": "string", "enum": ["stop", "continue"]}
+                }
+              }
+            }
+          ]
+        },
+        "settings": {"type": "array", "maxItems": 0}
+      }
+    },
+    "ErrorInput": {
+      "description": "An entry in an ErrorBlock `inputs` array. Only `message` and `action` are valid ids.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {"properties": {"id": {"enum": ["message", "action"]}}},
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "message"}}},
+          "then": {"properties": {"type": {"const": "string"}, "value": {"type": ["string", "null"]}}}
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "action"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {
+              "type": {"const": "select"},
+              "value": {"type": "string", "enum": ["stop", "continue"]}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

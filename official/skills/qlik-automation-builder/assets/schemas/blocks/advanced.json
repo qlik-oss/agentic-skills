@@ -1,0 +1,480 @@
+{
+  "$id": "https://qlik.com/schemas/automations/blocks/advanced.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Qlik Automate block defs - advanced",
+  "description": "Structure of the Advanced blocks used when constructing an automation workspace: Update Run Title, List Pointers, Update Pointer, Delete Pointer, Compare Object, Redirect, Case, Go To Label, Label, Loop Batch, Exit Loop, Custom Code.",
+  "$defs": {
+    "UpdateRunTitleBlock": {
+      "description": "Sets the title of the run in progress, so runs can be told apart in the run history. Use it to record the outcome or what the run was about, rather than leaving a list of identical entries. Default block name: updateRunTitle.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "UpdateJobBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "allOf": [{"$ref": "../workspace-schema.json#/$defs/InputCommon"}],
+            "required": ["id", "type"],
+            "properties": {
+              "id": {"const": "title"},
+              "type": {"const": "string"},
+              "value": {"type": ["string", "null"]}
+            }
+          }
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "../workspace-schema.json#/$defs/CensorDataSetting"}
+        }
+      }
+    },
+    "ListPointerBlock": {
+      "description": "Reports where a connector block that fetches records incrementally has got to. Use it to see what an earlier run already collected, or to check progress before deciding what to do next. Default block name: listPointers.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "ListPointerBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {"$ref": "#/$defs/PointerPickerInput"}
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "../workspace-schema.json#/$defs/CensorDataSetting"}
+        }
+      }
+    },
+    "UpdatePointerBlock": {
+      "description": "Moves the mark that says how far a connector block has already fetched, so the next run picks up from where you choose. Use it to make a run re-read a period again, or to skip ahead past records you do not want. Default block name: updatePointer.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "UpdatePointerBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/UpdatePointerInput"},
+          "contains": {"required": ["id"], "properties": {"id": {"const": "pointer_block_id"}}},
+          "oneOf": [
+            {
+              "contains": {"required": ["id"], "properties": {"id": {"const": "last_retrieved_at"}}}
+            },
+            {
+              "contains": {"required": ["id"], "properties": {"id": {"const": "highest_record_retrieved"}}}
+            }
+          ]
+        },
+        "settings": {"type": "array", "maxItems": 0}
+      }
+    },
+    "UpdatePointerInput": {
+      "description": "An entry in an UpdatePointerBlock `inputs` array: the pointer picker, or one of the two mutually exclusive position inputs.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {
+          "properties": {
+            "id": {"enum": ["pointer_block_id", "last_retrieved_at", "highest_record_retrieved"]}
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "pointer_block_id"}}},
+          "then": {"$ref": "#/$defs/PointerPickerInput"}
+        },
+        {
+          "if": {
+            "required": ["id"],
+            "properties": {"id": {"enum": ["last_retrieved_at", "highest_record_retrieved"]}}
+          },
+          "then": {"properties": {"type": {"const": "string"}, "value": {"type": ["string", "null"]}}}
+        }
+      ]
+    },
+    "DeletePointerBlock": {
+      "description": "Clears the mark that says how far a connector block has already fetched, so the next run starts from the beginning. Use it to force a full re-fetch after something went wrong. Default block name: deletePointer.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "DeletePointerBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {"$ref": "#/$defs/PointerPickerInput"}
+        },
+        "settings": {"type": "array", "maxItems": 0}
+      }
+    },
+    "PointerPickerInput": {
+      "description": "The `pointer_block_id` input shared by the three pointer blocks (AbstractPointerBlock.createPointerPicker). Type `select`, required, formulas and parent-block references disabled. Its value is the **block id of another block in this same workspace** - one whose endpoint has a pointer (an incremental endpoint) - not a guid from the connector catalog and not a `{$....}` reference.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {
+          "properties": {
+            "id": {"const": "pointer_block_id"},
+            "type": {"const": "select"},
+            "value": {"type": ["string", "null"]}
+          }
+        }
+      ]
+    },
+    "CompareObjectBlock": {
+      "description": "Compares two records and reports either the fields where they differ or the fields where they agree. Use it to see what changed between a before and after - a setting that moved, a value that was updated. Default block name: compareObject.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/BlockBase"},
+        {
+          "if": {
+            "required": ["settings"],
+            "properties": {
+              "settings": {
+                "type": "array",
+                "contains": {
+                  "required": ["id", "value"],
+                  "properties": {"id": {"const": "compare_mode"}, "value": {"const": "diff"}}
+                }
+              }
+            }
+          },
+          "then": {
+            "$comment": "compare_mode=diff: both ignore_missing_* settings are exported.",
+            "properties": {
+              "settings": {
+                "allOf": [
+                  {
+                    "contains": {
+                      "required": ["id"],
+                      "properties": {"id": {"const": "ignore_missing_in_object1"}}
+                    }
+                  },
+                  {
+                    "contains": {
+                      "required": ["id"],
+                      "properties": {"id": {"const": "ignore_missing_in_object2"}}
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["settings"],
+            "properties": {
+              "settings": {
+                "type": "array",
+                "contains": {
+                  "required": ["id", "value"],
+                  "properties": {"id": {"const": "compare_mode"}, "value": {"const": "similar"}}
+                }
+              }
+            }
+          },
+          "then": {
+            "$comment": "compare_mode=similar: neither ignore_missing_* setting is exported.",
+            "properties": {
+              "settings": {
+                "not": {
+                  "contains": {
+                    "required": ["id"],
+                    "properties": {"id": {"enum": ["ignore_missing_in_object1", "ignore_missing_in_object2"]}}
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "required": ["type", "inputs", "settings"],
+      "properties": {
+        "type": {"const": "CompareObjectBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "allOf": [
+              {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+              {
+                "properties": {
+                  "id": {"enum": ["object1", "object2"]},
+                  "type": {"const": "string"},
+                  "value": {"type": ["string", "null"]}
+                }
+              }
+            ]
+          },
+          "allOf": [
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "object1"}}}},
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "object2"}}}}
+          ]
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/CompareObjectSetting"},
+          "contains": {"required": ["id"], "properties": {"id": {"const": "compare_mode"}}}
+        }
+      }
+    },
+    "CompareObjectSetting": {
+      "description": "An entry in a CompareObjectBlock `settings` array.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/SettingCommon"},
+        {
+          "properties": {
+            "id": {
+              "enum": [
+                "compare_mode",
+                "ignore_missing_in_object1",
+                "ignore_missing_in_object2",
+                "automations_censor_data"
+              ]
+            }
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "compare_mode"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {
+              "type": {"const": "select"},
+              "value": {"type": "string", "enum": ["diff", "similar"]}
+            }
+          }
+        },
+        {
+          "if": {
+            "required": ["id"],
+            "properties": {"id": {"enum": ["ignore_missing_in_object1", "ignore_missing_in_object2"]}}
+          },
+          "then": {
+            "required": ["value"],
+            "properties": {"type": {"const": "select"}, "value": {"type": "string", "enum": ["yes", "no"]}}
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "automations_censor_data"}}},
+          "then": {"$ref": "../workspace-schema.json#/$defs/CensorDataSetting"}
+        }
+      ]
+    },
+    "RedirectBlock": {
+      "description": "Sends whoever started the run on to another web address and ends the run there. It only makes sense when a browser is waiting on the automation. Default block name: redirect.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "RedirectBlock"},
+        "childId": {"type": "null"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "allOf": [
+              {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+              {
+                "properties": {
+                  "id": {"const": "url"},
+                  "type": {"const": "string"},
+                  "value": {"type": ["string", "null"]}
+                }
+              }
+            ]
+          }
+        },
+        "settings": {"type": "array", "maxItems": 0}
+      }
+    },
+    "CaseBlock": {
+      "description": "Picks one of several paths by looking at a value, where a condition block would only give two. Use it when a run should behave differently per status, type, or region, with a fallback path for anything unrecognised. Default block name: case.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "statementChildrenIds", "defaultChildId"],
+      "properties": {
+        "type": {"const": "CaseBlock"},
+        "defaultChildId": {"type": ["string", "null"]},
+        "statementChildrenIds": {"type": "array", "items": {"type": ["string", "null"]}},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "allOf": [
+            {
+              "contains": {
+                "type": "object",
+                "required": ["id", "type", "value"],
+                "properties": {
+                  "id": {"const": "expression"},
+                  "type": {"const": "string"},
+                  "value": {"type": "string"}
+                }
+              }
+            },
+            {
+              "contains": {
+                "type": "object",
+                "required": ["id", "type", "value"],
+                "properties": {
+                  "id": {"const": "statements"},
+                  "type": {"const": "list"},
+                  "value": {"type": "array", "minItems": 1}
+                }
+              }
+            }
+          ]
+        }
+      },
+      "$comment": "JSON Schema cannot enforce that statementChildrenIds.length == inputs[id=statements].value.length. Validate in code."
+    },
+    "GotoBlock": {
+      "description": "Jumps the run to a labelled point elsewhere in the automation, instead of carrying on to the next block. Use it sparingly, to send several branches to a shared ending or to retry an earlier step. Default block name: goToLabel.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "GotoBlock"},
+        "childId": {"type": "null"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "contains": {
+            "type": "object",
+            "required": ["id", "type", "value", "displayValue"],
+            "properties": {
+              "id": {"const": "label"},
+              "type": {"const": "select"},
+              "value": {"type": "string", "minLength": 1},
+              "displayValue": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "LabelBlock": {
+      "description": "Marks a point in the automation that a jump can be aimed at. On its own it does nothing. Default block name: label.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "LabelBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "contains": {
+            "type": "object",
+            "required": ["id", "type", "value"],
+            "properties": {"id": {"const": "name"}, "type": {"const": "string"}, "value": {"type": "string"}}
+          }
+        }
+      }
+    },
+    "ForEachBatchBlock": {
+      "description": "Works through a list in groups rather than one record at a time. Use it when what comes next can take many records in one go, such as writing rows to a file or sending a bulk request, which is far quicker than repeating the call per record. Default block name: loopBatch.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "ForEachBatchBlock"},
+        "loopBlockId": {"type": ["string", "null"]},
+        "inputs": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "allOf": [
+              {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+              {
+                "properties": {
+                  "id": {"enum": ["input", "size"]},
+                  "type": {"const": "string"},
+                  "value": {"type": ["string", "null"]}
+                }
+              }
+            ]
+          },
+          "allOf": [
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "input"}}}},
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "size"}}}}
+          ]
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "../workspace-schema.json#/$defs/CensorDataSetting"}
+        }
+      }
+    },
+    "ForEachBreakBlock": {
+      "description": "Leaves a loop before it has been through everything. Use it to stop once what you were looking for has been found, or once enough has been done. Default block name: exitLoop.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type"],
+      "properties": {
+        "type": {"const": "ForEachBreakBlock"},
+        "inputs": {"type": "array", "maxItems": 0},
+        "settings": {"type": "array", "maxItems": 0}
+      }
+    },
+    "CustomCodeBlock": {
+      "description": "Runs a short piece of code, in PHP, Node.js or Python, for logic no other block can express. Values from the run are handed to it and whatever it prints comes back as its result. Reach for it last, once no combination of the other blocks will do. Default block name: customCode.",
+      "allOf": [{"$ref": "../workspace-schema.json#/$defs/BlockBase"}],
+      "required": ["type", "inputs"],
+      "properties": {
+        "type": {"const": "CustomCodeBlock3"},
+        "inputs": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {"$ref": "#/$defs/CustomCodeInput"},
+          "allOf": [
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "language"}}}},
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "inputs"}}}},
+            {"contains": {"required": ["id"], "properties": {"id": {"const": "code"}}}}
+          ]
+        },
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "../workspace-schema.json#/$defs/ConnectorSetting"},
+          "contains": {"$ref": "../workspace-schema.json#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "CustomCodeInput": {
+      "description": "An entry in a CustomCodeBlock (`type: CustomCodeBlock3`) `inputs` array. Only `language`, `inputs` and `code` are valid ids.",
+      "allOf": [
+        {"$ref": "../workspace-schema.json#/$defs/InputCommon"},
+        {"properties": {"id": {"enum": ["language", "inputs", "code"]}}},
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "language"}}},
+          "then": {
+            "required": ["value"],
+            "properties": {
+              "type": {"const": "select"},
+              "value": {"type": "string", "enum": ["php", "nodejs", "python"]}
+            }
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "inputs"}}},
+          "then": {
+            "properties": {
+              "type": {"const": "object"},
+              "mode": {"type": "string", "enum": ["keyValue", "raw"]},
+              "value": {
+                "type": ["array", "null"],
+                "items": {
+                  "type": "object",
+                  "required": ["key", "value"],
+                  "additionalProperties": true,
+                  "properties": {"key": {"type": "string", "minLength": 1}, "value": {}}
+                },
+                "description": "Array of { key, value } variables. The key is the name the snippet reads (`$inputs['First Name']` / `inputs['First Name']`), so keep it a plain identifier-ish string; the value may be a formula."
+              }
+            }
+          }
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "code"}}},
+          "then": {"properties": {"type": {"const": "code"}, "value": {"type": ["string", "null"]}}}
+        }
+      ]
+    }
+  }
+}
