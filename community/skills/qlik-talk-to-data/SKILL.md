@@ -2,8 +2,8 @@
 name: qlik-talk-to-data
 description: >-
   Answers analytical questions against a Qlik Cloud app via the Qlik MCP
-  server — read-only exploration and ephemeral analysis, never creating or
-  modifying anything persistent. Use for requests like "how many", "show me",
+  server — read-only exploration and ephemeral analysis. It creates nothing
+  persistent except a bookmark on explicit request. Use for "how many", "show me",
   "what is", "top 10", "trend of", "compare X vs Y", "customers who never...",
   or any question that needs qlik_* MCP tools to answer accurately from
   governed Qlik data. DO NOT invoke this skill to create or edit a master

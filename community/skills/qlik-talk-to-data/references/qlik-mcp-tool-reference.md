@@ -34,8 +34,9 @@ licensing, independently of anything here.
 - `qlik_list_bookmarks` / `qlik_select_bookmark` — list existing bookmarks and
   apply one's saved selections. Applying one **overwrites the conversation's
   working context** ([SKILL.md](../SKILL.md#active-selections-are-the-conversations-working-context)),
-  so say what it changed. Wider use is parked in
-  [skills/_backlog/qlik-bookmarks-as-governance/](../../_backlog/qlik-bookmarks-as-governance/README.md).
+  so say what it changed. A bookmark's stored values are not readable without
+  applying it, and it carries no owner — so it is never treated as governed
+  content the way a published sheet is.
 - `qlik_search_knowledgebase_chunks` — semantic search over an indexed knowledge
   base, IDs discoverable via `qlik_search(resourceType="knowledgebase")`. **Start
   with a small `topN`** and raise it only if needed: a large one fills the context

@@ -86,8 +86,8 @@ Combining two separately governed measures is not a safe substitute:
 `Count(Distinct A) + Count(Distinct B)` over-counts the moment the populations
 overlap, and which fields are safe to union or intersect depends on keys and
 grain specific to that data model. Set-based cohort analysis — unions,
-intersections and differences over governed populations — is parked in
-[skills/_backlog/qlik-cohort-set-analysis/](../../_backlog/qlik-cohort-set-analysis/README.md).
+intersections and differences over governed populations — is out of scope for
+this skill.
 
 ## Tags as a synonym source
 

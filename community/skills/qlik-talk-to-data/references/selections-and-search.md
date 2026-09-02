@@ -378,8 +378,7 @@ This skill works in the default state only. A never-before-used state name on
 has been observed to silently fall back to the default state instead of creating
 an isolated one — including inheriting a stuck selection already on it.
 Supporting alternate states deliberately — including one an app already defines —
-is parked in
-[skills/_backlog/qlik-alternate-states/](../../_backlog/qlik-alternate-states/README.md).
+is out of scope for this skill.
 
 ## The silent failure catalogue
 
