@@ -1,0 +1,366 @@
+{
+  "$id": "https://qlik.com/schemas/automations/workspace-schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Qlik Automate Workspace Schema",
+  "description": "Defines the structure of an automation workspace. Use it to construct the workspace JSON for a Qlik Automate Automation, and to confirm the result is well-formed.",
+  "type": "object",
+  "required": ["blocks", "variables"],
+  "additionalProperties": true,
+  "properties": {
+    "blocks": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Every block is validated by `Block`: it must satisfy BlockBase, and if its `type` is a known block it must also satisfy that type's schema. Exactly one block must be a StartBlock.",
+      "items": {"$ref": "#/$defs/Block"},
+      "contains": {"properties": {"type": {"const": "StartBlock"}}, "required": ["type"]},
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "variables": {"type": "array", "items": {"$ref": "#/$defs/Variable"}}
+  },
+  "$defs": {
+    "Uuid": {
+      "type": "string",
+      "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+    },
+    "BlockId": {
+      "description": "Block id. Uppercase UUIDv4 in production.",
+      "type": "string",
+      "pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$"
+    },
+    "KnownBlockType": {
+      "description": "Block types that have a dedicated schema. Any other type is validated against BlockBase only.",
+      "enum": [
+        "StartBlock",
+        "EndpointBlock",
+        "SnippetBlock",
+        "IfElseBlock",
+        "CaseBlock",
+        "LabelBlock",
+        "GotoBlock",
+        "ForEachBlock",
+        "FilterListBlock",
+        "SleepBlock",
+        "ShowBlock",
+        "StopBlock",
+        "FormBlock",
+        "VariableBlock",
+        "UpdateJobBlock",
+        "CallUrlBlock",
+        "CallWidgetBlock",
+        "ErrorBlock",
+        "MergeListsBlock",
+        "LookupItemBlock",
+        "DeduplicateListBlock",
+        "CompareListsBlock",
+        "ReplaceFieldNamesBlock",
+        "TransformListBlock",
+        "LimitBlock",
+        "ListPointerBlock",
+        "UpdatePointerBlock",
+        "DeletePointerBlock",
+        "CompareObjectBlock",
+        "RedirectBlock",
+        "ForEachBatchBlock",
+        "ForEachBreakBlock",
+        "CustomCodeBlock3",
+        "OpenFileBlock",
+        "CreateFileBlock",
+        "CopyFileBlock",
+        "ReadDataFromFileBlock",
+        "WriteLineToFileBlock",
+        "CloseFileBlock",
+        "DeleteFileBlock",
+        "MoveFileBlock",
+        "CheckFileExistsBlock",
+        "ListFilesBlock"
+      ]
+    },
+    "EditorType": {
+      "description": "Editor type tag for inputs and settings. `table` and `number` are Variable types, not input types - see Variable.type.",
+      "type": "string",
+      "enum": [
+        "string",
+        "select",
+        "checkbox",
+        "date",
+        "json",
+        "object",
+        "list",
+        "longtext",
+        "custom",
+        "field",
+        "code",
+        "documentation",
+        "api-search",
+        "file"
+      ]
+    },
+    "BlendrOnError": {
+      "type": "string",
+      "enum": ["ignore", "warning", "stop"],
+      "description": "Allowed on-error values. `continue` is rejected by import."
+    },
+    "Variable": {
+      "description": "Top-level variable declaration. Authored workspaces emit guid, name and type only - initial state is seeded by a VariableBlock in the flow, not by a value here.",
+      "type": "object",
+      "required": ["guid", "name", "type"],
+      "additionalProperties": true,
+      "properties": {
+        "guid": {"$ref": "#/$defs/Uuid"},
+        "name": {"type": "string", "minLength": 1},
+        "type": {"type": "string", "enum": ["string", "list", "table", "object", "number"]},
+        "value": {}
+      }
+    },
+    "InputCommon": {
+      "description": "Shared shape for an entry in `inputs`. `id` matches a catalog input guid for connector blocks, or a built-in id (`run_mode`, `conditions`, `expression`, `statements`, `name`, `label`, `input`, `time`, `schedule_*`, `datasourcetype_guid`, `webhook_event_guid`, `test_payload`, or `webhook_param_<guid>`).",
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "value": {},
+        "type": {"$ref": "#/$defs/EditorType"},
+        "structure": {"type": ["array", "object"]},
+        "mode": {"type": "string"},
+        "displayValue": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "SettingCommon": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "value": {},
+        "type": {"$ref": "#/$defs/EditorType"},
+        "structure": {"type": ["array", "object"]}
+      },
+      "additionalProperties": true
+    },
+    "DatasourceSetting": {
+      "description": "Connection bound to a connector block. `value` is a connection id from qlik_list_automation_connections (filter by connectorId), or null when the tenant has no matching connection. The REST create/update path stores this verbatim and never auto-binds a null value - only the editor's JSON-import pipeline (CleanDatasourcesPipe) rewrites it, stripping guids that are not connections of the importing account.",
+      "allOf": [{"$ref": "#/$defs/SettingCommon"}],
+      "properties": {"id": {"const": "datasource"}, "type": {"const": "select"}, "value": {"type": ["string", "null"]}}
+    },
+    "CensorDataSetting": {
+      "description": "Exclude the block's inputs and outputs from run logs. This is a checkbox, so `type` is `checkbox` and `value` is a boolean - not a select over \"yes\"/\"no\".",
+      "allOf": [{"$ref": "#/$defs/SettingCommon"}],
+      "required": ["value"],
+      "properties": {
+        "id": {"const": "automations_censor_data"},
+        "type": {"const": "checkbox"},
+        "value": {"type": "boolean"}
+      }
+    },
+    "BlendrOnErrorSetting": {
+      "allOf": [{"$ref": "#/$defs/SettingCommon"}],
+      "required": ["value"],
+      "properties": {
+        "id": {"const": "blendr_on_error"},
+        "type": {"const": "select"},
+        "value": {"$ref": "#/$defs/BlendrOnError"}
+      }
+    },
+    "ConnectorSetting": {
+      "description": "An entry in an EndpointBlock / SnippetBlock `settings` array. Any setting id is allowed, but the three with fixed shapes (`datasource`, `blendr_on_error`, `automations_censor_data`) are held to them.",
+      "allOf": [
+        {"$ref": "#/$defs/SettingCommon"},
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "datasource"}}},
+          "then": {"$ref": "#/$defs/DatasourceSetting"}
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "blendr_on_error"}}},
+          "then": {"$ref": "#/$defs/BlendrOnErrorSetting"}
+        },
+        {
+          "if": {"required": ["id"], "properties": {"id": {"const": "automations_censor_data"}}},
+          "then": {"$ref": "#/$defs/CensorDataSetting"}
+        }
+      ]
+    },
+    "CollapsedEntry": {
+      "type": "object",
+      "required": ["name", "isCollapsed"],
+      "additionalProperties": false,
+      "properties": {"name": {"type": "string", "minLength": 1}, "isCollapsed": {"type": "boolean"}}
+    },
+    "BlockBase": {
+      "description": "Fields shared by every block.",
+      "type": "object",
+      "required": ["id", "type", "name", "inputs"],
+      "properties": {
+        "id": {"$ref": "#/$defs/BlockId"},
+        "type": {"type": "string"},
+        "name": {"type": "string", "minLength": 1},
+        "displayName": {"type": "string"},
+        "comment": {"type": ["string", "null"]},
+        "disabled": {"type": "boolean"},
+        "collapsed": {"type": "array", "items": {"$ref": "#/$defs/CollapsedEntry"}},
+        "inputs": {"type": "array", "items": {"$ref": "#/$defs/InputCommon"}},
+        "settings": {"type": "array", "items": {"$ref": "#/$defs/SettingCommon"}},
+        "childId": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "Block": {
+      "description": "Validates any block: it must satisfy BlockBase AND either match one of the known block schemas or carry a type outside the known set (in which case BlockBase alone applies).",
+      "allOf": [
+        {"$ref": "#/$defs/BlockBase"},
+        {
+          "anyOf": [
+            {"$ref": "#/$defs/StartBlock"},
+            {"$ref": "#/$defs/EndpointBlock"},
+            {"$ref": "#/$defs/SnippetBlock"},
+            {"$ref": "blocks/basic.json#/$defs/IfElseBlock"},
+            {"$ref": "blocks/advanced.json#/$defs/CaseBlock"},
+            {"$ref": "blocks/advanced.json#/$defs/LabelBlock"},
+            {"$ref": "blocks/advanced.json#/$defs/GotoBlock"},
+            {"$ref": "blocks/basic.json#/$defs/ForEachBlock"},
+            {"$ref": "blocks/lists.json#/$defs/FilterListBlock"},
+            {"$ref": "blocks/basic.json#/$defs/SleepBlock"},
+            {"$ref": "blocks/basic.json#/$defs/ShowBlock"},
+            {"$ref": "blocks/basic.json#/$defs/StopBlock"},
+            {"$ref": "blocks/basic.json#/$defs/FormBlock"},
+            {"$ref": "blocks/basic.json#/$defs/VariableBlock"},
+            {"$ref": "blocks/advanced.json#/$defs/UpdateRunTitleBlock"},
+            {"$ref": "blocks/basic.json#/$defs/CallUrlBlock"},
+            {"$ref": "blocks/basic.json#/$defs/CallWidgetBlock"},
+            {"$ref": "blocks/basic.json#/$defs/ErrorBlock"},
+            {"$ref": "blocks/lists.json#/$defs/MergeListsBlock"},
+            {"$ref": "blocks/lists.json#/$defs/LookupItemBlock"},
+            {"$ref": "blocks/lists.json#/$defs/DeduplicateListBlock"},
+            {"$ref": "blocks/lists.json#/$defs/CompareListsBlock"},
+            {"$ref": "blocks/lists.json#/$defs/ReplaceFieldNamesBlock"},
+            {"$ref": "blocks/lists.json#/$defs/TransformListBlock"},
+            {"$ref": "blocks/lists.json#/$defs/LimitBlock"},
+            {"$ref": "blocks/advanced.json#/$defs/ListPointerBlock"},
+            {"$ref": "blocks/advanced.json#/$defs/UpdatePointerBlock"},
+            {"$ref": "blocks/advanced.json#/$defs/DeletePointerBlock"},
+            {"$ref": "blocks/advanced.json#/$defs/CompareObjectBlock"},
+            {"$ref": "blocks/advanced.json#/$defs/RedirectBlock"},
+            {"$ref": "blocks/advanced.json#/$defs/ForEachBatchBlock"},
+            {"$ref": "blocks/advanced.json#/$defs/ForEachBreakBlock"},
+            {"$ref": "blocks/advanced.json#/$defs/CustomCodeBlock"},
+            {"$ref": "blocks/cloud-storage.json#/$defs/OpenFileBlock"},
+            {"$ref": "blocks/cloud-storage.json#/$defs/CreateFileBlock"},
+            {"$ref": "blocks/cloud-storage.json#/$defs/CopyFileBlock"},
+            {"$ref": "blocks/cloud-storage.json#/$defs/ReadDataFromFileBlock"},
+            {"$ref": "blocks/cloud-storage.json#/$defs/WriteLineToFileBlock"},
+            {"$ref": "blocks/cloud-storage.json#/$defs/CloseFileBlock"},
+            {"$ref": "blocks/cloud-storage.json#/$defs/DeleteFileBlock"},
+            {"$ref": "blocks/cloud-storage.json#/$defs/MoveFileBlock"},
+            {"$ref": "blocks/cloud-storage.json#/$defs/CheckFileExistsBlock"},
+            {"$ref": "blocks/cloud-storage.json#/$defs/ListFilesBlock"},
+            {"not": {"properties": {"type": {"$ref": "#/$defs/KnownBlockType"}}}}
+          ]
+        }
+      ]
+    },
+    "IfElseConditionEntry": {
+      "type": "object",
+      "required": ["input1", "operator"],
+      "additionalProperties": false,
+      "properties": {
+        "input1": {"type": "string"},
+        "input2": {"type": ["string", "null"]},
+        "operator": {
+          "type": "string",
+          "enum": [
+            "=",
+            "!=",
+            ">",
+            ">=",
+            "<",
+            "<=",
+            "empty",
+            "notEmpty",
+            "contain",
+            "doesntContain",
+            "inList",
+            "notInList",
+            "isText",
+            "isNotText",
+            "isNumber",
+            "isNotNumber",
+            "isObject",
+            "isNotObject",
+            "isList",
+            "isNotList",
+            "isEmail",
+            "isNotEmail",
+            "isPhone",
+            "isNotPhone",
+            "isTrue",
+            "isFalse"
+          ]
+        }
+      }
+    },
+    "ConditionGroup": {
+      "description": "Value of a `conditions` input. Shared by IfElseBlock and FilterListBlock. `mode: all` ANDs the entries, `mode: some` ORs them.",
+      "type": "object",
+      "required": ["mode", "conditions"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": {"type": "string", "enum": ["all", "some"]},
+        "conditions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/IfElseConditionEntry"}}
+      }
+    },
+    "StartBlock": {
+      "description": "Starts the automation and sets how it is triggered. `run_mode` comes first and is one of `manual`, `scheduled`, `triggered` or `webhook`. Use `triggered` when something outside the automation starts it - an Answers assistant action, Qlik MCP, a sheet button or the run URL - and add an `async` input, where `no` sends the run output back to the caller. A webhook trigger also needs the connector, the event, and one input per event parameter; a scheduled trigger also needs its start, stop time, interval and timezone. Every workspace has exactly one. Default block name: Start.",
+      "allOf": [{"$ref": "#/$defs/BlockBase"}],
+      "required": ["type"],
+      "properties": {
+        "type": {"const": "StartBlock"},
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "prefixItems": [
+            {
+              "allOf": [{"$ref": "#/$defs/InputCommon"}],
+              "required": ["value"],
+              "properties": {
+                "id": {"const": "run_mode"},
+                "type": {"const": "select"},
+                "value": {"type": "string", "enum": ["manual", "scheduled", "triggered", "webhook"]}
+              }
+            }
+          ]
+        }
+      }
+    },
+    "EndpointBlock": {
+      "description": "Calls one action on a connector - the main way an automation talks to Qlik or an outside service. `datasourcetype_guid` is the connector and `endpoint_guid` is the action; take both from the connector detail, and list the action's inputs in the order the connector gives them. Bind the `datasource` setting to a matching connection id from qlik_list_automation_connections, or null when the tenant has none.",
+      "allOf": [{"$ref": "#/$defs/BlockBase"}],
+      "required": ["type", "datasourcetype_guid", "endpoint_guid"],
+      "properties": {
+        "type": {"const": "EndpointBlock"},
+        "datasourcetype_guid": {"$ref": "#/$defs/Uuid"},
+        "endpoint_guid": {"$ref": "#/$defs/Uuid"},
+        "endpoint_role": {"type": "string", "minLength": 1},
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/ConnectorSetting"},
+          "contains": {"$ref": "#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    },
+    "SnippetBlock": {
+      "description": "Runs one ready-made routine from a connector, as opposed to the single action an EndpointBlock calls. `datasourcetype_guid` is the connector and `snippet_guid` is the routine; take both from the connector detail, and list its inputs in the order the connector gives them. Bind the `datasource` setting to a matching connection id from qlik_list_automation_connections, or null when the tenant has none.",
+      "allOf": [{"$ref": "#/$defs/BlockBase"}],
+      "required": ["type", "datasourcetype_guid", "snippet_guid"],
+      "properties": {
+        "type": {"const": "SnippetBlock"},
+        "datasourcetype_guid": {"$ref": "#/$defs/Uuid"},
+        "snippet_guid": {"$ref": "#/$defs/Uuid"},
+        "settings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/ConnectorSetting"},
+          "contains": {"$ref": "#/$defs/BlendrOnErrorSetting"}
+        }
+      }
+    }
+  }
+}

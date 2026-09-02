@@ -6,9 +6,21 @@ updates:
       interval: 'weekly'
     commit-message:
       prefix: 'chore'
+    groups:
+      group:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
   - package-ecosystem: 'github-actions'
     commit-message:
       prefix: 'chore'
     directory: '/'
     schedule:
       interval: 'weekly'
+    groups:
+      group:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
