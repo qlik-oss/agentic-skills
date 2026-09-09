@@ -12,7 +12,6 @@ Community skills are **opt-in**. They are never silently enabled in a Qlik envir
 |---|---|---|
 | [qlik-sense-app-analysis](qlik-sense-app-analysis/) | [nabeel-oz](https://github.com/nabeel-oz) | Explore, analyze, visualize, and govern Qlik Sense apps and Qlik Cloud analytics content (master items, business glossary, data products) via the Qlik MCP server. |
 | [qlik-load-script](qlik-load-script/) | [nabeel-oz](https://github.com/nabeel-oz) | Lightweight skill for coding agents (Claude Code, Cursor, etc.) to write, complete, and extend Qlik Sense load scripts (.qvs) — general authoring plus data prep for ML-ready datasets with Qlik Predict |
-| [qlik-talk-to-data](qlik-talk-to-data/) | [ybl74](https://github.com/ybl74) | Answers analytical questions against a Qlik Cloud app via the Qlik MCP server — read-only exploration and ephemeral analysis, with no persistent changes except an explicitly requested bookmark. |
 
 ---
 
@@ -24,9 +23,6 @@ npx skills add qlik-oss/agentic-skills --skill your-skill-name
 
 # Install to a specific agent
 npx skills add qlik-oss/agentic-skills --skill your-skill-name -a claude-code
-
-# Install to all agents
-npx skills add qlik-oss/agentic-skills --skill your-skill-name --agent '*'
 ```
 
 ---
@@ -93,7 +89,7 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 
 ### 5. Open a pull request
 
-Fork the repo, add your skill under `/community/skills/`, and open a PR using the provided template. The automated CI pipeline runs spec validation; a maintainer runs a local security scan before merging. A maintainer will review within 5 business days.
+Fork the repo, add your skill under `/community/skills/`, and open a PR using the provided template. The automated CI pipeline runs spec validation and security scanning. A maintainer will review within 5 business days.
 
 ---
 
@@ -108,12 +104,6 @@ Community skills do not need to meet the same bar as official skills, but they m
 - Include at least one realistic usage example
 
 Skills that fail the automated checks or violate the security rules will not be merged.
-
----
-
-## Versioning
-
-Community skills aren't held to the same versioning rigor as [official skills](../../official/skills/README.md#versioning), but you should still bump `metadata.version` using semver whenever you change a skill you maintain: patch for wording fixes, minor for new steps or reference files, major for breaking changes to behavior or trigger phrases. This isn't enforced by CI, but it helps users and maintainers tell what changed.
 
 ---
 
