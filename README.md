@@ -2,7 +2,7 @@
 
 This is Qlik's public, open-source hub for AI agent skills - reusable skills and Claude plugins that extend AI agents with Qlik-specific expertise. Contributions from anyone are welcome; see [Contribute a skill](#contribute-a-skill) below.
 
-Skills here work across Anthropic (Claude & Claude Code), OpenAI (ChatGPT, Codex), GitHub Copilot, Cursor, Gemini CLI, and 20+ other tools that support the open [Agent Skills standard](https://agentskills.io).
+The skill content in this repository follows the open [Agent Skills standard](https://agentskills.io). It is intended to be portable across compatible runtimes, but runtime compatibility depends on the host tool's implementation and should be verified in each consuming agent.
 
 ---
 
@@ -49,7 +49,7 @@ Skills owned and maintained by Qlik staff, reviewed by the official maintainers 
 
 ### Community folder
 
-Skills and Claude plugins contributed by Qlik customers, partners, and the developer community. Every community skill passes automated security scanning and a quality review before being merged.
+Skills and Claude plugins contributed by Qlik customers, partners, and the developer community. Community skills are reviewed for fit and quality, and the repository includes validation checks for SKILL.md structure and Claude plugin manifests. Security validation and runtime verification remain host-specific and should be completed in the consuming environment if required.
 
 ### Plugins
 
@@ -109,19 +109,19 @@ See [`official/skills/`](./official/skills/) for the current list of official sk
 
 ## Compatibility
 
-This repository follows the open [Agent Skills specification](https://agentskills.io). Skills work across all compatible tools — no per-tool configuration needed.
+This repository follows the open [Agent Skills specification](https://agentskills.io). The repo is designed for tools that support that standard, but compatibility should be checked per host runtime and per agent installation.
 
-| Tool | Supported |
+| Tool / runtime | Status |
 |---|---|
-| Claude Code (Anthropic) | ✓ |
-| OpenAI Codex | ✓ |
-| GitHub Copilot / VS Code | ✓ |
-| Cursor | ✓ |
-| Gemini CLI | ✓ |
-| JetBrains Junie | ✓ |
-| Goose (Block) | ✓ |
-| OpenCode | ✓ |
-| Amp | ✓ |
+| Claude Code (Anthropic) | Targeted and validated at the skill-spec manifest layer |
+| OpenAI Codex | Intended to be compatible with Agent Skills-compatible runtimes |
+| GitHub Copilot / VS Code | Intended to be compatible with Agent Skills-compatible runtimes |
+| Cursor | Intended to be compatible with Agent Skills-compatible runtimes |
+| Gemini CLI | Intended to be compatible with Agent Skills-compatible runtimes |
+| JetBrains Junie | Intended to be compatible with Agent Skills-compatible runtimes |
+| Goose (Block) | Intended to be compatible with Agent Skills-compatible runtimes |
+| OpenCode | Intended to be compatible with Agent Skills-compatible runtimes |
+| Amp | Intended to be compatible with Agent Skills-compatible runtimes |
 
 ---
 

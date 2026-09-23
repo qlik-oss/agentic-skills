@@ -1,6 +1,6 @@
 # Contributing to Qlik Agent Skills
 
-Thank you for contributing to the Qlik Agent Skills repository. This repo is the central source of truth for skills and Claude plugins that extend Qlik's AI agents, and through the open [Agent Skills standard](https://agentskills.io), they work across Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI, and 20+ other tools.
+Thank you for contributing to the Qlik Agent Skills repository. This repo is the central source of truth for skills and Claude plugins that extend Qlik's AI agents. The content follows the open [Agent Skills standard](https://agentskills.io), and compatibility is expected in any runtime that implements that standard, but each host tool should still verify installation and behavior in its own environment.
 
 ---
 
@@ -59,7 +59,7 @@ Skills in this repository are organized into two trust tiers that determine how 
 Skills owned and maintained by Qlik engineering teams, the standard, versioned way to work with Qlik Cloud through an AI agent. Changes require a PR review from a `@qlik-oss/agentic-skills-official-maintainers` team member and pass all automated validation checks.
 
 ### `community/`
-Skills contributed by Qlik customers, partners, or the broader developer community. These are opt-in at the tenant level and carry a **Community** badge in the UI. They must pass automated security scanning and a basic quality review before merging, but do not require Qlik engineering sign-off.
+Skills contributed by Qlik customers, partners, or the broader developer community. These are opt-in at the tenant level and carry a **Community** badge in the UI. They should pass the repo's validation checks and a basic quality review before merging, but do not require Qlik engineering sign-off. Host-specific security review and runtime verification remain the responsibility of the consumer environment when relevant.
 
 > **Note for enterprise users:** Tenant administrators control which community skills are available to their users. No community skill is silently enabled.
 
