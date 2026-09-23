@@ -1,6 +1,6 @@
 # Contributing to Qlik Agent Skills
 
-Thank you for contributing to the Qlik Agent Skills repository. This repo is the central source of truth for skills and Claude plugins that extend Qlik's AI agents. The content follows the open [Agent Skills standard](https://agentskills.io), and compatibility is expected in any runtime that implements that standard, but each host tool should still verify installation and behavior in its own environment.
+Thank you for contributing to the Qlik Agent Skills repository. This repo is the central source of truth for skills and Claude plugins that extend Qlik's AI agents. The content follows the open [Agent Skills standard](https://agentskills.io) and is designed for Agent Skills-compatible runtimes; each host tool should still verify installation and behavior in its own environment.
 
 ---
 

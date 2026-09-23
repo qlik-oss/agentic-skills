@@ -6,7 +6,7 @@ Skills in this directory are owned and maintained by Qlik engineering. They repr
 
 ## Who maintains these skills
 
-Official skills are authored and reviewed by members of the `@qlik-oss/agentic-skills-official-maintainers` team. Every change goes through a pull request, passes automated spec validation and security scanning, and requires at least one team member review before merging.
+Official skills are authored and reviewed by members of the `@qlik-oss/agentic-skills-official-maintainers` team. Every change goes through a pull request, passes the repo-local validation checks, and requires at least one team member review before merging. Host-specific security or runtime verification remains the responsibility of the consuming environment when relevant.
 
 If you find a bug or want to suggest an improvement to an official skill, open a GitHub issue — do not open a PR directly against this directory unless you are a member of `@qlik-oss/agentic-skills-official-maintainers`.
 

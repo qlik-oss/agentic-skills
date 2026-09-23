@@ -37,9 +37,9 @@ corepack pnpm run validate:spec
 corepack pnpm run validate:claude
 ```
 
-### Recommended local checks for affected host/runtime
+### Additional validation
 
-These are not required by the repo-level CI and should be run only when the PR affects a specific agent runtime or plugin installation flow:
+Run `skills-ref validate` for every skill change. Host-native checks are optional and apply only when the PR affects a specific agent runtime or plugin installation flow:
 
 ```bash
 # Example: use the host runtime's native validation command
