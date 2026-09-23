@@ -37,14 +37,21 @@ corepack pnpm run validate:spec
 corepack pnpm run validate:claude
 ```
 
-### Additional validation
+### Required for every skill change
 
-Run `skills-ref validate` for every skill change. Host-native checks are optional and apply only when the PR affects a specific agent runtime or plugin installation flow:
+Run `skills-ref validate` for the skill you added or modified:
+
+```bash
+skills-ref validate community/skills/your-skill-name/
+```
+
+### Optional: host-specific runtime verification
+
+Run only when the PR affects a specific agent runtime or plugin installation flow:
 
 ```bash
 # Example: use the host runtime's native validation command
 # claude plugin validate .
-# skills-ref validate community/skills/your-skill-name/
 ```
 
 ## Notes for reviewers
