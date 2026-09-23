@@ -10,7 +10,7 @@ The skill content in this repository follows the open [Agent Skills standard](ht
 
 Agent skills are folders of instructions, scripts, and reference material that an AI agent loads on demand. Instead of repeating context in every conversation, you package your expertise once and let the agent discover and apply it automatically.
 
-Think of a skill as an onboarding guide for a new hire - it tells the agent what to do, when to do it, and how to do it correctly for your specific environment. The [SKILL.md format](https://agentskills.io/specification) is an open standard, so a skill you write here works the same way in every compatible tool.
+Think of a skill as an onboarding guide for a new hire - it tells the agent what to do, when to do it, and how to do it correctly for your specific environment. The [SKILL.md format](https://agentskills.io/specification) is an open standard, but each agent runtime still decides how it discovers, loads, and executes those skills.
 
 ---
 
@@ -53,29 +53,21 @@ Skills and Claude plugins contributed by Qlik customers, partners, and the devel
 
 ### Plugins
 
-Claude Code plugins that package the skills in each tier (`official/`, `community/`) into a single installable unit through Claude's plugin marketplace. The plugin format supports bundling agents, hooks, slash commands, and MCP server configuration alongside skills, but the underlying skills themselves remain cross-platform regardless of how a given plugin is packaged.
+This repository includes Claude plugin manifests and marketplace metadata for packaging the skills in each tier (`official/`, `community/`) into a Claude Code installable unit. The plugin format can bundle agents, hooks, slash commands, and MCP server configuration alongside skills, but the underlying skill content is still defined by the Agent Skills files themselves and should be verified in the consuming host runtime.
 
 ---
 
 ## Install skills
 
-Skills are installed using the [`npx skills` CLI](https://skills.sh) — no setup required.
+This repository is a source package for Agent Skills content. Hosts that support the standard can install the skills by copying or linking the skill folders into the relevant discovery path, or by using a host-specific install flow such as the `npx skills` CLI or a Claude plugin marketplace command.
 
 ```bash
-# Browse and install everything from this repo
+# Example installation patterns for compatible hosts
 npx skills add qlik-oss/agentic-skills
-
-# Install a specific skill
 npx skills add qlik-oss/agentic-skills --skill <skill-name>
-
-# Install to a specific agent
-npx skills add qlik-oss/agentic-skills --skill <skill-name> -a claude-code
-
-# Install to all detected agents at once
-npx skills add qlik-oss/agentic-skills --agent '*' --skill <skill-name>
 ```
 
-The CLI automatically detects which AI tools you have installed and places skill files in the correct directory for each one.
+The exact install path depends on the consuming agent or plugin system. Confirm the host-specific installation steps for the runtime you plan to use.
 
 ### Manual installation
 
@@ -92,7 +84,7 @@ If you prefer to install manually, clone or copy the skill folder into your agen
 
 ### Claude Code plugin marketplace
 
-Claude Code users can also install via the plugin system, which packages each tier's skills into a single installable plugin:
+This repository includes Claude marketplace metadata for plugin-style installation. The expected installation flow is host-specific to Claude Code and should be validated in that tool's environment:
 
 ```
 /plugin install qlik-cloud-skills@qlik-cloud-skills
