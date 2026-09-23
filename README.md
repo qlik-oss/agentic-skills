@@ -117,6 +117,22 @@ This repository follows the open [Agent Skills specification](https://agentskill
 
 ---
 
+## Security and trust model
+
+Skills execute instructions and may call tools, read files, or invoke scripts in the host environment. Treat every contribution as a security-sensitive change.
+
+Before accepting or merging a change, confirm that it does not:
+
+- hardcode secrets, tokens, API keys, or personal credentials
+- request broad tool access when a narrower `allowed-tools` policy would suffice
+- introduce outbound network calls or remote fetches without explicit need and review
+- instruct the agent to ignore its safety constraints or hidden system boundaries
+- embed sensitive user data, tenant identifiers, or internal host details in examples or docs
+
+Use the least privilege principle. If a skill needs shell access, file access, or external calls, document why and keep the scope narrow.
+
+When a change affects runtime behavior, verify it in the consuming host environment. The repository validates structure and metadata locally, but it does not automatically prove that a specific agent runtime or plugin installation path works for every user.
+
 ## Contribute a skill
 
 Community contributions are welcome. The fastest path is to use the `skill-creator` skill to scaffold your SKILL.md, then open a pull request.
