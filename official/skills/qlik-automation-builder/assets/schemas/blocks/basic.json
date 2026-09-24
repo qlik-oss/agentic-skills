@@ -232,13 +232,18 @@
         {
           "if": {"required": ["id"], "properties": {"id": {"const": "guid"}}},
           "then": {
-            "required": ["value"],
+            "required": ["value", "displayValue"],
             "properties": {
               "type": {"const": "api-search"},
               "value": {
                 "type": "string",
                 "pattern": "^[A-Za-z0-9-]+$",
                 "description": "Target automation id. Letters, digits and dashes only - the backend rejects anything else, and rejects an empty value at save time."
+              },
+                "displayValue": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The target automation's name, matching `value`'s id. Required alongside `value` - this is what the api-search field actually displays."
               }
             }
           }
