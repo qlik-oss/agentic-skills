@@ -26,6 +26,9 @@ on:
       - "pnpm-lock.yaml"
       - ".github/workflows/validate-skill-spec.yml"
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
