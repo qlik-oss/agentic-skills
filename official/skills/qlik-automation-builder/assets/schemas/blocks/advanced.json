@@ -477,8 +477,8 @@
               "type": {"const": "code"},
               "value": {
                 "type": ["string", "null"],
-                "not": {"pattern": "\\{\\$\\.|\\{\\s*explode\\s*:"},
-                "description": "The snippet source. No `{$...}` reference or `{explode: ...}` helper may appear in it — run-time values reach the snippet through the sibling `inputs` entry, never by interpolation into the code. See `references/construction-rules.md#custom-code`."
+                "not": {"pattern": "\\{\\$\\."},
+                "description": "The snippet source. No `{$...}` reference may appear in it, including one nested in a helper such as `{explode: {$.block.field}, ','}` — run-time values reach the snippet through the sibling `inputs` entry, never by interpolation into the code. See `references/construction-rules.md#custom-code`."
               }
             }
           }

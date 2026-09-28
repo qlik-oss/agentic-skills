@@ -136,7 +136,7 @@ The validator reports schema violations only. The rules in `references/construct
    - every `loopBlockId` sits on an iterable block, and each such `EndpointBlock` carries a matching `endpoint_role`
    - every reference made from inside a loop to the list-producing block that owns that loop goes through `item` (`{$.blockName.item...}`), not the bare list — and the field after `item` is one the user named or the element demonstrably exposes, not an assumed `id`
    - no block has multiple parents
-   - no `{$.` reference (and no `{explode: ...}` helper) appears anywhere inside a `CustomCodeBlock3` `code` value — run-time values reach the snippet only through the block's `inputs` entry, read as `$inputs['key']` / `inputs['key']`
+   - no `{$.` reference appears anywhere inside a `CustomCodeBlock3` `code` value, including one nested in a helper — run-time values reach the snippet only through the block's `inputs` entry, read as `$inputs['key']` / `inputs['key']`
    - no `inputs[*].value` holds a literal credential (API key, password, token, secret, signed URL) — authenticated calls go through a connection-bound connector block, and any `CallUrlBlock` with `headers` or `params` sets `automations_censor_data: true`
 3. Short `Assumptions` section listing unresolved connections or guesses.
 

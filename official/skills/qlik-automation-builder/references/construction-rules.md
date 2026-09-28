@@ -86,7 +86,7 @@ The remaining `EditorType` values — `checkbox`, `list`, `custom`, `field`, `co
 
 `CustomCodeBlock3` executes whatever its `code` input holds, as PHP, Node.js or Python. It is the one block whose input value is a program rather than data, so the reference rules in [References in input values](#references-in-input-values) apply to it **in reverse**.
 
-- **Never interpolate a run-time value into the `code` string.** No `{$.blockName}`, `{$.blockName.item...}`, `{$.variableName}`, or `{explode: ...}` may appear anywhere inside the `code` value — not in an expression, not in a string literal, not in a comment.
+- **Never interpolate a run-time value into the `code` string.** No `{$...}` reference — `{$.blockName}`, `{$.blockName.item...}`, `{$.variableName}`, or one nested inside a helper such as `{explode: {$.blockName}, ','}` — may appear anywhere inside the `code` value, not in an expression, not in a string literal, not in a comment.
 - **Pass run-time values through `inputs` instead.** The block's `inputs` entry with `id: "inputs"` is the only channel: each `{ key, value }` pair takes the `{$...}` reference as its `value`, and the snippet reads it by key — `$inputs['reportUrl']` in PHP, `inputs['reportUrl']` in Node.js and Python. The substitution then lands in a variable, where it stays data.
 - This holds even when the value looks harmless. A reference that resolves to an app name, a user-supplied field, an API response body or a loop element is attacker-influenceable text; concatenated into source it becomes part of the program. Passed as an input it cannot be.
 
