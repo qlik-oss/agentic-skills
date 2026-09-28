@@ -236,7 +236,7 @@
             "properties": {
               "type": {"const": "api-search"},
               "value": {
-                "type": ["string", "null"],
+                "type": "string",
                 "pattern": "^[A-Za-z0-9-]+$",
                 "description": "Target automation id. Letters, digits and dashes only - the backend rejects anything else, and rejects an empty value at save time."
               },
