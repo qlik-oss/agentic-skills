@@ -81,3 +81,15 @@ The connector detail describes inputs with `fieldType`; the schema's `inputs[*].
 | `date` | `date` | |
 
 The remaining `EditorType` values — `checkbox`, `list`, `custom`, `field`, `code`, `documentation`, `api-search` — are never the target of this translation. They belong to built-in block inputs and connector settings (`conditions` is `custom`, `automations_censor_data` is `checkbox`), not to connector-detail inputs.
+
+## Custom code
+
+`CustomCodeBlock3` executes whatever its `code` input holds, as PHP, Node.js or Python. It is the one block whose input value is a program rather than data, so the reference rules in [References in input values](#references-in-input-values) apply to it **in reverse**.
+
+- **Never interpolate a run-time value into the `code` string.** No `{$.blockName}`, `{$.blockName.item...}`, `{$.variableName}`, or `{explode: ...}` may appear anywhere inside the `code` value — not in an expression, not in a string literal, not in a comment.
+- **Pass run-time values through `inputs` instead.** The block's `inputs` entry with `id: "inputs"` is the only channel: each `{ key, value }` pair takes the `{$...}` reference as its `value`, and the snippet reads it by key — `$inputs['reportUrl']` in PHP, `inputs['reportUrl']` in Node.js and Python. The substitution then lands in a variable, where it stays data.
+- This holds even when the value looks harmless. A reference that resolves to an app name, a user-supplied field, an API response body or a loop element is attacker-influenceable text; concatenated into source it becomes part of the program. Passed as an input it cannot be.
+
+So a snippet needing an app id from `listApps` gets `inputs: [{ "key": "appId", "value": "{$.listApps.item.id}" }]` and a body of `$id = $inputs['appId'];` — never a body containing `$id = "{$.listApps.item.id}";`.
+
+Keep the snippet short and prefer other blocks: `CustomCodeBlock3` is the last resort, not a shortcut around the block catalog.

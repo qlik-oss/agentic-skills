@@ -328,12 +328,23 @@
               }
             }
           ],
-          "items": {"$ref": "#/$defs/StartBlockInput"}
+          "items": {"$ref": "#/$defs/StartBlockInput"},
+          "allOf": [
+            {
+              "if": {
+                "prefixItems": [{"required": ["value"], "properties": {"value": {"const": "triggered"}}}]
+              },
+              "then": {
+                "contains": {"required": ["id"], "properties": {"id": {"const": "async"}}},
+                "$comment": "A triggered StartBlock is either sync or async, never neither - the editor always emits the input, so require it."
+              }
+            }
+          ]
         }
       }
     },
     "StartBlockInput": {
-      "description": "A StartBlock input after the leading `run_mode`: `async` (`yes`/`no`) or `test_payload` (a JSON string, never an object). Which of them a given mode needs, and what to put in them, is in the mode's `references/run-mode-*.md`; this only pins their shapes.",
+      "description": "A StartBlock input after the leading `run_mode`: `async` (`yes`/`no`, required on a triggered StartBlock) or `test_payload` (a JSON string, never an object). Which of them a given mode needs, and what to put in them, is in the mode's `references/run-mode-*.md`; this only pins their shapes.",
       "allOf": [{"$ref": "#/$defs/InputCommon"}],
       "if": {"required": ["id"], "properties": {"id": {"const": "async"}}},
       "then": {
@@ -346,7 +357,7 @@
       }
     },
     "EndpointBlock": {
-      "description": "Calls one action on a connector - the main way an automation talks to Qlik or an outside service. `datasourcetype_guid` is the connector and `endpoint_guid` is the action; take it from the connector detail's `blocks[]` array, and list the action's inputs in the order the connector gives them. Bind the `datasource` setting to a matching connection id from qlik_list_automation_connections, or null when the tenant has none.",
+      "description": "Calls one action on a connector - the main way an automation talks to Qlik or an outside service. `datasourcetype_guid` is the connector and `endpoint_guid` is the action; take both from the connector detail, and list the action's inputs in the order the connector gives them. Bind the `datasource` setting to a matching connection id from qlik_list_automation_connections, or null when the tenant has none.",
       "allOf": [{"$ref": "#/$defs/BlockBase"}],
       "required": ["type", "datasourcetype_guid", "endpoint_guid"],
       "properties": {
@@ -362,7 +373,7 @@
       }
     },
     "SnippetBlock": {
-      "description": "Runs one ready-made routine from a connector, as opposed to the single action an EndpointBlock calls. `datasourcetype_guid` is the connector and `snippet_guid` is the routine; take it from the connector detail's `snippets[]` array, and list its inputs in the order the connector gives them. Bind the `datasource` setting to a matching connection id from qlik_list_automation_connections, or null when the tenant has none.",
+      "description": "Runs one ready-made routine from a connector, as opposed to the single action an EndpointBlock calls. `datasourcetype_guid` is the connector and `snippet_guid` is the routine; take both from the connector detail, and list its inputs in the order the connector gives them. Bind the `datasource` setting to a matching connection id from qlik_list_automation_connections, or null when the tenant has none.",
       "allOf": [{"$ref": "#/$defs/BlockBase"}],
       "required": ["type", "datasourcetype_guid", "snippet_guid"],
       "properties": {

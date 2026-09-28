@@ -472,7 +472,16 @@
         },
         {
           "if": {"required": ["id"], "properties": {"id": {"const": "code"}}},
-          "then": {"properties": {"type": {"const": "code"}, "value": {"type": ["string", "null"]}}}
+          "then": {
+            "properties": {
+              "type": {"const": "code"},
+              "value": {
+                "type": ["string", "null"],
+                "not": {"pattern": "\\{\\$\\.|\\{\\s*explode\\s*:"},
+                "description": "The snippet source. No `{$...}` reference or `{explode: ...}` helper may appear in it — run-time values reach the snippet through the sibling `inputs` entry, never by interpolation into the code. See `references/construction-rules.md#custom-code`."
+              }
+            }
+          }
         }
       ]
     }
