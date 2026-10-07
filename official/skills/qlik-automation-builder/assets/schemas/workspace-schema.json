@@ -1,5 +1,5 @@
 {
-  "$id": "https://github.com/qlik-oss/agentic-skills/blob/main/official/skills/qlik-automation-builder/assets/schemas/workspace-schema.json",
+  "$id": "https://raw.githubusercontent.com/qlik-oss/agentic-skills/main/official/skills/qlik-automation-builder/assets/schemas/workspace-schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Qlik Automate Workspace Schema",
   "description": "Defines the structure of an automation workspace. Use it to construct the workspace JSON for a Qlik Automate Automation, and to confirm the result is well-formed.",
