@@ -1,9 +1,5 @@
 {
-<<<<<<< Updated upstream
-  "$id": "https://github.com/qlik-oss/agentic-skills/blob/main/official/skills/qlik-automation-builder/assets/schemas/blocks/cloud-storage.json",
-=======
   "$id": "https://raw.githubusercontent.com/qlik-oss/agentic-skills/main/official/skills/qlik-automation-builder/assets/schemas/blocks/cloud-storage.json",
->>>>>>> Stashed changes
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Qlik Automate block defs - cloud-storage",
   "description": "Structure of the Cloud storage blocks used when constructing an automation workspace: Open File, Create File, Copy File, Read Data From File, Write Line To File, Save And Close File, Delete File, Move File, Check If File Exists, List Files.",
