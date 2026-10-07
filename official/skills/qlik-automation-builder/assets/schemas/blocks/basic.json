@@ -1,5 +1,5 @@
 {
-  "$id": "https://qlik.com/schemas/automations/blocks/basic.json",
+  "$id": "https://raw.githubusercontent.com/qlik-oss/agentic-skills/main/official/skills/qlik-automation-builder/assets/schemas/blocks/basic.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Qlik Automate block defs - basic",
   "description": "Structure of the Basic blocks used when constructing an automation workspace: Output, Inputs, Condition, Loop, Call URL, Stop, Sleep, Call Automation, Variable, Error.",
