@@ -1,0 +1,78 @@
+name: Lint Skills
+
+# Best-practice lint for changed skills, wherever they live in the repo
+# (official/skills/, community/skills/, template/skill/). Two steps:
+#   1. scripts/lint-skill-structure.mjs: reference chains deeper than one level,
+#      long reference files without a table of contents, Windows-style paths.
+#   2. claudelint: name/description rules, body length, broken file references,
+#      XML tags, secrets, ...
+# Complements validate-skill-spec.yml, which checks the SKILL.md spec.
+# Non-blocking for now: existing skills have findings (see PR).
+# Remove `continue-on-error` once they are cleaned up.
+
+on:
+  workflow_dispatch: # manual run: lint every skill in the repo
+  pull_request:
+    paths:
+      - "**/SKILL.md"
+      - "**/references/**"
+      - "scripts/lint-skill-structure.mjs"
+      - ".github/workflows/lint-skills.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint changed skills
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find changed skills
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            git ls-files '*SKILL.md' | xargs -n1 dirname | sort -u > "$RUNNER_TEMP/changed-skills.txt"
+            echo "any=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Map every changed file to its nearest ancestor directory holding a SKILL.md.
+          git diff --name-only --diff-filter=ACMR \
+            "${{ github.event.pull_request.base.sha }}" \
+            "${{ github.event.pull_request.head.sha }}" |
+          while read -r f; do
+            d=$(dirname "$f")
+            while [ "$d" != "." ] && [ ! -f "$d/SKILL.md" ]; do d=$(dirname "$d"); done
+            [ -f "$d/SKILL.md" ] && echo "$d"
+          done | sort -u > "$RUNNER_TEMP/changed-skills.txt"
+          if [ -s "$RUNNER_TEMP/changed-skills.txt" ]; then echo "any=true" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/setup-node@v4
+        if: steps.changed.outputs.any == 'true'
+        with:
+          node-version: 24
+
+      - name: Structure checks (nesting, TOC, paths)
+        if: steps.changed.outputs.any == 'true'
+        continue-on-error: true
+        run: xargs node scripts/lint-skill-structure.mjs < "$RUNNER_TEMP/changed-skills.txt"
+
+      - name: Run claudelint
+        if: steps.changed.outputs.any == 'true'
+        continue-on-error: true
+        run: |
+          # claudelint only discovers skills under <cwd>/skills or <cwd>/.claude/skills,
+          # so stage each changed skill in a temp workspace and map paths back.
+          npm install --no-save --no-package-lock claude-code-lint@0.10.0
+          rc=0
+          while read -r d; do
+            ws=$(mktemp -d)
+            mkdir -p "$ws/.claude/skills"
+            cp -R "$d" "$ws/.claude/skills/"
+            out=$(npx claudelint validate-skills --cwd "$ws" 2>&1) || rc=1
+            echo "$out" | sed "s#\.claude/skills/$(basename "$d")/#$d/#"
+          done < "$RUNNER_TEMP/changed-skills.txt"
+          exit $rc
