@@ -7,8 +7,8 @@ name: Lint Skills
 #   2. claudelint: name/description rules, body length, broken file references,
 #      XML tags, secrets, ...
 # Complements validate-skill-spec.yml, which checks the SKILL.md spec.
-# Non-blocking for now: existing skills have findings (see PR).
-# Remove `continue-on-error` once they are cleaned up.
+# Advisory by design: findings are reported but never fail the check
+# (`continue-on-error` on each lint step). Do not add it as a required check.
 
 on:
   workflow_dispatch: # manual run: lint every skill in the repo
