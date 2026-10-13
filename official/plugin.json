@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "qlik-cloud-skills",
+  "description": "Skills for building, administering, and optimizing on Qlik Cloud — platform workflows and best practices built and maintained by Qlik staff.",
+  "version": "1.0.0",
+  "author": {
+    "name": "QlikTech International AB",
+    "url": "https://github.com/qlik-oss/agentic-skills/official"
+  },
+  "keywords": [
+    "qlik",
+    "qlik answers",
+    "qlik app",
+    "automation",
+    "qtcp",
+    "data-pipeline",
+    "replication",
+    "data-integration"
+  ]
+}
