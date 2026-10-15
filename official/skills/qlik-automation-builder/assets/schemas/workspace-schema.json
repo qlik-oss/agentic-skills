@@ -309,7 +309,7 @@
       }
     },
     "StartBlock": {
-      "description": "Starts the automation and sets how it is triggered. `run_mode` is always the first input, and is one of `manual`, `scheduled` or `triggered`. Which mode a request calls for, and which further inputs that mode obliges the block to carry, is decided by the skill's Run modes section and the matching `references/run-mode-*.md`; this definition only pins the shapes. Every workspace has exactly one. Default block name: Start.",
+      "description": "Starts the automation and sets how it is triggered. `run_mode` is always the first input, and is one of `manual`, `scheduled`, `triggered` or `webhook`. Which mode a request calls for, and which further inputs that mode obliges the block to carry, is decided by the skill's Run modes section and the matching `references/run-mode-*.md`; this definition only pins the shapes. Every workspace has exactly one. Default block name: Start - except on a webhook StartBlock, which the editor renames after its event on import (see `references/run-mode-webhook.md`).",
       "allOf": [{"$ref": "#/$defs/BlockBase"}],
       "required": ["type"],
       "properties": {
@@ -338,13 +338,25 @@
                 "contains": {"required": ["id"], "properties": {"id": {"const": "async"}}},
                 "$comment": "A triggered StartBlock is either sync or async, never neither - the editor always emits the input, so require it."
               }
+            },
+            {
+              "if": {
+                "prefixItems": [{"required": ["value"], "properties": {"value": {"const": "webhook"}}}]
+              },
+              "then": {
+                "allOf": [
+                  {"contains": {"required": ["id"], "properties": {"id": {"const": "datasourcetype_guid"}}}},
+                  {"contains": {"required": ["id"], "properties": {"id": {"const": "webhook_event_guid"}}}}
+                ],
+                "$comment": "A webhook StartBlock names the connector and the event it listens to; without both the editor has no event to subscribe to."
+              }
             }
           ]
         }
       }
     },
     "StartBlockInput": {
-      "description": "A StartBlock input after the leading `run_mode`: `async` (`yes`/`no`, required on a triggered StartBlock) or `test_payload` (a JSON string, never an object). Which of them a given mode needs, and what to put in them, is in the mode's `references/run-mode-*.md`; this only pins their shapes.",
+      "description": "A StartBlock input after the leading `run_mode`: `async` (`yes`/`no`, required on a triggered StartBlock), `test_payload` (a JSON string, never an object), or - on a webhook StartBlock - `datasourcetype_guid` / `webhook_event_guid` (select, both required) and one `webhook_param_<param id>` per event param. Which of them a given mode needs, and what to put in them, is in the mode's `references/run-mode-*.md`; this only pins their shapes.",
       "allOf": [{"$ref": "#/$defs/InputCommon"}],
       "if": {"required": ["id"], "properties": {"id": {"const": "async"}}},
       "then": {
@@ -353,7 +365,11 @@
       },
       "else": {
         "if": {"required": ["id"], "properties": {"id": {"const": "test_payload"}}},
-        "then": {"properties": {"type": {"const": "json"}, "value": {"type": ["string", "null"]}}}
+        "then": {"properties": {"type": {"const": "json"}, "value": {"type": ["string", "null"]}}},
+        "else": {
+          "if": {"required": ["id"], "properties": {"id": {"enum": ["datasourcetype_guid", "webhook_event_guid"]}}},
+          "then": {"required": ["value"], "properties": {"type": {"const": "select"}, "value": {"type": "string", "minLength": 1}}}
+        }
       }
     },
     "EndpointBlock": {
