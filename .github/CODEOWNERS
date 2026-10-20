@@ -2,4 +2,5 @@
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 *                                   @qlik-oss/agentic-skills-maintainers
 /official/                          @qlik-oss/agentic-skills-maintainers @qlik-oss/agentic-skills-official-maintainers
+/data-pipelines/                    @qlik-oss/agentic-skills-maintainers @qlik-oss/agentic-skills-official-maintainers
 /community/                         @qlik-oss/agentic-skills-maintainers @qlik-oss/agentic-skills-official-maintainers @qlik-oss/agentic-skills-community-maintainers

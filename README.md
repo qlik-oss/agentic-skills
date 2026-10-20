@@ -22,6 +22,10 @@ agentic-skills/
 │   ├── skills/
 │   │   └── README.md
 │   └── .claude-plugin/plugin.json
+├── data-pipelines/                  # Qlik-owned QTCP data pipeline/replication skills
+│   ├── skills/
+│   │   └── README.md
+│   └── .claude-plugin/plugin.json
 ├── community/                       # Customer and partner contributions
 │   ├── skills/
 │   │   └── README.md
@@ -47,13 +51,17 @@ agentic-skills/
 
 Skills owned and maintained by Qlik staff, reviewed by the official maintainers team before merging. These are the generic way to work with Qlik Cloud through an AI agent.
 
+### Data pipelines folder
+
+Skills owned and maintained by Qlik staff for building and managing QTCP (Qlik Talend Cloud Platform) data pipeline and replication projects, packaged as a separate installable plugin.
+
 ### Community folder
 
 Skills and Claude plugins contributed by Qlik customers, partners, and the developer community. Community skills are reviewed for fit and quality, and the repository includes validation checks for SKILL.md structure and Claude plugin manifests. Security validation and runtime verification remain host-specific and should be completed in the consuming environment if required.
 
 ### Plugins
 
-This repository includes Claude plugin manifests and marketplace metadata for packaging the skills in each tier (`official/`, `community/`) into a Claude Code installable unit. The plugin format can bundle agents, hooks, slash commands, and MCP server configuration alongside skills, but the underlying skill content is still defined by the Agent Skills files themselves and should be verified in the consuming host runtime.
+This repository includes Claude plugin manifests and marketplace metadata for packaging the skills in each tier (`official/`, `data-pipelines/`, `community/`) into a Claude Code installable unit. The plugin format can bundle agents, hooks, slash commands, and MCP server configuration alongside skills, but the underlying skill content is still defined by the Agent Skills files themselves and should be verified in the consuming host runtime.
 
 ---
 
@@ -88,6 +96,7 @@ This repository includes Claude marketplace metadata for plugin-style installati
 
 ```
 /plugin install qlik-cloud-skills@qlik-cloud-skills
+/plugin install qlik-data-pipelines-skills@qlik-cloud-skills
 /plugin install qlik-cloud-community-skills@qlik-cloud-skills
 ```
 
@@ -95,7 +104,7 @@ This repository includes Claude marketplace metadata for plugin-style installati
 
 ## Available skills
 
-See [`official/skills/`](./official/skills/) for the current list of official skills, and [`community/skills/`](./community/skills/) for community contributions.
+See [`official/skills/`](./official/skills/) for the current list of official skills, [`data-pipelines/skills/`](./data-pipelines/skills/) for QTCP data pipeline and replication skills, and [`community/skills/`](./community/skills/) for community contributions.
 
 ---
 

@@ -13,6 +13,7 @@ const SEMVER_RE = /^\d+\.\d+\.\d+$/;
 
 const TIERS = [
   { label: "official", skillsDir: join(ROOT, "official", "skills") },
+  { label: "data-pipelines", skillsDir: join(ROOT, "data-pipelines", "skills") },
   { label: "community", skillsDir: join(ROOT, "community", "skills") },
 ];
 

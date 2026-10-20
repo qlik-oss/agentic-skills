@@ -43,6 +43,7 @@ This repository contains four top-level areas:
 | Type | Location | Purpose |
 |---|---|---|
 | **Official skills** | `official/skills/` | Qlik-owned SKILL.md packages maintained by Qlik engineering |
+| **Data pipelines skills** | `data-pipelines/skills/` | Qlik-owned SKILL.md packages for QTCP data pipeline and replication projects, maintained by Qlik engineering |
 | **Community skills** | `community/skills/` | Community-contributed SKILL.md packages reviewed before merge |
 | **Specification docs** | `spec/` | Repository guidance for the Agent Skills format used here |
 | **Templates** | `template/skill/` | Starter files contributors can copy when creating a new skill |
@@ -58,6 +59,8 @@ Skills in this repository are organized into two trust tiers that determine how 
 ### `official/`
 Skills owned and maintained by Qlik engineering teams, the standard, versioned way to work with Qlik Cloud through an AI agent. Changes require a PR review from a `@qlik-oss/agentic-skills-official-maintainers` team member and pass all automated validation checks.
 
+`data-pipelines/` follows the same tier and review rules as `official/` — it is packaged as a separate plugin because it targets QTCP (Qlik Talend Cloud Platform) data pipeline and replication workflows rather than general Qlik Cloud usage.
+
 ### `community/`
 Skills contributed by Qlik customers, partners, or the broader developer community. These are opt-in at the tenant level and carry a **Community** badge in the UI. They should pass the repo's validation checks and a basic quality review before merging, but do not require Qlik engineering sign-off. Host-specific security review and runtime verification remain the responsibility of the consumer environment when relevant.
 
@@ -67,7 +70,7 @@ Skills contributed by Qlik customers, partners, or the broader developer communi
 
 ## Before you start
 
-1. **Check for an existing skill.** Search `official/skills/` and `community/skills/` before creating a new one — you may be able to extend an existing skill rather than duplicate it.
+1. **Check for an existing skill.** Search `official/skills/`, `data-pipelines/skills/`, and `community/skills/` before creating a new one — you may be able to extend an existing skill rather than duplicate it.
 
 2. **Open an issue first for large contributions.** If you're planning a skill that introduces new patterns, new schema fields, or a new category, open a GitHub issue to discuss the approach before writing code. This saves everyone time.
 
@@ -91,6 +94,10 @@ Skills contributed by Qlik customers, partners, or the broader developer communi
 agentic-skills/
 ├── official/
 │   ├── skills/                      # Qlik-owned skills
+│   │   └── README.md
+│   └── .claude-plugin/plugin.json
+├── data-pipelines/
+│   ├── skills/                      # Qlik-owned QTCP data pipeline/replication skills
 │   │   └── README.md
 │   └── .claude-plugin/plugin.json
 ├── community/
@@ -255,7 +262,7 @@ Official skills require a Qlik engineering team member as the PR author or revie
 
 Before opening a PR, confirm:
 
-- [ ] Skill lives in the correct tier (`official/skills/` or `community/skills/`)
+- [ ] Skill lives in the correct tier (`official/skills/`, `data-pipelines/skills/`, or `community/skills/`)
 - [ ] `name` in frontmatter matches the folder name exactly
 - [ ] `description` includes concrete trigger phrases
 - [ ] `SKILL.md` is under 500 lines

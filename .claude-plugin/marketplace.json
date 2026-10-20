@@ -12,6 +12,11 @@
       "source": "./official/"
     },
     {
+      "name": "qlik-data-pipelines-skills",
+      "description": "Skills for building and managing QTCP (Qlik Talend Cloud Platform) data pipeline and replication projects — project scaffolding, source selection, transformations, scheduling, and binding management. Built and maintained by Qlik staff.",
+      "source": "./data-pipelines/"
+    },
+    {
       "name": "qlik-cloud-community-skills",
       "description": "Community-contributed skills for Qlik Cloud — integration recipes, industry-specific workflows, and team conventions from partners and customers. Reviewed by community maintainers before publishing.",
       "source": "./community/"

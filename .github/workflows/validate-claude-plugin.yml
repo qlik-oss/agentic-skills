@@ -8,6 +8,7 @@ on:
     paths:
       - ".claude-plugin/**"
       - "official/.claude-plugin/**"
+      - "data-pipelines/.claude-plugin/**"
       - "community/.claude-plugin/**"
       - "scripts/validate-claude-plugin.mjs"
       - "scripts/lib/**"
@@ -18,6 +19,7 @@ on:
     paths:
       - ".claude-plugin/**"
       - "official/.claude-plugin/**"
+      - "data-pipelines/.claude-plugin/**"
       - "community/.claude-plugin/**"
       - "scripts/validate-claude-plugin.mjs"
       - "scripts/lib/**"
