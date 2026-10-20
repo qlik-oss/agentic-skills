@@ -1,17 +1,9 @@
 {
-  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "qlik-data-pipelines-skills",
   "description": "Skills for building and managing QTCP (Qlik Talend Cloud Platform) data pipeline and replication projects — project scaffolding, source selection, transformations, scheduling, and binding management.",
   "version": "1.0.0",
   "author": {
     "name": "QlikTech International AB",
-    "url": "https://github.com/qlik-oss/agentic-skills/data-pipelines"
-  },
-  "keywords": [
-    "qlik",
-    "qtcp",
-    "data-pipeline",
-    "replication",
-    "data-integration"
-  ]
+    "url": "https://github.com/qlik-oss/agentic-skills"
+  }
 }
