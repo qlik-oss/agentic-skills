@@ -29,7 +29,6 @@ Inputs, in this order:
 2. `{"id": "datasourcetype_guid", "type": "select", "value": "<connector id>"}`
 3. `{"id": "webhook_event_guid", "type": "select", "value": "<event id>"}`
 4. one input per `params[]` entry, in the order returned, with id `webhook_param_<param id>`
-5. `{"id": "test_payload", "type": "json", "value": "<exampleOutput serialized to a JSON string>"}`
 
 Every input also carries `"structure": {}`.
 
