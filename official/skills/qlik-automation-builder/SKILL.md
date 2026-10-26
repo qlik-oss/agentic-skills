@@ -3,10 +3,10 @@ name: qlik-automation-builder
 description: >
   Build automations for Qlik Automate. Translate natural-language requests into automation workspace JSON and, when requested, create, update, or delete automations using the automation management tools exposed through qlik-mcp.
 license: Apache-2.0
-allowed-tools: qlik_skill_view qlik_search qlik_create_automation qlik_update_automation qlik_delete_automation qlik_get_automation_by_id qlik_list_automation_connectors qlik_get_automation_connector qlik_get_automation_connector_webhook_configuration qlik_list_automation_connections bash
+allowed-tools: qlik_skill_view qlik_search qlik_create_automation qlik_update_automation qlik_delete_automation qlik_get_automation_by_id qlik_list_automation_connectors qlik_get_automation_connector qlik_list_automation_connections bash
 metadata:
   author: yeshQ
-  version: 0.3.0
+  version: 0.3.1
   tags:
   - qlik
   - analytics
@@ -21,7 +21,7 @@ Build automation `workspace` JSON, then create, update, or delete automations vi
 
 When the platform the automation needs to reach has no dedicated connector, or the resolved connector does not expose the needed block, do **not** stop — fall back to the generic connectors or the built-in `CallUrlBlock` as long as the platform has an HTTP API. See `references/generic-connectors.md`. Stop and tell the user the skill cannot help only when even that fallback cannot express the request (no HTTP API, or an auth flow the generic connectors do not support).
 
-Four run modes are supported — `manual`, `triggered`, `scheduled` and `webhook`. Pick the one the request implies, then follow [Run modes](#run-modes).
+Three run modes are supported — `manual`, `triggered` and `scheduled`. Pick the one the request implies, then follow [Run modes](#run-modes).
 
 ## Workflow
 
@@ -35,8 +35,7 @@ Four run modes are supported — `manual`, `triggered`, `scheduled` and `webhook
 
    Both arrays carry the same fields — `id`, `name`, `description`, `role`, `objectType`, `exampleOutput`, and `inputs[]` (per-input `id`, `name`, `fieldType`, `optional`, `description`, `options`; `blocks[]` inputs also carry `exampleValue`, snippet inputs do not). Pick a candidate by searching both arrays by `name` and `role`, then read that entry's `inputs`. On import the editor rebuilds each input list from connector metadata and pairs values by `id`, so emit every `id` exactly as returned — one missing or misspelled lands as an empty input.
 3. For external connector blocks (any block that carries a `datasource` setting — QCS-native blocks don't), resolve the connection: call `qlik_list_automation_connections` with `filter='connectorId eq "<connector-guid>"'`, once per distinct connector. Exactly one match → bind its `id` as the block's `datasource` value; warn when it reports `isConnected: false` (runs will fail at the service until the user reconnects it). Several matches → ask the user which to bind. None → leave `value: null` and record in `Assumptions` that the user must create and bind a connection before execution. For cloud-storage file blocks there is no `datasourcetype_guid` — their `datasourcetype` is an adapter name — so first get the connector guid with `qlik_list_automation_connectors` using `filter='name eq "<adapter name>"'` (the adapter name is the connector's catalog name), then resolve the connection as above. The create/update API stores `datasource` verbatim — a null is never auto-bound on import, so an unbound block stays unbound.
-4. If the automation should start from a connector event (run mode `webhook`), fetch that connector's events with `qlik_get_automation_connector_webhook_configuration(connectorId=<connector-guid>)` — only for a connector whose list entry reports `hasWebhooks: true`. Each event carries its `params[]` and, for some connectors, `allowedFilters[]` (filter `path`s and the `allowedValues` each accepts) that decide what the event's `filter` param may contain. Build the StartBlock from that response as `references/run-mode-webhook.md` describes.
-5. If no connector or block fits, don't stop — see `references/generic-connectors.md`.
+4. If no connector or block fits, don't stop — see `references/generic-connectors.md`.
 
 ### 2. Build workspace JSON
 
@@ -77,19 +76,18 @@ Keep the lookup that narrow — an unscoped, higher-limit search pulls unrelated
 | `manual` | someone presses Run in the editor or the hub | nothing — `run_mode` is the StartBlock's only input |
 | `triggered` | an outside caller starts it — an Answers assistant action, `qlik_start_automation_run`, a sheet button, the run URL | `references/run-mode-triggered.md` |
 | `scheduled` | a recurrence stored on the automation fires | `references/run-mode-scheduled.md` |
-| `webhook` | a connector publishes an event — an app reload finishing, a push to a repository, a run failing | `references/run-mode-webhook.md` |
 
-Read the mode out of the request rather than asking: "every morning at 6" is `scheduled`, "so an agent / Answers / a sheet button can run it" is `triggered`, "when <something> happens in <system>" is `webhook` if that connector publishes the event, and a flow a person kicks off by hand is `manual`. Ask only when the request genuinely fits two modes (e.g. "run it after the nightly reload" — a schedule timed after the reload, or a triggered automation the reload flow calls).
+Read the mode out of the request rather than asking: "every morning at 6" is `scheduled`, "so an agent / Answers / a sheet button can run it" is `triggered`, and a flow a person kicks off by hand is `manual`. Ask only when the request genuinely fits two modes (e.g. "run it after the nightly reload" — a schedule timed after the reload, or a triggered automation the reload flow calls).
 
-Read only the file for the mode you picked — it lists that mode's StartBlock inputs and carries the timeouts, schedule grammar or event-filter rules it needs, plus its extra `Preflight` items.
+Read only the file for the mode you picked — it lists that mode's StartBlock inputs and carries the timeouts or schedule grammar it needs, plus its extra `Preflight` items.
 
 ### The trigger payload is the StartBlock's output
 
-For `triggered` the StartBlock produces output: the payload the caller sent. For `webhook` it is the event payload the connector published, shaped like the event's `exampleOutput` — see `references/run-mode-webhook.md` for the StartBlock name the editor assigns, which is the name references must use. Downstream blocks read it like any other block — `{$.<startBlockName>.<field>}`. A StartBlock named `Start` receiving `{"appId": "..."}` is referenced as `{$.Start.appId}`.
+For `triggered` the StartBlock produces output: the payload the caller sent. Downstream blocks read it like any other block — `{$.<startBlockName>.<field>}`. A StartBlock named `Start` receiving `{"appId": "..."}` is referenced as `{$.Start.appId}`.
 
-A `manual` StartBlock produces **nothing**. The same workspace that returns the payload under `run_mode: "triggered"` resolves `{$.Start.appId}` to `null` under `run_mode: "manual"` — so if the flow consumes values from whoever started it, the mode is `triggered` or `webhook` (or the values come from a `FormBlock`, for interactive prompts). Never wire a payload reference off a `manual` StartBlock.
+A `manual` StartBlock produces **nothing**. The same workspace that returns the payload under `run_mode: "triggered"` resolves `{$.Start.appId}` to `null` under `run_mode: "manual"` — so if the flow consumes values from whoever started it, the mode is `triggered` (or the values come from a `FormBlock`, for interactive prompts). Never wire a payload reference off a `manual` StartBlock.
 
-`test_payload` is a **JSON string**, not a JSON object — `"value": "{\"appId\":\"abc\"}"`. Editor and test runs substitute it for the real payload, so give it the shape the real trigger delivers — for `webhook`, the event's `exampleOutput`. Live runs ignore it.
+`test_payload` is a **JSON string**, not a JSON object — `"value": "{\"appId\":\"abc\"}"`. Editor and test runs substitute it for the real payload, so give it the shape the real trigger delivers. Live runs ignore it.
 
 ## JSON output rules
 
