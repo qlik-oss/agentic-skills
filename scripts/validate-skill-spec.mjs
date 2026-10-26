@@ -5,32 +5,22 @@
 // separately in validate-claude-plugin.mjs.
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { load as loadYaml } from "js-yaml";
 import { ROOT, createReporter } from "./lib/reporter.mjs";
+import { SEMVER_RE, SKILL_TIERS, parseFrontmatter } from "./lib/skill-frontmatter.mjs";
 
 const NAME_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-const SEMVER_RE = /^\d+\.\d+\.\d+$/;
 
-const TIERS = [
-  { label: "official", skillsDir: join(ROOT, "official", "skills") },
-  { label: "community", skillsDir: join(ROOT, "community", "skills") },
-];
+const TIERS = SKILL_TIERS.map(({ label, dir }) => ({ label, skillsDir: join(ROOT, ...dir.split("/")) }));
 
 function validateSkillMd(skillMdPath, folderName, { fail, warn, relPath }, seenNamesInTier) {
   const label = relPath(skillMdPath);
   const raw = readFileSync(skillMdPath, "utf8");
 
-  const match = raw.match(/^(?:\uFEFF)?---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
-  if (!match) {
-    fail(`${label}: missing YAML frontmatter`);
-    return;
-  }
-
   let frontmatter;
   try {
-    frontmatter = loadYaml(match[1]) || {};
+    frontmatter = parseFrontmatter(raw);
   } catch (e) {
-    fail(`${label}: invalid YAML frontmatter — ${e.message}`);
+    fail(`${label}: ${e.message}`);
     return;
   }
 

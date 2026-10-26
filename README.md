@@ -31,7 +31,7 @@ agentic-skills/
 ├── template/skill                   # Starter template for new skills
 │   ├── README.md
 │   └── SKILL.md
-├── scripts/                          # CI validation scripts (SKILL.md spec + plugin manifest checks)
+├── scripts/                          # CI validation scripts (SKILL.md spec, version bump, plugin manifest checks)
 ├── .github/workflows/                # CI: runs the scripts above on relevant file changes
 ├── .claude-plugin/
 │   └── marketplace.json

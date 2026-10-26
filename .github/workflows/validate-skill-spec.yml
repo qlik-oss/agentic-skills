@@ -3,25 +3,33 @@ name: Validate skill spec
 # Shared across every destination — same SKILL.md format everywhere, so one
 # check, not one per destination. Claude's plugin packaging is validated
 # separately in validate-claude-plugin.yml.
+#
+# Triggers on any file inside a skill (not just SKILL.md) so the version-bump
+# check sees reference/asset-only changes. Not a required status check: a
+# failure shows on the PR but does not block merging, so reviewers enforce it.
 on:
   push:
     branches: [main]
     paths:
-      - "official/skills/**/SKILL.md"
-      - "community/skills/**/SKILL.md"
+      - "official/skills/**"
+      - "community/skills/**"
       - "spec/**"
       - "scripts/validate-skill-spec.mjs"
+      - "scripts/validate-skill-versions.mjs"
       - "scripts/lib/**"
+      - "scripts/test/**"
       - "package.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/validate-skill-spec.yml"
   pull_request:
     paths:
-      - "official/skills/**/SKILL.md"
-      - "community/skills/**/SKILL.md"
+      - "official/skills/**"
+      - "community/skills/**"
       - "spec/**"
       - "scripts/validate-skill-spec.mjs"
+      - "scripts/validate-skill-versions.mjs"
       - "scripts/lib/**"
+      - "scripts/test/**"
       - "package.json"
       - "pnpm-lock.yaml"
       - ".github/workflows/validate-skill-spec.yml"
@@ -34,6 +42,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # On pull_request this checks out GitHub's merge commit; depth 2 also
+          # fetches its first parent (the current base branch tip), which the
+          # version check compares against.
+          fetch-depth: 2
       - uses: pnpm/action-setup@v6.1.0
         with:
           version: 10.6.5
@@ -43,3 +56,7 @@ jobs:
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - run: pnpm run validate:spec
+      - run: pnpm run test:scripts
+      - name: Check changed skills bumped metadata.version
+        if: github.event_name == 'pull_request'
+        run: pnpm run validate:versions --base HEAD^1 --head HEAD
