@@ -6,7 +6,7 @@ Skills in this directory are owned and maintained by Qlik engineering. They repr
 
 ## Who maintains these skills
 
-Official skills are authored and reviewed by members of the `@qlik-oss/agentic-skills-official-maintainers` team. Every change goes through a pull request, passes automated spec validation in CI, is checked with a local security scan before merge, and requires at least one team member review before merging.
+Official skills are authored and reviewed by members of the `@qlik-oss/agentic-skills-official-maintainers` team. Every change goes through a pull request, passes the repo-local validation checks, and requires at least one team member review before merging.
 
 If you find a bug or want to suggest an improvement to an official skill, open a GitHub issue — do not open a PR directly against this directory unless you are a member of `@qlik-oss/agentic-skills-official-maintainers`.
 
@@ -86,4 +86,4 @@ For net-new workflows that don't fit an existing skill, consider contributing to
 
 ## Security
 
-Because official skills go through mandatory maintainer review and a security scan before merging, they carry a lower risk profile than community skills. If you discover a security vulnerability in an official skill, do not open a public issue. Email `security@qlik.com` with the subject line `[Agent Skills] Vulnerability Report` — see the [Security section of CONTRIBUTING.md](../../CONTRIBUTING.md#security) for full details.
+Run the SkillCheck security scan locally before opening a pull request; it is not wired into CI. If you discover a security vulnerability in an official skill, do not open a public issue. Email `security@qlik.com` with the subject line `[Agent Skills] Vulnerability Report` — see the [Security section of CONTRIBUTING.md](../../CONTRIBUTING.md#security) for full details.

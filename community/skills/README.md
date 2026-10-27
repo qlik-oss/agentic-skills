@@ -93,7 +93,7 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 
 ### 5. Open a pull request
 
-Fork the repo, add your skill under `/community/skills/`, and open a PR using the provided template. The automated CI pipeline runs spec validation; a maintainer runs a local security scan before merging. A maintainer will review within 5 business days.
+Fork the repo, add your skill under `/community/skills/`, and open a PR. CI runs the repo-local validation checks; run `skills-ref validate` and the SkillCheck security scan locally before opening a PR. A maintainer will review within 5 business days.
 
 ---
 
@@ -132,7 +132,7 @@ To nominate a skill, open a GitHub issue describing the skill and why it should 
 
 ## Security
 
-Community skills are not verified by Qlik in the same way official skills are. Before installing a community skill in a production environment:
+Community skills are contributed by external authors and reviewed before merging, but do not require Qlik engineering sign-off. Before installing a community skill in a production environment:
 
 - Review the full `SKILL.md` and any scripts in the skill directory
 - Check the skill's install history and open issues
