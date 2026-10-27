@@ -113,7 +113,7 @@ Skills that fail the automated checks or violate the security rules will not be 
 
 ## Versioning
 
-Community skills aren't held to the same versioning rigor as [official skills](../../official/skills/README.md#versioning), but you should still bump `metadata.version` using semver whenever you change a skill you maintain: patch for wording fixes, minor for new steps or reference files, major for breaking changes to behavior or trigger phrases. This isn't enforced by CI, but it helps users and maintainers tell what changed.
+Community skills aren't held to the same versioning rigor as [official skills](../../official/skills/README.md#versioning), but you must still bump `metadata.version` using semver whenever you change a skill you maintain: patch for wording fixes, minor for new steps or reference files, major for breaking changes to behavior or trigger phrases.
 
 ---
 
