@@ -2,7 +2,7 @@
 
 This is Qlik's public, open-source hub for AI agent skills - reusable skills and Claude plugins that extend AI agents with Qlik-specific expertise. Contributions from anyone are welcome; see [Contribute a skill](#contribute-a-skill) below.
 
-Skills here work across Anthropic (Claude & Claude Code), OpenAI (ChatGPT, Codex), GitHub Copilot, Cursor, Gemini CLI, and 20+ other tools that support the open [Agent Skills standard](https://agentskills.io).
+The skill content in this repository follows the open [Agent Skills standard](https://agentskills.io). It is intended to be portable across compatible runtimes, but runtime compatibility depends on the host tool's implementation and should be verified in each consuming agent.
 
 ---
 
@@ -10,7 +10,7 @@ Skills here work across Anthropic (Claude & Claude Code), OpenAI (ChatGPT, Codex
 
 Agent skills are folders of instructions, scripts, and reference material that an AI agent loads on demand. Instead of repeating context in every conversation, you package your expertise once and let the agent discover and apply it automatically.
 
-Think of a skill as an onboarding guide for a new hire - it tells the agent what to do, when to do it, and how to do it correctly for your specific environment. The [SKILL.md format](https://agentskills.io/specification) is an open standard, so a skill you write here works the same way in every compatible tool.
+Think of a skill as an onboarding guide for a new hire - it tells the agent what to do, when to do it, and how to do it correctly for your specific environment. The [SKILL.md format](https://agentskills.io/specification) is an open standard, but each agent runtime still decides how it discovers, loads, and executes those skills.
 
 ---
 
@@ -49,33 +49,25 @@ Skills owned and maintained by Qlik staff, reviewed by the official maintainers 
 
 ### Community folder
 
-Skills and Claude plugins contributed by Qlik customers, partners, and the developer community. Every community skill passes automated security scanning and a quality review before being merged.
+Skills and Claude plugins contributed by Qlik customers, partners, and the developer community. Community skills are reviewed for fit and quality, and the repository includes validation checks for SKILL.md structure and Claude plugin manifests. Security validation and runtime verification remain host-specific and should be completed in the consuming environment if required.
 
 ### Plugins
 
-Claude Code plugins that package the skills in each tier (`official/`, `community/`) into a single installable unit through Claude's plugin marketplace. The plugin format supports bundling agents, hooks, slash commands, and MCP server configuration alongside skills, but the underlying skills themselves remain cross-platform regardless of how a given plugin is packaged.
+This repository includes Claude plugin manifests and marketplace metadata for packaging the skills in each tier (`official/`, `community/`) into a Claude Code installable unit. The plugin format can bundle agents, hooks, slash commands, and MCP server configuration alongside skills, but the underlying skill content is still defined by the Agent Skills files themselves and should be verified in the consuming host runtime.
 
 ---
 
 ## Install skills
 
-Skills are installed using the [`npx skills` CLI](https://skills.sh) — no setup required.
+This repository is a source package for Agent Skills content. Hosts that support the standard can install the skills by copying or linking the skill folders into the relevant discovery path, or by using a host-specific install flow such as the `npx skills` CLI or a Claude plugin marketplace command.
 
 ```bash
-# Browse and install everything from this repo
+# Example installation patterns for compatible hosts
 npx skills add qlik-oss/agentic-skills
-
-# Install a specific skill
 npx skills add qlik-oss/agentic-skills --skill <skill-name>
-
-# Install to a specific agent
-npx skills add qlik-oss/agentic-skills --skill <skill-name> -a claude-code
-
-# Install to all detected agents at once
-npx skills add qlik-oss/agentic-skills --agent '*' --skill <skill-name>
 ```
 
-The CLI automatically detects which AI tools you have installed and places skill files in the correct directory for each one.
+The exact install path depends on the consuming agent or plugin system. Confirm the host-specific installation steps for the runtime you plan to use.
 
 ### Manual installation
 
@@ -92,7 +84,7 @@ If you prefer to install manually, clone or copy the skill folder into your agen
 
 ### Claude Code plugin marketplace
 
-Claude Code users can also install via the plugin system, which packages each tier's skills into a single installable plugin:
+This repository includes Claude marketplace metadata for plugin-style installation. The expected installation flow is host-specific to Claude Code and should be validated in that tool's environment:
 
 ```
 /plugin install qlik-cloud-skills@qlik-cloud-skills
@@ -109,21 +101,37 @@ See [`official/skills/`](./official/skills/) for the current list of official sk
 
 ## Compatibility
 
-This repository follows the open [Agent Skills specification](https://agentskills.io). Skills work across all compatible tools — no per-tool configuration needed.
+This repository follows the open [Agent Skills specification](https://agentskills.io). The repo is designed for tools that support that standard, but compatibility should be checked per host runtime and per agent installation.
 
-| Tool | Supported |
+| Tool / runtime | Status |
 |---|---|
-| Claude Code (Anthropic) | ✓ |
-| OpenAI Codex | ✓ |
-| GitHub Copilot / VS Code | ✓ |
-| Cursor | ✓ |
-| Gemini CLI | ✓ |
-| JetBrains Junie | ✓ |
-| Goose (Block) | ✓ |
-| OpenCode | ✓ |
-| Amp | ✓ |
+| Claude Code (Anthropic) | Targeted and validated at the skill-spec manifest layer |
+| OpenAI Codex | Intended to be compatible with Agent Skills-compatible runtimes |
+| GitHub Copilot / VS Code | Intended to be compatible with Agent Skills-compatible runtimes |
+| Cursor | Intended to be compatible with Agent Skills-compatible runtimes |
+| Gemini CLI | Intended to be compatible with Agent Skills-compatible runtimes |
+| JetBrains Junie | Intended to be compatible with Agent Skills-compatible runtimes |
+| Goose (Block) | Intended to be compatible with Agent Skills-compatible runtimes |
+| OpenCode | Intended to be compatible with Agent Skills-compatible runtimes |
+| Amp | Intended to be compatible with Agent Skills-compatible runtimes |
 
 ---
+
+## Security and trust model
+
+Skills execute instructions and may call tools, read files, or invoke scripts in the host environment. Treat every contribution as a security-sensitive change.
+
+Before accepting or merging a change, confirm that it does not:
+
+- hardcode secrets, tokens, API keys, or personal credentials
+- request broad tool access when a narrower `allowed-tools` policy would suffice
+- introduce outbound network calls or remote fetches without explicit need and review
+- instruct the agent to ignore its safety constraints or hidden system boundaries
+- embed sensitive user data, tenant identifiers, or internal host details in examples or docs
+
+Use the least privilege principle. If a skill needs shell access, file access, or external calls, document why and keep the scope narrow.
+
+When a change affects runtime behavior, verify it in the consuming host environment. The repository validates structure and metadata locally, but it does not automatically prove that a specific agent runtime or plugin installation path works for every user.
 
 ## Contribute a skill
 

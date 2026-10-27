@@ -1,6 +1,6 @@
 # Contributing to Qlik Agent Skills
 
-Thank you for contributing to the Qlik Agent Skills repository. This repo is the central source of truth for skills and Claude plugins that extend Qlik's AI agents, and through the open [Agent Skills standard](https://agentskills.io), they work across Claude Code, OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI, and 20+ other tools.
+Thank you for contributing to the Qlik Agent Skills repository. This repo is the central source of truth for skills and Claude plugins that extend Qlik's AI agents. The content follows the open [Agent Skills standard](https://agentskills.io) and is designed for Agent Skills-compatible runtimes; each host tool should still verify installation and behavior in its own environment.
 
 ---
 
@@ -59,7 +59,7 @@ Skills in this repository are organized into two trust tiers that determine how 
 Skills owned and maintained by Qlik engineering teams, the standard, versioned way to work with Qlik Cloud through an AI agent. Changes require a PR review from a `@qlik-oss/agentic-skills-official-maintainers` team member and pass all automated validation checks.
 
 ### `community/`
-Skills contributed by Qlik customers, partners, or the broader developer community. These are opt-in at the tenant level and carry a **Community** badge in the UI. They must pass automated security scanning and a basic quality review before merging, but do not require Qlik engineering sign-off.
+Skills contributed by Qlik customers, partners, or the broader developer community. These are opt-in at the tenant level and carry a **Community** badge in the UI. They should pass the repo's validation checks and a basic quality review before merging, but do not require Qlik engineering sign-off. Host-specific security review and runtime verification remain the responsibility of the consumer environment when relevant.
 
 > **Note for enterprise users:** Tenant administrators control which community skills are available to their users. No community skill is silently enabled.
 
@@ -208,6 +208,14 @@ Reference them in `SKILL.md` by path:
 Run `scripts/validate-app.sh` to check the app structure before analysis.
 ```
 
+**Security checklist for scripts:**
+
+- do not embed secrets, tokens, credentials, or personal account identifiers
+- prefer local validation and static checks over remote fetches
+- avoid network calls unless the purpose is explicit, necessary, and reviewed
+- keep file access narrow and document why the script needs it
+- prefer `allowed-tools` entries that are as restrictive as possible
+
 ### Validate before submitting
 
 Use the official validator to catch spec violations before opening a PR:
@@ -235,8 +243,8 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 1. Fork the repository.
 2. Create your skill under `community/skills/your-skill-name/`.
 3. Validate it locally (see above).
-4. Open a pull request describing the skill, what it does, and when it should activate - there's no PR template yet, so cover this in the description.
-5. CI runs the spec check automatically (see [Automated checks](#automated-checks-all-prs)). Run `skills-ref validate` and the SkillCheck security scan locally — not wired into CI yet.
+4. Open a pull request describing the skill, what it does, when it should activate, and why it is needed.
+5. CI runs the repo-local validation automatically (see [Automated checks](#automated-checks-all-prs)). Run the repo-local checks and any relevant host-specific verification before asking for review.
 6. A maintainer will review within 5 business days.
 
 ### For official skills

@@ -1,14 +1,5 @@
 # CODEOWNERS - Qlik Agentic Skills
-# Rules are evaluated top-to-bottom; the last matching rule wins.
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
-
-*                                   @qlik-oss/agentic-skills-official-maintainers
-
-/official/                          @qlik-oss/agentic-skills-official-maintainers
-/community/                         @qlik-oss/agentic-skills-official-maintainers @qlik-oss/agentic-skills-community-maintainers
-/scripts/                           @qlik-oss/agentic-skills-official-maintainers
-/.github/                           @qlik-oss/agentic-skills-official-maintainers
-
-/LICENSE                            @qlik-oss/agentic-skills-official-maintainers
-/CONTRIBUTING.md                    @qlik-oss/agentic-skills-official-maintainers
-/README.md                          @qlik-oss/agentic-skills-official-maintainers
+*                                   @qlik-oss/agentic-skills-maintainers
+/official/                          @qlik-oss/agentic-skills-maintainers @qlik-oss/agentic-skills-official-maintainers
+/community/                         @qlik-oss/agentic-skills-maintainers @qlik-oss/agentic-skills-official-maintainers @qlik-oss/agentic-skills-community-maintainers

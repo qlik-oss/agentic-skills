@@ -93,7 +93,7 @@ uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-re
 
 ### 5. Open a pull request
 
-Fork the repo, add your skill under `/community/skills/`, and open a PR. CI runs the repo-local validation checks; run `skills-ref validate` and the SkillCheck security scan locally before opening a PR. A maintainer will review within 5 business days.
+Fork the repo, add your skill under `/community/skills/`, and open a PR using the provided template. CI runs the repo-local validation checks for the skill and plugin manifests; run `skills-ref validate` and the SkillCheck security scan locally before opening a PR. A maintainer will review within 5 business days.
 
 ---
 
