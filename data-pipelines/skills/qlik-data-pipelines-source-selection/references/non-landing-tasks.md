@@ -7,6 +7,19 @@ Non-landing tasks read from an upstream task, not directly from a data source co
 **Prompting:**
 - Ask: "Which task should this read from?" (list available tasks from `qtcp_tasks/`).
   - **Landing source restriction:** only `STORAGE` tasks may read from landing task types (`LANDING`, `LAKE_LANDING`, `STREAMING_LAKE_LANDING`, `REPLICATION`, `REPLICATE_LANDING`). All other non-landing task types cannot — do not present landing tasks as source options for them.
+  - ⚠️ **One landing task per STORAGE task (MUST):** A `STORAGE` task may be linked
+  to only **one** upstream landing-type task (`LANDING`, `LAKE_LANDING`,
+  `STREAMING_LAKE_LANDING`, `REPLICATION`, `REPLICATE_LANDING`) — never more than
+  one, even across multiple `explicitlySelected`/`includePatterns` entries.
+  - Before adding a source from a landing task, read the target `STORAGE` task's
+    current `sourceSelection.yaml` and collect the distinct `sourceTask` values
+    from `explicitlySelected[]` and `includePatterns[]`.
+  - If the new source's `sourceTask` refers to a **different** landing task than
+    the one(s) already present → ❌ **do not add it.** Inform the user: "This
+    STORAGE task is already linked to `<existing-landing-task>` — a STORAGE task
+    can only be linked to one landing task." Ask whether they want to:
+    1. Replace the existing landing source with the new one, or
+    2. Choose a different, non-landing upstream task instead.
 - Ask: "Which tables/datasets from that task do you want to include?"
 
 ## Writing `sourceSelection.yaml`
