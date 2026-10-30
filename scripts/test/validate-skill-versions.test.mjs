@@ -196,6 +196,42 @@ test("a skill moved between tiers keeps its version history", (t) => {
   assert.deepEqual(repo.check(base).errors, []);
 });
 
+test("a tier move with a large rewrite still needs a bump", (t) => {
+  const repo = makeRepo(t);
+  const base = seed(repo);
+  repo.git("mv", A, "official/skills/skill-a");
+  // Rewrite enough that git reports delete + add instead of a rename.
+  repo.skill("official/skills/skill-a", "0.9.0", "Completely different content.\n".repeat(20));
+  repo.commit("promote and rewrite");
+  assert.match(repo.git("diff", "--name-status", "-M", base, "HEAD"), /^D\t/m);
+  const { errors } = repo.check(base);
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /^official\/skills\/skill-a \(moved from community\/skills\/skill-a\):/);
+  assert.match(errors[0], /base 1\.0\.0, head 0\.9\.0/);
+
+  repo.skill("official/skills/skill-a", "1.1.0", "Completely different content.\n".repeat(20));
+  repo.commit("bump");
+  assert.deepEqual(repo.check(base).errors, []);
+});
+
+test("a skill with the same name in another tier is not a move while the original remains", (t) => {
+  const repo = makeRepo(t);
+  const base = seed(repo);
+  repo.skill("official/skills/skill-a", "0.1.0");
+  repo.commit("add same-named skill in another tier");
+  assert.deepEqual(repo.check(base), { errors: [], warnings: [], checked: [] });
+});
+
+test("an unstaged tier move with a rewrite is caught in working-tree mode", (t) => {
+  const repo = makeRepo(t);
+  const base = seed(repo);
+  repo.remove(A);
+  repo.skill("official/skills/skill-a", "0.9.0", "Completely different content.\n".repeat(20));
+  const { errors } = checkSkillVersions({ cwd: repo.cwd, base, head: null });
+  assert.equal(errors.length, 1);
+  assert.match(errors[0], /\(moved from community\/skills\/skill-a\)/);
+});
+
 test("a renamed skill is a new skill", (t) => {
   const repo = makeRepo(t);
   const base = seed(repo);

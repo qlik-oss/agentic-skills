@@ -120,6 +120,23 @@ function listFiles(files) {
   return more > 0 ? `${shown}, … and ${more} more` : shown;
 }
 
+// A skill moved between tiers under the same name (e.g. community -> official)
+// keeps its version history. Rather than rely on git's similarity-based rename
+// detection, which reports a move plus a large SKILL.md rewrite as delete + add,
+// look for the same-named skill in another tier at the base revision that no
+// longer exists at the head revision.
+function findMovedFrom(cwd, baseRev, headRev, dir) {
+  const name = basename(dir);
+  for (const { dir: tierDir } of SKILL_TIERS) {
+    const candidate = `${tierDir}/${name}`;
+    if (candidate === dir) continue;
+    if (readSkillMd(cwd, baseRev, candidate) !== null && readSkillMd(cwd, headRev, candidate) === null) {
+      return candidate;
+    }
+  }
+  return null;
+}
+
 /**
  * Compares skill versions between two revisions of the repo at `cwd`.
  * `head` may be null to compare against the working tree.
@@ -132,32 +149,14 @@ export function checkSkillVersions({ cwd, base, head = null }) {
   const skills = new Map();
   const touch = (path) => {
     const dir = skillDirOf(path);
-    if (!dir) return null;
-    if (!skills.has(dir)) skills.set(dir, { files: new Set(), renamedFrom: null });
+    if (!dir) return;
+    if (!skills.has(dir)) skills.set(dir, { files: new Set() });
     skills.get(dir).files.add(path.slice(dir.length + 1));
-    return dir;
   };
 
   for (const entry of changedEntries(cwd, baseRev, headRev)) {
-    if (entry.status !== "R") {
-      touch(entry.path);
-      continue;
-    }
-    const fromDir = touch(entry.from);
-    const toDir = touch(entry.path);
-    // A skill moved between tiers (same name, e.g. community -> official) keeps
-    // its version history. Git's similarity-based rename detection can also pair
-    // unrelated skills, so require the folder name (= skill name) to match.
-    if (
-      fromDir &&
-      toDir &&
-      fromDir !== toDir &&
-      entry.from === `${fromDir}/SKILL.md` &&
-      entry.path === `${toDir}/SKILL.md` &&
-      basename(fromDir) === basename(toDir)
-    ) {
-      skills.get(toDir).renamedFrom = fromDir;
-    }
+    touch(entry.path);
+    if (entry.status === "R") touch(entry.from);
   }
 
   const errors = [];
@@ -165,16 +164,19 @@ export function checkSkillVersions({ cwd, base, head = null }) {
   const checked = [];
 
   for (const dir of [...skills.keys()].sort()) {
-    const { files, renamedFrom } = skills.get(dir);
+    const { files } = skills.get(dir);
 
     const headRaw = readSkillMd(cwd, headRev, dir);
     if (headRaw === null) continue; // deleted skill, or not a skill folder
 
     let baseDir = dir;
     let baseRaw = readSkillMd(cwd, baseRev, dir);
-    if (baseRaw === null && renamedFrom) {
-      baseDir = renamedFrom;
-      baseRaw = readSkillMd(cwd, baseRev, renamedFrom);
+    if (baseRaw === null) {
+      const movedFrom = findMovedFrom(cwd, baseRev, headRev, dir);
+      if (movedFrom) {
+        baseDir = movedFrom;
+        baseRaw = readSkillMd(cwd, baseRev, movedFrom);
+      }
     }
     if (baseRaw === null) continue; // new skill: nothing to compare against
 
