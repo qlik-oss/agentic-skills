@@ -86,7 +86,7 @@ const hasDep = (...names) => names.some((n) => declared.has(n));
 const srcRoot = existsSync(join(projectDir, "src")) ? join(projectDir, "src") : projectDir;
 const FAIL_PREFIXES = ["host.", "qlik.", "backendApi.", "ctx.selectValues", "dom.$element", "export.call", "variable.setContent", "variable.getContent"];
 const LUI_CLASS_CONTEXT = /\bclass(?:Name|List)?\b|\b(?:add|remove|toggle|has)Class\b|setAttribute\s*\(\s*['"]class|<[a-z][^>]*\bclass\s*=|\.lui-|querySelector/;
-const REVIEW_AS_WARN = new Set(["host.dom-query", "host.jquery-global-selector", "host.external-url", "host.enigma-session", "host.app-model", "app.sheetlist", "dom.html-injection", "code.eval", "storage.local", "cdn.google-charts", "host.relative-fetch", "host.lui-string"]);
+const REVIEW_AS_WARN = new Set(["host.dom-query", "host.jquery-global-selector", "host.external-url", "host.enigma-session", "host.app-model", "app.sheetlist", "dom.html-injection", "code.eval", "storage.local", "cdn.google-charts", "host.relative-fetch", "api.qlik-rest", "api.host-config-literal", "host.lui-string"]);
 let scanned = 0;
 for (const f of walk(srcRoot, { skipDirs: new Set([...SKIP_DIRS, "test", "tests", "__tests__"]) })) {
   if (kindOf(f.rel) === "css") for (const m of stripCssComments(readText(f.abs)).matchAll(/\.(lui-[\w-]+)/g)) ownClasses.add(m[1]);

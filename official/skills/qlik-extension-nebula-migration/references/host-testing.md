@@ -29,7 +29,8 @@ API-created objects get no initial properties. Set `qInfo.qType` and `visualizat
 3. **Interaction.** Click a selectable element and watch the selection bar and toolbar. Edit a setting. Hidden-in-analysis controls should appear in edit mode.
 4. **Blocked requests.** A request to an origin the tenant has not allowed fails silently in the UI. Add `document.addEventListener('securitypolicyviolation', e => console.log(e.effectiveDirective, e.blockedURI))` before the object loads (`external-resources.md`).
 5. **Console.** Read errors and attribute them before blaming the extension. The `jquery` warning is the host's own (`host-isolation.md`). A `show` callback that throws on `undefined` data means the test object lacks properties.
-6. **Not covered:** export, snapshots, stories, and an object saved by the *original* extension. They stay on the user's checklist.
+6. **Service calls.** If the extension uses `@qlik/api`, the Network tab shows its requests going to the tenant's own `/api/v1/...` and succeeding for the signed-in user. Calls that change something (reload, automation run) are tenant changes: trigger them only with the user's approval. A nebula.js mashup needs its own test with a host config (`service-calls.md`).
+7. **Not covered:** export, snapshots, stories, and an object saved by the *original* extension. They stay on the user's checklist.
 
 ## Browser automation notes
 

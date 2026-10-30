@@ -36,6 +36,8 @@ References:
 - Extension API reference: https://qlik.dev/apis/javascript/extension/
 - Capability API reference: https://qlik.dev/apis/javascript/capability/
 - Engine (QIX) methods: https://qlik.dev/apis/json-rpc/qix/doc/ , https://qlik.dev/apis/json-rpc/qix/genericobject/
+- `@qlik/api` (REST and auth for Qlik Cloud; host config, `setDefaultHostConfig`): https://qlik.dev/toolkits/qlik-api/ , https://github.com/qlik-oss/qlik-api-ts/blob/main/docs/authentication.md
+- REST API reference (services, endpoints): https://qlik.dev/apis/rest/
 
 Deployment:
 
@@ -86,6 +88,7 @@ Do not copy these into a report as current. Re-check them at the source before r
 | Deprecation of jQuery and underscore for extensions | `api-mapping.md`, `jquery-to-dom.md` | Extension guidelines page |
 | Valid `.qext` icon names | `check-package.mjs` | QEXT file page |
 | Minimum client-managed version for nebula extensions | `host-differences.md` | Release notes of the target version |
+| `@qlik/api` version, function names, behavior without a host config, and the need for `nebula build --inlineDynamic` | `service-calls.md`, `packaging-and-deploy.md` | `@qlik/api` typings and docs; rebuild a project that imports it |
 | Observed Qlik Cloud behavior: sheet panel without a Data section, `useInteractionState().edit`, the console `jquery` warning, `useEmbed`, what CSP blocks, `extension patch` setting `supernova` | `properties-and-data.md`, `app-and-navigation.md`, `host-isolation.md`, `external-resources.md`, `compatibility-and-rename.md` | repeat the checks in `host-testing.md` |
 | Behavior of third-party packages named in the docs (DOMPurify options, d3 modular packages, jsdom, ESLint 8 flags) | `styling-and-assets.md`, `testing-without-sense.md`, `host-isolation.md` | each package's own documentation |
 
@@ -95,6 +98,10 @@ Do not copy these into a report as current. Re-check them at the source before r
 - qlik-oss/nebula.js-examples: `simple-chart` (legacy and nebula versions side by side), `chart-custom-prop`, `react-table-chart`.
 - Real capability to nebula migrations in qlik-oss (both archived): sn-network-chart (commit `955d954`, "feat: add conversion to nebula"; PR 27) and sn-word-cloud (commit `c5aee38`, "feat: convert to nebula"). Both kept property names and the data path, moved definition `defaultValue`s into initial properties, and first ran the old paint code through a small adapter.
 - sn-org-chart: `onTakeSnapshot`, `ext.migrate`, paging with `getHyperCubeData`. sn-action-button and sn-treemap: guarded use of `anything.sense`.
+- `@nebula.js/sn-action-button` 2.6.0 as published on npm: bundles `@qlik/api`, forwards `galaxy.hostConfig` with `auth.setDefaultHostConfig` (which the browser build passes to the page's shared runtime), and its extension bundle's only AMD dependency is `@nebula.js/stardust`. Its bundle keeps one `fetch` with a CSRF header for the automation `actions/execute` endpoint, which `@qlik/api` does not cover.
+- nebula.js stardust API spec: `hostConfig` on `Configuration` (`embed(app, { hostConfig })`) and on `Galaxy`; `nebula build` options `--inlineDynamic` and `--codeSplit`.
+- `@qlik/api` 2.20.0 source (browser build): REST calls and `auth.*` are handed to the Qlik runtime (`window.QlikMain`, shared on the page through `window.__qlikMainPrivateResolvers`); a host config with a `host` makes it load `https://<host>/qlik-embed/main.js`; with neither, a call waits indefinitely.
+- Observed with stardust 7.8.0, `@qlik/api` 2.20.0 and the built extension bundle in jsdom (October 2026; the runtime was a stub, so this shows the wiring, not a tenant): with a runtime on the page the call went through it with no host config; `embed(app, { hostConfig })` reached the chart as `galaxy.hostConfig`, and a per-call `{ hostConfig }` reached the runtime's `invokeFetch`; without a runtime or host config the call never settled, even with `timeoutMs`.
 
 ## Observed by running the tools (E)
 

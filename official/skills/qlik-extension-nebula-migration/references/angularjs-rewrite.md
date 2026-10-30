@@ -30,6 +30,7 @@ qlik.dev: AngularJS 1.8 long-term support ended on 2021-12-12 (qlik.dev) and hel
 | `$timeout`, `$interval` | `setTimeout`, `setInterval` inside `useEffect` with cleanup |
 | `$scope.$apply()` / `$digest` | Not needed |
 | `$q` | native `Promise` |
+| `$http` to a Qlik REST endpoint | The `@qlik/api` function for that service (`service-calls.md`) |
 | `qlik.table(this)` | No equivalent; build the table model yourself |
 | `ng-bind-html` / `$sce` | Do not render untrusted HTML. Build elements, or sanitize with a bundled library |
 | Custom property-panel component with `template`/`controller` | Built-in component or move the feature into the chart (`host-isolation.md`) |

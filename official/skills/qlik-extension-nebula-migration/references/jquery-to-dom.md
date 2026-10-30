@@ -52,7 +52,7 @@ Stage 1 may bundle jQuery (`npm install jquery@3`) so the old `paint` runs uncha
 | `$.proxy(fn, ctx)` | Arrow function, or `fn.bind(ctx)` |
 | `$.isArray` / `$.trim` / `$.inArray` | `Array.isArray` / `str.trim()` / `arr.includes` |
 | `$.Deferred()` / `$.when(...)` | `new Promise(...)` / `Promise.all([...])` |
-| `$.ajax` / `$.get` / `$.getJSON` | `fetch`. Extensions should not call host-relative URLs or external origins without a reason (`host.relative-fetch`, `host.external-url`) |
+| `$.ajax` / `$.get` / `$.getJSON` | A call to a Qlik Cloud service (`/api/v1/...`): the `@qlik/api` function (`service-calls.md`). Anything else: `fetch`; extensions should not call host-relative URLs or external origins without a reason (`host.relative-fetch`, `host.external-url`) |
 | `.fadeIn` / `.animate` / `.slideToggle` | CSS transitions on a class, or `el.animate(...)` (Web Animations API) |
 | `$(document).ready(fn)` | Not needed: `component()` already runs when the element exists |
 | `$(window).on('resize', fn)` | Not needed: the render hook reruns on size change (`useRect()`); remove the handler |

@@ -33,7 +33,7 @@ Ask for a migration in plain words, for example "migrate the extension in `~/ext
 
 ## Rules that always apply
 
-1. **No host-page APIs or frameworks.** The migrated extension uses only `@nebula.js/stardust` hooks, the `galaxy` argument, and npm packages it bundles itself. No `qlik` global or `define(['qlik'])`, no AngularJS (`template`, `controller`, `$scope`, `ng-*`), no `qvangular` or other internal modules, no host jQuery/underscore through `require`, no `.qv-*` or `lui-*` classes, no DOM or CSS outside the extension's own element. The only host objects allowed are `galaxy.anything.sense.theme` and `.navigation`, guarded so the extension still renders without them, plus a guarded fallback to `handler.app` in property-panel callbacks. Details and replacements: [`references/host-isolation.md`](references/host-isolation.md).
+1. **No host-page APIs or frameworks.** The migrated extension uses only `@nebula.js/stardust` hooks, the `galaxy` argument, and npm packages it bundles itself. No `qlik` global or `define(['qlik'])`, no AngularJS (`template`, `controller`, `$scope`, `ng-*`), no `qvangular` or other internal modules, no host jQuery/underscore through `require`, no `.qv-*` or `lui-*` classes, no DOM or CSS outside the extension's own element. The only host objects allowed are `galaxy.anything.sense.theme` and `.navigation`, guarded so the extension still renders without them, `galaxy.hostConfig` when present, plus a guarded fallback to `handler.app` in property-panel callbacks. Calls to Qlik Cloud services other than the engine (users, spaces, items, automations, reloads) go through a bundled `@qlik/api`, not hand-written requests: [`references/service-calls.md`](references/service-calls.md). Details and replacements: [`references/host-isolation.md`](references/host-isolation.md).
 2. **Side-by-side name first.** Build and install the new extension under the original id plus `-nebula` (derive it with [`scripts/nebula-id.mjs`](scripts/nebula-id.mjs); for example `WordCloud` becomes `word-cloud-nebula`) so old and new can be compared on the same tenant. The final step is to recommend renaming to the original name, so existing charts pick up the new code (silent drop-in), **unless** [`scripts/check-compat.mjs`](scripts/check-compat.mjs) shows property names, the data path or limits changed, or the drop-in otherwise cannot work. In that case keep the side-by-side name and say why. See [`references/compatibility-and-rename.md`](references/compatibility-and-rename.md).
 3. **Preserve behavior and saved data.** Keep every property name and path, `support` flags, data limits, and selection behavior (instant vs modal) unless the user asks for a change. Read a property that old saved objects lack the way the legacy code treated it (often its own default); any other default is a change. Every change goes in the report.
 4. **Report what ran.** Never write "compatible", "works" or "verified" for something you did not run in a host; write "no blocking difference found by static checks". Mark inferred mappings (tag `I` in [`references/api-mapping.md`](references/api-mapping.md)) as inferred. Limits, versions and statements about what Qlik Cloud supports are dated: where a reference gives one, confirm it on the linked Qlik page before relying on it ([`references/sources.md`](references/sources.md), "Facts that go stale").
@@ -63,7 +63,7 @@ Out of scope: extensions of another type (widgets, custom components, themes), m
 node <skill-dir>/scripts/inventory.mjs <legacy-dir>
 ```
 
-The script is a regex work list, not a parser: read the entry file(s) completely. Buckets: **direct** (has a mapping row), **rewrite** (redesign), **host** (must not survive), **review** (check context). Present a short plan: size of the work, what cannot be migrated, libraries to map to npm, decisions needed. Stop and ask (see "Stop and ask") before continuing when the inventory shows AngularJS templates ([`references/angularjs-rewrite.md`](references/angularjs-rewrite.md)), `qlik.table`, client-only `qlik.*` calls, QVisualization export calls, run-time CDN loading, or `getDrop*Options` and other members not in the public reference.
+The script is a regex work list, not a parser: read the entry file(s) completely. Buckets: **direct** (has a mapping row), **rewrite** (redesign), **host** (must not survive), **review** (check context). Present a short plan: size of the work, what cannot be migrated, libraries to map to npm, REST calls to move to `@qlik/api` (`host.relative-fetch`, `$.ajax`, `$http`, `qlik.callRepository`), decisions needed. Stop and ask (see "Stop and ask") before continuing when the inventory shows AngularJS templates ([`references/angularjs-rewrite.md`](references/angularjs-rewrite.md)), `qlik.table`, client-only `qlik.*` calls, QVisualization export calls, run-time CDN loading, or `getDrop*Options` and other members not in the public reference.
 
 ### 2. Scaffold
 
@@ -80,7 +80,7 @@ Then in the new project:
 - `src/meta.json`: `name` = `Nebula <original display name>` and a valid `icon`. Set the `.qext` description in `package.json` (`nebula sense` ignores a `description` in `meta.json`).
 - Third-party code keeps its licence as `LICENSE.txt` (a file without an extension is ignored by Qlik Cloud); the licences of bundled libraries go in it too. `nebula sense` does not copy it: see "Licence, preview, author" in [`references/packaging-and-deploy.md`](references/packaging-and-deploy.md).
 - Remove the scaffold leftovers ([`references/testing-without-sense.md`](references/testing-without-sense.md)), and set `author` deliberately.
-- Add the libraries the legacy code needs to `dependencies` (not `peerDependencies`, which are not bundled) at the major version the legacy code expects, except d3 v3, which becomes the modular `d3-*` packages ([`references/styling-and-assets.md`](references/styling-and-assets.md)).
+- Add the libraries the legacy code needs to `dependencies` (not `peerDependencies`, which are not bundled) at the major version the legacy code expects, except d3 v3, which becomes the modular `d3-*` packages ([`references/styling-and-assets.md`](references/styling-and-assets.md)). If the extension calls Qlik services, add `@qlik/api` too and set `"build": "nebula build --inlineDynamic"`; a plain `nebula build` fails on its dynamic imports ([`references/service-calls.md`](references/service-calls.md)).
 
 Layout and commands: [`references/packaging-and-deploy.md`](references/packaging-and-deploy.md).
 
@@ -117,6 +117,7 @@ Replace the shim and legacy names one area at a time using the references, then 
 | jQuery calls (`$element.find`, `.on`, `$.ajax`, ...) | [`references/jquery-to-dom.md`](references/jquery-to-dom.md) |
 | AngularJS `template`/`controller`/`$scope` | [`references/angularjs-rewrite.md`](references/angularjs-rewrite.md) |
 | CSS, LESS, `text!`/`css!`, d3/jQuery libraries, fonts, images | [`references/styling-and-assets.md`](references/styling-and-assets.md) |
+| REST calls to Qlik services (`fetch('/api/v1/...')`, `$.ajax`, `$http`, `callRepository`) | [`references/service-calls.md`](references/service-calls.md) |
 | CDN or other run-time external resources, CSP | [`references/external-resources.md`](references/external-resources.md) |
 | snapshots, export, "finished rendering" | [`references/snapshots-and-export.md`](references/snapshots-and-export.md) |
 | optional React renderer | [`references/react-renderer.md`](references/react-renderer.md) |
@@ -189,6 +190,7 @@ All in `references/`:
 - [react-renderer.md](references/react-renderer.md)
 - [report-template.md](references/report-template.md)
 - [selections-and-data.md](references/selections-and-data.md)
+- [service-calls.md](references/service-calls.md)
 - [snapshots-and-export.md](references/snapshots-and-export.md)
 - [sources.md](references/sources.md)
 - [styling-and-assets.md](references/styling-and-assets.md)

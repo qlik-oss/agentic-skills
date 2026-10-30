@@ -121,7 +121,8 @@ See `selections-and-data.md` for code.
 | `luiDialog`, `luiPopover`, `luiTooltip` | own dialog/overlay inside the element | I |
 | `qlik.config`, `app.model` | none; derive from the page URL or the raw Doc | I |
 | `qlik.resize()` | `useRect()` | I |
-| `qlik.openApp`, `callRepository`, `getExtensionList`, `getAppList`, `sessionApp`, `sessionAppFromApp`, `setOnError`, `getGlobal` | none (the Capability API page lists which are unsupported in Qlik Cloud; check it for the current list) | D |
+| `qlik.openApp`, `callRepository`, `getExtensionList`, `getAppList`, `sessionApp`, `sessionAppFromApp`, `setOnError`, `getGlobal` | none (the Capability API page lists which are unsupported in Qlik Cloud; check it for the current list). For the data behind `getAppList`, and for other Qlik Cloud services, call the REST API through a bundled `@qlik/api` (`service-calls.md`) | D |
+| `$.ajax` / `$http` / `fetch` to `/api/v1/...` | the matching `@qlik/api` function (`users.getMyUser()`, `spaces.getSpaces()`, `automations.*`, ...); Qlik Cloud (`service-calls.md`) | E |
 | QVisualization `exportData/exportImg/exportPdf` | none; documented as unsupported in Qlik Cloud (October 2026) | D |
 
 ## 6. Environment

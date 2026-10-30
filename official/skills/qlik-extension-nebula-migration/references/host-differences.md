@@ -10,6 +10,7 @@ Qlik documents nebula.js extensions for both products. This skill assumes a clie
 | AngularJS | The capability and extension APIs in Qlik Cloud do not expose several methods (`sessionApp`, `getGlobal`, `callRepository`, `getExtensionList`, `exportData/Img/Pdf`) | AngularJS support is provided by the platform for client-managed; irrelevant after migration, because this skill does not use it |
 | Download of extension archives | Tenant Admin or Analytics Admin only | Files live on the server |
 | `galaxy.anything.sense` | Present in the Sense client | Present in the Sense client |
+| Calls to platform services | REST APIs through a bundled `@qlik/api` (`service-calls.md`) | Repository service (`/qrs/...`); not covered by this skill, and `@qlik/api` is rarely needed here |
 | Dev tooling | `nebula serve` against a tenant | `nebula serve` against a local or remote engine; Dev Hub for legacy extensions |
 
 ## Test plan to hand to the user

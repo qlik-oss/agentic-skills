@@ -40,7 +40,7 @@ node <skill>/scripts/check-no-host-apis.mjs . --bundle <nebula-id>
 
 What `nebula sense` produces (observed): the `.qext` with `"type": "visualization"` and `"supernova": true`, plus a one-line AMD wrapper `define(['./dist/<name>'], (supernova) => supernova);`, plus the UMD bundle whose only AMD dependency is `@nebula.js/stardust`. With `--ext def.js` it also bundles an ext file and the wrapper merges it, overwriting any `ext` already on the chart. The "should be included in package.json 'files'" warnings are about npm publishing and can be ignored here.
 
-`nebula build` facts: rollup; UMD (used by `nebula sense`), ESM, SystemJS; `package.json` `main` sets the UMD path; **every `peerDependency` is treated as external and not bundled**, so libraries you want bundled (React, d3, jQuery) must be in `dependencies`. `--typescript`, `--sourcemap`, `--mode`, `--watch`, `build.replacementStrings` in `nebula.config.js`. `--legacy` was removed from `nebula sense` in 4.0.
+`nebula build` facts: rollup; UMD (used by `nebula sense`), ESM, SystemJS; `package.json` `main` sets the UMD path; **every `peerDependency` is treated as external and not bundled**, so libraries you want bundled (React, d3, jQuery, `@qlik/api`) must be in `dependencies`. `--inlineDynamic` puts dynamically imported modules into the single bundle; a dependency that uses `import()`, such as `@qlik/api`, needs it (`service-calls.md`). `--typescript`, `--sourcemap`, `--mode`, `--watch`, `build.replacementStrings` in `nebula.config.js`. `--legacy` was removed from `nebula sense` in 4.0.
 
 Zip the **folder** so the folder name is inside the zip:
 

@@ -59,7 +59,7 @@ Rebuilt versions that bundle FileSaver from npm and redraw the timeline in plain
 | Web font | Embed the glyphs you use as inline SVG or a `data:` URI (`styling-and-assets.md`), or bundle the font file |
 | Image or icon | Inline SVG, or a `data:` URI. `nebula build` has no image loader (its plugins are babel, postcss, json, node-resolve, commonjs and terser), so `import './logo.png'` fails: turn the file into a JS module once, `node -e "console.log('export default ' + JSON.stringify('data:image/png;base64,' + require('fs').readFileSync(process.argv[1]).toString('base64')))" logo.png > src/logo.js`, and import that. Base64 adds about a third, so shrink or compress first |
 | Image too large to inline (hundreds of KB or more) | Resize or compress first. If it really must stay large, Qlik's help page says to host it outside the archive and allow-list the origin: keep it out of the extension only then, and report the origin and `img-src` |
-| Data or API request (`fetch`, `$.ajax`, host-relative `/api/...`) | Prefer the engine (`useModel`, `useApp`). A call to another origin needs `connect-src`; a call to the tenant's own REST API is not available outside Sense (`host.relative-fetch`) |
+| Data or API request (`fetch`, `$.ajax`, host-relative `/api/...`) | Prefer the engine (`useModel`, `useApp`). A call to the tenant's own REST API goes through a bundled `@qlik/api` and needs no CSP entry (`service-calls.md`). A call to another origin needs `connect-src` |
 | A link the user clicks (`<a href="https://...">`, `window.open`) | No CSP entry needed: navigation is not a subresource request |
 
 Do not ask the admin for broad entries (`*`, a whole CDN domain) as a shortcut: a bundled copy needs none, and each entry is one origin.

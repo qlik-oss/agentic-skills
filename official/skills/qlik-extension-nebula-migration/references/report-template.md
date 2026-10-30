@@ -28,6 +28,7 @@ Repeat the table for the drop-in build (`--expect-name <original id>`) after the
 - Rewritten: <list, with the reason (for example AngularJS template)>
 - Dropped or unsupported: <list, with the reason>
 - Libraries now bundled: <name@version, ...> (previously provided by the host or a CDN: <...>)
+- Service calls through `@qlik/api` <version>: <function, why, read or change; or none>. Calls still made with `fetch` because `@qlik/api` has no function for them: <list or none>. Embedding in a nebula.js mashup needs `embed(app, { hostConfig })`: <yes / not applicable>
 - External origins needing a tenant CSP entry, with the directive for each (`script-src`, `style-src`, `font-src`, `img-src`, `connect-src`): <list or none>. Anything you could have bundled but did not: <reason>
 
 ## Drop-in decision
@@ -46,6 +47,7 @@ Qlik Cloud:
 - [ ] Chart saved by the old extension opens and behaves the same
 - [ ] Snapshot, story, data export; image/PDF/PPT export is unsupported for extensions in Qlik Cloud
 - [ ] CSP entries added for: <origins>
+- [ ] Service calls (`@qlik/api`) succeed for a normal user and degrade for a user without access
 Client-managed (<version>):
 - [ ] Same checklist, plus image/PDF/PPT export where the legacy chart supported it
 

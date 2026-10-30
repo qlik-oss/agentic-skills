@@ -20,7 +20,8 @@ Run it without `--allow-shim` before you hand the result over.
 | Host DOM: `document.querySelector('.qv-...')`, `$('.qv-panel-sheet')`, any element outside `useElement()` | Operate only inside the element you were given |
 | Host CSS classes: `.qv-*`, `lui-*` (Leonardo UI classes are provided by the Sense page), `!important` overrides | Ship your own namespaced CSS; read colors and fonts with `useTheme()` |
 | Global CSS: `<style>` in `document.head`, Bootstrap loaded globally | Scope styles to your element; see `styling-and-assets.md` |
-| A second engine connection (`enigma.create`, `new WebSocket`) | `useModel()` / `useApp()` |
+| A second engine connection (`enigma.create`, `new WebSocket`, `@qlik/api` `qix.openAppSession`) | `useModel()` / `useApp()` |
+| Hand-written requests to Qlik REST APIs (`fetch('/api/v1/...')`, `$.ajax`, `$http`), `qlik.callRepository` | A bundled `@qlik/api` (Qlik Cloud); see `service-calls.md` |
 | Loading scripts, styles or fonts from a CDN at run time | Install from npm and bundle; otherwise the tenant needs a CSP entry (`external-resources.md`) |
 | `useConstraints()` | `useInteractionState()` |
 
@@ -30,6 +31,7 @@ qlik.dev lists the same five anti-patterns (host DOM, global CSS, internal modul
 
 - `@nebula.js/stardust` hooks and the `galaxy` argument.
 - Any npm package listed in `package.json` `dependencies`, which `nebula build` bundles. `@nebula.js/stardust` is a `peerDependency` and is the only external.
+- A bundled `@qlik/api` for calls to Qlik Cloud services, using `galaxy.hostConfig` when the host provides one (`service-calls.md`). Never a copy assumed to be on the host page.
 - A bundled copy of jQuery, underscore or a UI framework. jQuery is allowed only as a declared dependency, never from the host, and it is discouraged: prefer native DOM.
 - **Guarded** use of `galaxy.anything.sense` (`theme`, `navigation`), which exists only inside Sense:
 

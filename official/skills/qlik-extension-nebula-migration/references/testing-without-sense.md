@@ -7,6 +7,7 @@ A jsdom smoke test runs the rendering code and catches exceptions, wrong DOM and
 - Keep drawing and interaction logic in plain modules (`src/render.js`, `src/engine.js`) that take `element`, `layout` and callbacks as arguments.
 - Keep `src/index.js` thin: it reads hooks and calls those modules.
 - Pass engine objects in (a fake `Doc`/`model`), so no module creates its own connection.
+- Pass `@qlik/api` functions in the same way (`src/services.js`), so a test can supply a stub and never reaches the network (`service-calls.md`).
 
 ## Node specifics the scaffold does not cover
 
@@ -23,7 +24,8 @@ A jsdom smoke test runs the rendering code and catches exceptions, wrong DOM and
 3. Click paths: the selection method is called with the right arguments, and nothing is selected when `useInteractionState` says interaction is off.
 4. Cleanup: session objects are destroyed, listeners removed.
 5. Empty data, huge data (paging cap), and untrusted text (`<img onerror=...>` must come out as text).
-6. Property panel: every `ref` is present, options functions return sane values with and without an app, and `show` callbacks tolerate the properties object lacking nested objects.
+6. Service calls (`@qlik/api`): success, empty result, rejection and timeout; in each failure case the chart still renders and says the data is unavailable.
+7. Property panel: every `ref` is present, options functions return sane values with and without an app, and `show` callbacks tolerate the properties object lacking nested objects.
 
 ## Scaffold clean-up
 
