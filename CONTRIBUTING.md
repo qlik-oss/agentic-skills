@@ -20,6 +20,7 @@ Thank you for contributing to the Qlik Agent Skills repository. This repo is the
     - [Spec constraints](#spec-constraints)
     - [Progressive disclosure](#progressive-disclosure)
     - [Scripts](#scripts)
+    - [Versioning](#versioning)
     - [Validate before submitting](#validate-before-submitting)
   - [Submitting a skill](#submitting-a-skill)
     - [For community skills](#for-community-skills)
@@ -103,7 +104,7 @@ agentic-skills/
 │   └── skill/                       # Starter template for new skills
 │       ├── README.md
 │       └── SKILL.md
-├── scripts/                         # CI validation scripts (SKILL.md spec + plugin manifest checks)
+├── scripts/                         # CI validation scripts (SKILL.md spec, version bump, plugin manifest checks)
 ├── .github/workflows/               # CI: runs the scripts above on relevant file changes
 ├── .claude-plugin/
 │   └── marketplace.json
@@ -216,6 +217,31 @@ Run `scripts/validate-app.sh` to check the app structure before analysis.
 - keep file access narrow and document why the script needs it
 - prefer `allowed-tools` entries that are as restrictive as possible
 
+### Versioning
+
+Every skill carries a semver `metadata.version`. When you change **any file** in an existing skill folder (`SKILL.md`, `references/`, `assets/`, `scripts/`, or anything else in it), bump that skill's version above the version on `main`:
+
+- Any increase is accepted. Pick patch, minor, or major to match the change; reviewers check the choice.
+- If a PR changes several skills, each one needs its own bump.
+- New skills (start at `1.0.0`, as in the template), fully deleted skills, and `template/` are exempt.
+- A skill moved between tiers under the same name keeps its version history, so it still needs a bump. A renamed skill counts as a new skill.
+
+**Rollbacks roll forward.** Revert the content, but give it a new, higher version — never reuse an older one. Consumers that already installed the bad version would not see a lower version as an update.
+
+| Step | Content | Version |
+|---|---|---|
+| Good release | A | `1.2.0` |
+| Bad change merged | B | `1.3.0` |
+| Rollback | A | `1.3.1` (not `1.2.0`) |
+
+GitHub's **Revert** button and `git revert` restore the old version too, so edit `metadata.version` in the revert PR before merging.
+
+Check locally (compares your working tree with the merge base of `origin/main`):
+
+```bash
+corepack pnpm run validate:versions
+```
+
 ### Validate before submitting
 
 Use the official validator to catch spec violations before opening a PR:
@@ -262,6 +288,7 @@ Before opening a PR, confirm:
 - [ ] `license` field is set (use `Apache-2.0` for community skills)
 - [ ] `metadata.author` is set to your GitHub username
 - [ ] `metadata.version` follows semver (`1.0.0`)
+- [ ] `metadata.version` is higher than on `main` for every existing skill you changed (see [Versioning](#versioning))
 - [ ] `skills-ref validate` passes with no errors
 - [ ] No hardcoded API keys, tokens, or credentials anywhere in the skill
 - [ ] No network calls to external URLs from scripts (community tier)
@@ -276,7 +303,10 @@ Before opening a PR, confirm:
 One CI check per destination, not one monolith:
 
 - **Frontmatter check** — [`validate-skill-spec.yml`](.github/workflows/validate-skill-spec.yml) validates every `SKILL.md` against the fields [`spec/README.md`](./spec/README.md) documents (name/description/license/metadata, naming, folder match, uniqueness). Same format across every destination, so one check covers all of them.
+- **Version bump check** — on pull requests, the same workflow runs `validate:versions`, which fails if an existing skill changed without a higher `metadata.version` (see [Versioning](#versioning)). It runs when any file in a skill folder changes, not just `SKILL.md`.
 - **Claude plugin check** — [`validate-claude-plugin.yml`](.github/workflows/validate-claude-plugin.yml) validates `.claude-plugin/marketplace.json` and each `plugin.json`. Claude-specific — it's the only destination with a plugin marketplace layer on top of `SKILL.md`, so it's a separate workflow, scoped to Claude-only files.
+
+These checks are not required status checks: a failure is shown on the PR but does not block merging, so reviewers treat a failing check as blocking.
 
 New destination has its own manifest format? Give it its own `validate-<destination>.mjs` + workflow, don't fold it into either of the above.
 
