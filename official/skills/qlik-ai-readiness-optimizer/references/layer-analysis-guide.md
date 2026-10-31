@@ -140,8 +140,6 @@ Master Items are how Qlik Answers selects the right metric. The description is t
 
 ⚠️ **Why grouping lives here instead of as its own layer**: MCP has no tool that reads or sets a Master Item's group assignment — not `qlik_list_measures`, not `qlik_list_dimensions`, not the create/update tools. An ungrouped Master Item is invisible to Qlik Answers (Key Rule #1), but that status can only be confirmed by the user in the Logical Model UI, never from MCP data. Treat it as sub-dimension **D** below: always ask, never score.
 
-Don't use `qlik_semantic_search_app` or `qlik_describe_app` as a proxy either: an ungrouped Master Item is returned by both exactly as a grouped one is. Appearing in a semantic search result does not mean Qlik Answers will surface the item.
-
 ### Special case: App has ZERO Master Items
 
 If `qlik_list_measures` and `qlik_list_dimensions` both return empty:
@@ -169,8 +167,6 @@ A rich description follows this pattern:
 [When to use vs. similar metrics]. Also known as: [synonyms/abbreviations]."
 ```
 
-💡 **Descriptions may be AI-generated, not authored.** Qlik's AI optimization can generate Master Item and field descriptions, and MCP returns them exactly like human-written ones — there is no reliable signal of which is which (`overrideDescription` in `qlik_semantic_search_app` is not one). Classify on the text as written, but don't present 🟢 Rich as "reviewed". If descriptions look uniformly generated, add a note asking the user to check them for business accuracy — for example, a description that states a fixed year ("for fiscal year 2013") where the expression uses a variable such as `$(vYTDYear)`.
-
 **C. Expression complexity:** Read the actual expression and classify:
 
 - **🟢 Simple** (score 1.0): Direct aggregations (`Sum(Sales)`), basic arithmetic, a single variable reference
@@ -195,11 +191,6 @@ Qlik's documented Qlik Answers limitations: if a master measure's expression con
 Judge "alludes to" on meaning, not exact wording — the name/description doesn't need to quote the set expression, it needs to communicate the constraint. When it's genuinely ambiguous whether the metadata covers the logic, flag it and let the user decide.
 
 **D. Group assignment:** Not scored (see the ⚠️ callout above — MCP cannot read or set this). For each Master Item, ask the user to confirm it has a group in the Logical Model UI. Use this exact framing, don't imply MCP already checked it: *"Does '[Master Item name]' have a group assigned in the Logical Model? If not, Qlik Answers will never surface it, regardless of how good its description is."*
-
-⚠️ **"Default … group" is a placeholder, not a selection.** When a Master Item is created from the sheet's *Master items* panel, the *Logical model group* field shows "Default dimension group" (or "Default measure group"). No group is assigned unless the user opens the dropdown and picks one. The item then looks correct — *Visibility* still shows "visible" — but it is *Not in a group*, counted as **Excluded** on the *AI optimization → Overview* card, and never surfaced by Qlik Answers. So "yes, it's in the default group" is not a confirmation. Ask the user to check the actual group in *AI optimization → Fields and master items*:
-- **Group column** shows a group name (the default groups appear as names such as `__MasterLib_Dimensions` or `__MasterLib_Calendars`) → grouped
-- **Group column** shows *Not in a group* → ungrouped, whatever the Visibility toggle says
-- Quick check across the app: the *Excluded* count on the *Overview* card should be 0 for Master Items the user expects Answers to use
 
 ### Scoring rubric
 
@@ -405,7 +396,7 @@ ones that probably should be.
 
 ## Layer 5 — Synonyms / Vocabulary
 
-> ⚠️ **MCP Limitation**: The current MCP tooling **cannot read existing synonyms or vocabulary** from a Qlik app, the same kind of gap as group assignment in Layer 3. Some MCP server versions return a `synonyms` array on fields and Master Items (`qlik_get_fields`, `qlik_describe_app`, `qlik_list_measures`, `qlik_list_dimensions`, `qlik_semantic_search_app`), but it has been observed staying empty while the app's *Synonyms* tab has entries. An empty array is not evidence that the app has no synonyms — never use it to score coverage or to drop suggestions. Layer 5 is therefore **not scored** and is not included in the overall AI Readiness Score. It is always shown in the assessment report as an enhancement opportunity, never as a coverage percentage.
+> ⚠️ **MCP Limitation**: The current MCP tooling **cannot read existing synonyms or vocabulary** from a Qlik app — there is no tool that returns this data, the same kind of gap as group assignment in Layer 3. Layer 5 is therefore **not scored** and is not included in the overall AI Readiness Score. It is always shown in the assessment report as an enhancement opportunity, never as a coverage percentage.
 
 **Tools:** `qlik_list_measures`, `qlik_list_dimensions` — used only to source Master Item names for a *suggested* synonym file, not to check existing coverage.
 

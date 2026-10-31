@@ -18,11 +18,11 @@ MCP tool availability and reload requirements. Referenced from the main [SKILL.m
 | Edit existing Master Dimension | `qlik_update_dimension` | ✅ Available | ❌ No — live immediately |
 | Delete Master Measure | `qlik_delete_measure` | ✅ Available (this skill does not call it — see Key Rule #6) | ❌ No — live immediately |
 | Delete Master Dimension | `qlik_delete_dimension` | ✅ Available (this skill does not call it — see Key Rule #6) | ❌ No — live immediately |
-| Read Master Item group assignment | — | ❌ Not available — no tool returns this; not `qlik_list_measures`, not `qlik_list_dimensions`, and `qlik_semantic_search_app` returns ungrouped items the same as grouped ones | — |
+| Read Master Item group assignment | — | ❌ Not available — no tool returns this; not `qlik_list_measures`, not `qlik_list_dimensions` | — |
 | Set Master Item group assignment | — | ❌ Not available — not exposed on create or update tools; Logical Model UI only | — |
 | Retrieve variable definitions | — | ❌ Not available | — |
 | Update load script | — | ⚠️ In Preview | ✅ Yes — reload after editing |
-| Read existing synonyms/vocabulary | — | ❌ Not available — some tools return a `synonyms` array, but it has been observed empty while the app's Synonyms tab has entries; don't rely on it | — |
+| Read existing synonyms/vocabulary | — | ❌ Not available — no tool returns this | — |
 | Import synonyms/vocabulary | — | ❌ Not via MCP — done by bulk file upload in the Qlik Answers Vocabulary UI (supported; 6-column `.xlsx` format per implementation guide Layer 5) | ❌ No — live after UI save |
 | Set field visibility (hidden) | — | ⚠️ Via load script `%` prefix (manual) | ✅ Yes — reload after editing |
 | Find a Glossary by name | `qlik_search` (`resourceType: "glossary"`) | ✅ Available | — |
