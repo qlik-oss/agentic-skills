@@ -9,6 +9,7 @@ Run the repo-local validation checks before completion:
 ```bash
 corepack pnpm install --frozen-lockfile
 corepack pnpm run validate:spec
+corepack pnpm run validate:versions
 corepack pnpm run validate:claude
 ```
 

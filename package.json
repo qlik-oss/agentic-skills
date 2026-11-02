@@ -5,7 +5,9 @@
   "packageManager": "pnpm@10.6.5",
   "scripts": {
     "validate:spec": "node scripts/validate-skill-spec.mjs",
-    "validate:claude": "node scripts/validate-claude-plugin.mjs"
+    "validate:versions": "node scripts/validate-skill-versions.mjs",
+    "validate:claude": "node scripts/validate-claude-plugin.mjs",
+    "test:scripts": "node --test scripts/test/validate-skill-versions.test.mjs"
   },
   "devDependencies": {
     "js-yaml": "^5.5.0"
