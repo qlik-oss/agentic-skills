@@ -14,7 +14,7 @@ Engine data still comes from the hooks (`useModel`, `useApp`, `useGlobal`). Do n
 ## Set it up
 
 1. Add it to `dependencies` (not `peerDependencies`) so `nebula build` bundles it. With the user's approval: `npm install --save-exact @qlik/api@latest`. Any version that has the functions you call works; take the latest when you add it. Do not rely on a copy on the host page.
-2. Build with `--inlineDynamic`. `@qlik/api` loads parts of itself with dynamic `import()`, and a plain `nebula build` then fails with rollup's "when building multiple chunks, the "output.dir" option must be used" error. Set the script to `"build": "nebula build --inlineDynamic"` (observed with `@nebula.js/cli` 7.8.0 and `@qlik/api` 2.20.0, October 2026).
+2. Build with `--inlineDynamic`. `@qlik/api` loads parts of itself with dynamic `import()`, and a plain `nebula build` then fails with rollup's "when building multiple chunks, the "output.dir" option must be used" error. Set the script to `"build": "nebula build --inlineDynamic"` (observed with `@nebula.js/cli` 7.8.0 and `@qlik/api` 2.20.0, October 2026). The error text comes from rollup; the bundler is due to change in 8.0, so re-check the message and whether the flag is still needed after upgrading.
 3. Import from the package root, as Qlik's own action button does: `import { spaces } from '@qlik/api'`. Type-only imports from subpaths (`@qlik/api/qix`) are fine.
 
 With `spaces` the bundle was about 110 KB (minified); `check-package.mjs` and `check-no-host-apis.mjs --bundle` both pass, and the bundle's only AMD dependency is still `@nebula.js/stardust`.

@@ -88,6 +88,7 @@ Do not copy these into a report as current. Re-check them at the source before r
 | Deprecation of jQuery and underscore for extensions | `api-mapping.md`, `jquery-to-dom.md` | Extension guidelines page |
 | Valid `.qext` icon names | `check-package.mjs` | QEXT file page |
 | Minimum client-managed version for nebula extensions | `host-differences.md` | Release notes of the target version |
+| The bundler behind `nebula build` (rollup in 7.x; the maintainers plan to replace it in 8.0 with the same output) and anything that depends on it: rollup error text, CSS and font injection | `packaging-and-deploy.md`, `service-calls.md`, `styling-and-assets.md` | nebula.js releases on GitHub; rebuild the worked example |
 | `@qlik/api` version, function names, behavior without a host config, and the need for `nebula build --inlineDynamic` | `service-calls.md`, `packaging-and-deploy.md` | `@qlik/api` typings and docs; rebuild a project that imports it |
 | Observed Qlik Cloud behavior: sheet panel without a Data section, `useInteractionState().edit`, the console `jquery` warning, `useEmbed`, what CSP blocks, `extension patch` setting `supernova` | `properties-and-data.md`, `app-and-navigation.md`, `host-isolation.md`, `external-resources.md`, `compatibility-and-rename.md` | repeat the checks in `host-testing.md` |
 | Behavior of third-party packages named in the docs (DOMPurify options, d3 modular packages, jsdom, ESLint 8 flags) | `styling-and-assets.md`, `testing-without-sense.md`, `host-isolation.md` | each package's own documentation |
