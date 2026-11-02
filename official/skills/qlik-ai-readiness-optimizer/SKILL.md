@@ -17,7 +17,7 @@ description: >-
 license: Apache-2.0
 metadata:
   author: JoshQlikDesign
-  version: 2.0.2
+  version: 2.0.3
   tags:
     - qlik
     - ai-readiness
@@ -218,7 +218,7 @@ After completing each layer:
 - Note what required manual steps (and provide exact instructions)
 - Update the AI Readiness Score
 - Remind user about reload requirements for load script changes
-- If the change touched the Logical Model (e.g. grouping), tell the user Qlik Answers can take up to 24 hours to reindex — this is separate from the app-engine "live immediately" behavior, and testing in Answers right away may still show stale results even though the fix applied correctly
+- If the change touched the Logical Model (e.g. grouping), ask the user to run *AI optimization → Overview → Sync application* and confirm the *Excluded* count, then tell them Qlik Answers can still take up to 24 hours to reindex — this is separate from the app-engine "live immediately" behavior, and testing in Answers right away may still show stale results even though the fix applied correctly
 - Ask if user wants to continue to next layer
 
 See [references/mcp-capability-matrix.md](references/mcp-capability-matrix.md) for reload requirement details.
@@ -238,8 +238,8 @@ See [references/mcp-capability-matrix.md](references/mcp-capability-matrix.md) f
 9. **Load script changes require an app reload** — Master Item content changes (create/edit/delete, descriptions) via MCP are live immediately; group assignment is not — see Rule 12.
 10. **Only structured, named Master Items are indexed by Qlik Answers** — label expressions on Master Items, and content inside Packages, Hierarchies, Behaviors, Calendar Periods, Custom analysis, and Example questions are not indexed. On tenants enabled for the agentic Qlik Answers experience, those unindexed feature types are removed entirely, not just skipped — treat logic living in any of them as something that needs to be re-expressed as a real field or Master Item, not left in place. **Exception:** a Glossary Term explicitly linked to a Master Item *is* used by Qlik Answers (see Rules 14–16) — this exception is narrow and applies only to terms linked via glossary-aware Master Items, not to glossary content that stands alone with no Master Item link.
 11. **If two users get different answers to the same question, check section access first** — Qlik Answers automatically inherits and enforces existing section access / row-level security with no extra configuration, so differing permissions are a common, expected cause of differing answers. Don't assume a data-model defect until access parity is ruled out.
-12. **MCP cannot read or set a Master Item's group assignment** — no tool returns or accepts it, including at creation time. Never present a group/grouping score as if it were measured; always frame group status as something the user needs to confirm or fix manually in the Logical Model UI. This is why grouping is a checklist item inside Layer 3 rather than its own scored layer.
-13. **MCP cannot read or write synonyms/vocabulary at all** — Layer 5 is never scored. The only thing MCP enables here is generating a suggested synonym import file from Master Item names for the user to review, edit, and upload themselves via the Qlik Answers admin UI.
+12. **MCP cannot read or set a Master Item's group assignment** — no tool returns or accepts it, including at creation time. Never present a group/grouping score as if it were measured; always frame group status as something the user needs to confirm or fix manually in the Logical Model UI. This is why grouping is a checklist item inside Layer 3 rather than its own scored layer. Two traps: the "Default … group" text shown when creating a Master Item is a placeholder (the item stays *Not in a group* unless a group is explicitly picked), and appearing in `qlik_semantic_search_app` results is not evidence an item is grouped — see [references/layer-analysis-guide.md](references/layer-analysis-guide.md) Layer 3, D.
+13. **MCP cannot read or write synonyms/vocabulary at all** — Layer 5 is never scored. Some tools return a `synonyms` array, but it has been observed empty while the app has synonyms defined; never treat an empty array as "no synonyms". The only thing MCP enables here is generating a suggested synonym import file from Master Item names for the user to review, edit, and upload themselves via the Qlik Answers admin UI.
 14. **Always ask the Glossary question in Phase 1 — but never assume the answer** — before starting any analysis, ask whether Master Items are linked to Glossary Terms and, if so, the glossary name(s). Never skip the question, even on a direct "just run the assessment" request. Then: only run the Layer 3 / Layer 5 Glossary sub-layers if the user confirms linkage and a glossary export was retrieved. Never assume linkage, and never score these sub-layers as 0% or N/A when linkage wasn't confirmed — omit them from the report instead.
 15. **Glossary Term Abbreviations function as Synonyms automatically** — Qlik Answers uses a linked Glossary Term's Abbreviation as a synonym for the associated Master Item without any separate vocabulary import. Don't recommend an app-level Synonym that only duplicates an Abbreviation already defined on a linked term.
 16. **A Glossary Term that conflicts with its linked Master Item is flagged, not auto-resolved** — Qlik Answers resolves the two sources of metadata natively; this skill's job is only to flag genuinely conflicting name/description pairs (not stylistic differences) and prompt the user to review which side is out of date, per the Layer 3 optional sub-layer.
