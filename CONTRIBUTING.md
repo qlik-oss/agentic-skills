@@ -39,12 +39,13 @@ Thank you for contributing to the Qlik Agent Skills repository. This repo is the
 
 ## What lives here
 
-This repository contains four top-level areas:
+This repository contains five top-level areas:
 
 | Type | Location | Purpose |
 |---|---|---|
 | **Official skills** | `official/skills/` | Qlik-owned SKILL.md packages maintained by Qlik engineering |
 | **Community skills** | `community/skills/` | Community-contributed SKILL.md packages reviewed before merge |
+| **Qlik Answers skills** | `answers/skills/` | Skills that run inside Qlik Answers, uploaded to an app or assistant. Not bundled in any Claude plugin |
 | **Specification docs** | `spec/` | Repository guidance for the Agent Skills format used here |
 | **Templates** | `template/skill/` | Starter files contributors can copy when creating a new skill |
 
