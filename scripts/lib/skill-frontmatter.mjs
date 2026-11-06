@@ -6,6 +6,7 @@ export const SEMVER_RE = /^\d+\.\d+\.\d+$/;
 export const SKILL_TIERS = [
   { label: "official", dir: "official/skills" },
   { label: "community", dir: "community/skills" },
+  { label: "answers", dir: "answers/skills" },
 ];
 
 const FRONTMATTER_RE = /^(?:\uFEFF)?---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/;
