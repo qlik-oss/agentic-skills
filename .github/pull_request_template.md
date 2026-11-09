@@ -34,10 +34,13 @@ Run these before asking for review:
 ```bash
 corepack pnpm install --frozen-lockfile
 corepack pnpm run validate:spec
+corepack pnpm run validate:versions
 corepack pnpm run validate:claude
 ```
 
 ### Required for every skill change
+
+- [ ] Every existing skill changed in this PR has a higher `metadata.version` than on `main` (any file in the skill folder counts; rollbacks also bump)
 
 Run `skills-ref validate` for the skill you added or modified:
 
