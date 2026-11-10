@@ -25,6 +25,9 @@ on:
       - "pnpm-lock.yaml"
       - ".github/workflows/validate-claude-plugin.yml"
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
