@@ -25,7 +25,7 @@ corepack pnpm run validate:claude
 
 ## Skill versioning
 
-- Any change to a file inside an existing skill folder (`official/skills/<skill>/` or `community/skills/<skill>/`) must increase that skill's `metadata.version`. Patch, minor, and major bumps are all accepted.
+- Any change to a file inside an existing skill folder (`official/skills/<skill>/`, `community/skills/<skill>/` or `answers/skills/<skill>/`) must increase that skill's `metadata.version`. Patch, minor, and major bumps are all accepted.
 - Each changed skill needs its own bump; one PR can touch several skills.
 - New skills, fully deleted skills, and `template/` are exempt.
 - Rollbacks roll forward: revert the content, but set a version above the current one on `main`.
@@ -34,7 +34,7 @@ corepack pnpm run validate:claude
 
 The repo’s automated validation is intentionally scoped to the relevant repo paths.
 
-- Skill spec validation is defined in `.github/workflows/validate-skill-spec.yml`. It triggers on any file inside an official or community skill folder and, on pull requests, also runs the skill version-bump check.
+- Skill spec validation is defined in `.github/workflows/validate-skill-spec.yml`. It triggers on any file inside an official, community or answers skill folder and, on pull requests, also runs the skill version-bump check.
 - Claude plugin validation is defined in `.github/workflows/validate-claude-plugin.yml`
 
 These are not required status checks in branch protection: a failure is shown on the PR but does not block merging, so reviewers should treat a failing check as blocking.
