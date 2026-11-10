@@ -46,8 +46,8 @@ Qlik load script *looks* like SQL, which is exactly why SQL reflexes slip throug
 | `SELECT … FROM a, b` (multi-table FROM) | Invalid | One source per LOAD; combine via JOIN prefix or `CONCATENATE` |
 | `UNION` / `UNION ALL` | Invalid | `CONCATENATE (Target) LOAD …` (union all). For union-distinct, add `LOAD distinct` on a RESIDENT pass |
 | `CASE WHEN … THEN … END` | Invalid | `If(cond, then, else)`, nested; or `Pick(Match(…), …)` |
-| `COALESCE(a, b, c)` | Invalid | `Alt(a, b, c)` |
-| `ISNULL(x)` returning a value | `IsNull(x)` returns a boolean only | `Alt(x, default)` or `If(IsNull(x), default, x)` |
+| `COALESCE(a, b, c)` | Valid ✓ | `Coalesce(a, b, c)`. Not `Alt()` — it only picks numeric values, so on text it skips populated values |
+| `ISNULL(x)` returning a value | `IsNull(x)` returns a boolean only | `Coalesce(x, default)` or `If(IsNull(x), default, x)` |
 | `SUBSTRING(s, 2, 3)` | Invalid | `Mid(s, 2, 3)` |
 | `LEN(s)` / `LENGTH(s)` | `Len(s)` ✓ | — |
 | `GETDATE()` / `CURRENT_DATE` | Invalid | `Today()` / `Now()` |
@@ -79,7 +79,7 @@ Work through this list against the script you just wrote — most of these are i
 6. **Every aggregating LOAD has a `GROUP BY`** unless you genuinely want a single total row.
 7. **Every function used is one you can point to in the Qlik docs.** If not, replace it or flag with `// TODO: verify`.
 8. **Every non-file LOAD that could collide on field names carries `NoConcatenate`.**
-9. **Preceding LOAD stacks:** only the bottom statement has a source clause; only the top has the label and prefix; each intermediate ends with a bare `;`.
+9. **Preceding LOAD stacks:** only the bottom statement has a source clause; only the top has the label and prefix; each intermediate ends with a bare `;`. No `Join` (or `Crosstable` / `Intervalmatch`) prefix on the stack — materialise it, then join from `RESIDENT`.
 10. **Every temporary table is dropped**, and nothing is referenced after its `DROP`.
 11. **No `FirstSortedValue()`** without an explicit tiebreak, or a stated reason why ties cannot occur in that data. Ties return NULL silently.
 12. **Every `TRACE` contains only literal text and `$(v…)` expansions** — no function calls, no arithmetic. Anything computed is assigned with `LET` on the line above.

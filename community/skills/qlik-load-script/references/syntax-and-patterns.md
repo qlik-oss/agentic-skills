@@ -111,7 +111,8 @@ DROP TABLE Sales_Step1;
 Preceding LOAD rules:
 - Statements are written **top-down but execute bottom-up**. The bottom statement is the data source; each LOAD above consumes the output of the one below.
 - Only the **bottom** statement carries the source clause (`FROM`, `RESIDENT`, `INLINE`, `AUTOGENERATE`). Every LOAD above it has **no** source clause and ends with a bare `;` before the next LOAD.
-- Only the **top** statement gets the table label and any prefix (`NoConcatenate`, `CONCATENATE`, `LEFT JOIN`).
+- Only the **top** statement gets the table label and any prefix (`NoConcatenate`, `CONCATENATE`).
+- **`Join`, `Crosstable` and `Intervalmatch` cannot prefix a preceding-LOAD stack** — Qlik does not support them there. To join derived fields, build the stack into its own table first, then `LEFT JOIN (Target) LOAD … RESIDENT Derived;` and `DROP TABLE Derived;`.
 - An outer LOAD sees **only** the fields output by the LOAD directly beneath it — not the raw source fields the inner LOAD dropped, and not fields from any other table.
 - `GROUP BY` belongs on the statement that does the aggregating (usually the bottom one). You cannot aggregate and then reference the aggregate in the same LOAD — that is exactly the alias-scope rule again.
 
@@ -141,7 +142,8 @@ INNER JOIN (MainTable)
 LOAD * RESIDENT OtherTable;
 ```
 - **Automatic key detection:** Qlik joins on all fields that share the same name in both tables. There is no `ON` clause. Rename fields if you need to control the join key.
-- Join types: `JOIN` (inner), `LEFT JOIN`, `RIGHT JOIN`, `OUTER JOIN`.
+- Join types: `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `OUTER JOIN`. A bare `JOIN` with no type keyword is an **outer** join, not an inner join — always state the type.
+- A join prefix cannot sit on a preceding-LOAD stack (see the preceding LOAD rules in §2). Materialise the derived fields into a table first, then join from it with `RESIDENT`.
 
 ---
 
@@ -238,7 +240,7 @@ Note that the `WHERE` in the second form is a *row* filter on already-aggregated
 | **Conditional** | `If(condition, then, else)`, `Pick()`, `Match()`, `MixMatch()`, `WildMatch()` |
 | **String** | `Len()`, `Left()`, `Right()`, `Mid()`, `SubField()`, `Replace()`, `Upper()`, `Lower()`, `Trim()`, `PurgeChar()`, `KeepChar()`, `TextBetween()` |
 | **Date** | `Today()`, `Now()`, `Year()`, `Month()`, `Day()`, `WeekDay()`, `Week()`, `Date()`, `Date#()`, `Num()`, `Interval()`, `AddMonths()`, `YearStart()`, `MonthStart()` |
-| **Null/Missing** | `IsNull()`, `Null()`, `If(Len(Field)=0, ...)`, `Alt()` (SQL `COALESCE()` equivalent — returns the first non-null argument) |
+| **Null/Missing** | `IsNull()`, `Null()`, `If(Len(Field)=0, ...)`, `Coalesce()` (SQL `COALESCE()` equivalent — returns the first non-null argument, text or numeric), `Alt()` (**numeric only** — returns the first argument with a valid number representation, else the last; `Alt('Gold','Unknown')` returns `'Unknown'`) |
 | **Math** | `Ceil()`, `Floor()`, `Round()`, `Fabs()`, `Log()`, `Sqrt()`, `Mod()`, `Div()`, `RangeMin()`, `RangeMax()`, `RangeAvg()`, `RangeSum()` |
 | **Type** | `IsNum()`, `IsText()`, `Num()`, `Text()`, `Num#()`, `Date#()`, `Money#()` |
 | **Inter-record** | `Previous()`, `Peek()`, `FieldValue()`, `FieldValueCount()` |

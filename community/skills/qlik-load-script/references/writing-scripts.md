@@ -166,14 +166,15 @@ The table below is **illustrative, not exhaustive**. It shows the check applied 
 
 | pandas idiom | Qlik equivalent |
 |---|---|
-| `df.merge(other, on='k')` | `LEFT JOIN (T) LOAD …` — joins on **all** shared field names; rename to control the key |
+| `df.merge(other, on='k')` (default `how='inner'`) | `INNER JOIN (T) LOAD …` — joins on **all** shared field names; rename to control the key |
+| `df.merge(other, on='k', how='left')` | `LEFT JOIN (T) LOAD …` — keeps unmatched rows of `T`. Never a bare `JOIN`: that is an outer join |
 | `groupby().transform()` | `Window(agg, partition, sort_type, sort_expr, filter, start, end)` on a RESIDENT load |
 | `groupby().agg()` | `LOAD … GROUP BY` — every non-aggregated field must be listed |
 | `.shift(1)` | `Previous()` on an ordered load, or `Window(…, -1, -1)` |
 | `.cumsum()` | `RangeSum(Peek('Running'), Value)` on an ordered load, or a `Window()` running frame |
 | `round(x, 2)` | `Round(x, 0.01)` — the second argument is a step, not a decimal count |
 | `x % y` | `Mod(x, y)` |
-| `fillna(v)` | `Alt(x, v)` |
+| `fillna(v)` | `Coalesce(x, v)` — `Alt(x, v)` only substitutes correctly for numeric `x` |
 | `.query()` / `.assign()` chained on just-created columns | Alias scope — one derivation level per LOAD; split into preceding/RESIDENT steps |
 | in-place mutation, reassigning `df` | No mutation. Each step is a new table; drop the old one |
 | `drop_duplicates()` | `LOAD distinct …` on a RESIDENT pass |
