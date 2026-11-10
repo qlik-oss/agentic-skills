@@ -523,12 +523,16 @@ async function sheetsPdf(sheetIds) {
 }
 
 // Submit, poll, and download.
+// Matches the default meta.exportDeadline (10 minutes); raise both together.
+const EXPORT_TIMEOUT_MS = 10 * 60_000;
+
 /** @param {import("@qlik/api/reports").ReportRequest} request @param {string} filename */
 async function runReport(request, filename) {
   const { headers } = await reports.createReport(request);
   const reportId = headers.get("content-location")?.match(/reports\/([^/]+)\/status/)?.[1];
   if (!reportId) throw new Error("No report ID returned");
-  for (let i = 0; i < 60; i++) {
+  const deadline = Date.now() + EXPORT_TIMEOUT_MS;
+  while (Date.now() < deadline) {
     await sleep(2000);
     // noCache: @qlik/api caches GETs in the page, so a poll would see the first status forever.
     const { data: status } = await reports.getReportStatus(reportId, { noCache: true });
@@ -545,7 +549,7 @@ async function runReport(request, filename) {
     URL.revokeObjectURL(a.href);
     return;
   }
-  throw new Error("Export timed out");
+  throw new Error(`Export did not finish within ${EXPORT_TIMEOUT_MS / 60_000} minutes`);
 }
 
 /** @param {string} id @param {() => Promise<void>} run */
@@ -572,7 +576,8 @@ onClick("export-sheet", async () => runReport(await sheetPdf("<SHEET_ID>"), "she
   own size when `widthPx` and `heightPx` are left out.
 - **Limits:** the output file expires after an hour (`meta.outputTtl`), and a
   report fails after 10 minutes by default (`meta.exportDeadline`, ISO 8601,
-  up to 2 hours).
+  up to 2 hours). If you set `meta.exportDeadline`, set `EXPORT_TIMEOUT_MS`
+  to match so the client doesn't stop polling before the server does.
 - Don't use the engine's `exportData`: it isn't supported in Qlik Cloud.
 - Preview mode's context menu already offers download with no code; build
   buttons when the host app needs its own UI, a fixed format, or several
