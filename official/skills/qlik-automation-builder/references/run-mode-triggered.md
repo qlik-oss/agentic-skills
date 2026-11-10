@@ -1,0 +1,25 @@
+# Run mode: `triggered`
+
+Read this once the mode is `triggered`. `SKILL.md` under **Run modes** decides the mode and holds the rule that the StartBlock's output *is* the trigger payload, plus the `test_payload` string rule.
+
+StartBlock inputs: `run_mode: "triggered"`, then `async` — always emit it, `"yes"` or `"no"`.
+
+## Sync vs async
+
+A triggered automation runs either synchronously or asynchronously — there is no third state. `async` on the StartBlock sets the **default**, and the caller can override it per call.
+
+- `async: "no"` runs synchronously — the run URL holds the connection open and returns the run output to the caller. `async: "yes"` returns as soon as the run is queued. Always write the input explicitly: the editor emits it on every triggered StartBlock, so a workspace without it does not match what the product produces. (An absent input would fall back to `"no"`; do not rely on that.)
+- Sync and async runs get very different timeouts: a sync run defaults to **60s**, while an async run gets the automation's normal timeout. Anything that loops over a list, reloads an app, or waits on a slow API must default to `"yes"` — a sync default will simply time out. Reserve `"no"` for short flows whose result the caller reads immediately.
+- `qlik_start_automation_run` does not go through this at all: it posts to `/runs` with context `api`, which is always queued and polled with `qlik_get_automation_run`. `async` neither helps nor hurts there.
+
+## Why this mode for outside callers
+
+- The run URL — `POST /api/v1/automations/{id}/actions/execute`, authenticated with the automation's execution token — **rejects every run mode except `triggered`** for automations created after the tenant's cut-off date. That is the reason to pick this mode for anything driven from outside the hub.
+- `qlik_start_automation_run` posts to `/runs` instead and is not subject to that check, so it will happily start a `manual` automation. It still cannot get a payload into one: the `inputs` it sends are only readable through a `triggered` StartBlock.
+
+## Preflight additions
+
+Confirm these alongside the checklist in `SKILL.md`:
+
+- `async` is present with an explicit `"yes"` or `"no"`, and when it is `"no"` the flow demonstrably finishes inside the 300s sync cap.
+- Every `{$.<startBlockName>...}` reference names a field the caller sends.
