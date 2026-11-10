@@ -89,7 +89,7 @@ Qlik Agentic Pipeline / onboarding layers almost always produce **quoted-case** 
 | Connection info DB/schema/table | Physical source or subquery `FROM` target |
 | Field | `dimensions`, `facts`, or time dimension |
 | Field description | Column `comment` — use verbatim when present |
-| Field with 100% distinct = row count | `primary key` candidate |
+| Field with 100% distinct = row count | `primary key` candidate (validate uniqueness + non-null before declaring) |
 | FK described as "Foreign key reference to X" | `relationships` entry |
 | `readMe` Relationships section | `relationships (...)` — authoritative when present |
 | Glossary term tagged `measure` | `metrics (...)` entry |
@@ -106,11 +106,11 @@ Qlik Agentic Pipeline / onboarding layers almost always produce **quoted-case** 
 
 Apply in order:
 
-1. **Key** (`*ID`, `*KEY`, distinct count == row count) — `dimensions`, and `primary key` on its own table
-2. **Foreign key** — `dimensions` + a `relationships` entry
+1. **Foreign key** (references another table, values may repeat) — `dimensions` + a `relationships` entry. Never a `primary key` on the referencing table (e.g. `ORDER_DETAILS.OrderID` repeats for multi-line orders).
+2. **Validated key** — `dimensions`, and `primary key` on its own table. A `*ID` / `*KEY` name is only a hint: declare the primary key only after the complete key tuple is proven unique and non-null, e.g. `SELECT COUNT(*) = COUNT(DISTINCT OrderID, ProductID) AND COUNT_IF(OrderID IS NULL OR ProductID IS NULL) = 0 FROM ORDER_DETAILS;`. Bridge tables usually need a composite key (`ORDER_DETAILS` → `(OrderID, ProductID)`).
 3. **DATE / TIMESTAMP** — `dimensions`, registered as `time_dimensions` in the `CA` extension
-4. **Numeric on a fact/bridge table** (quantity, price, discount, tax, freight, balance, cost, stock level) — `facts`
-5. **Numeric that is really a code or flag** (`Discontinued`, `ShipVia`, `O_SHIPPRIORITY`) — `dimensions`, not facts
+4. **Numeric that is really a code or flag** (`Discontinued`, `ShipVia`, `O_SHIPPRIORITY`; low cardinality or enumerated meaning, summing it is meaningless) — `dimensions`, not facts. Check this before the fact rule.
+5. **Numeric on a fact/bridge table** (quantity, price, discount, tax, freight, balance, cost, stock level) — `facts`
 6. **Everything else** — `dimensions`
 7. **Exclude entirely**: free-text `*_COMMENT`/`Notes` blobs, `Picture`/`Photo` file names, `Description` on large tables. They add tokens and no analytical value. Keep short descriptive text on small dimension tables (e.g. `CATEGORIES.DESCRIPTION`, 8 rows).
 
@@ -229,7 +229,7 @@ ai_verified_queries (
 
 ### Step 10 — Validate and Verify
 
-1. **Dry run** — `SELECT SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML(<yaml>, TRUE);` when going through YAML. Skip `reflect_semantic_model` for quoted-case sources; it reports false failures.
+1. **Dry run** — when going through YAML, call the stored procedure with the fully qualified target schema, the YAML string, and `verify_only = TRUE` (validates without creating the view): `CALL SYSTEM$CREATE_SEMANTIC_VIEW_FROM_YAML('SUMMIT.PUBLIC', $$<yaml>$$, TRUE);`. Skip `reflect_semantic_model` for quoted-case sources; it reports false failures.
 2. **Create** the view.
 3. **Query it directly** — one metric crossed with one dimension per fact table.
 4. **Compare against the source** — the metric total from the semantic view must match a plain `SUM` against the physical table. This is what catches join fan-out.
@@ -240,7 +240,7 @@ ai_verified_queries (
 
 - [ ] Every Snowflake-backed DP dataset present as a logical table
 - [ ] Quoted-case handled via aliasing subqueries, not escaped quotes
-- [ ] Every table has a primary key and a comment
+- [ ] Every table has a validated (unique, non-null) primary key and a comment
 - [ ] Steward-written field descriptions carried into column comments
 - [ ] Every glossary `measure` term has a matching metric with the glossary's own formula
 - [ ] Metric names match the glossary term they implement
