@@ -45,4 +45,10 @@ Apply it to every chart or KPI you create. It does not matter how the request wa
 
 ## Check before creating any chart
 
-Before you create any chart or KPI, confirm it is set to single color #2ca02c, or to the color the user asked for in the current message. If it is not, fix it.
+Before you create any chart or KPI, confirm its coloring matches one of these:
+
+- Single color #2ca02c (the default).
+- The color the user named for this chart in the current message.
+- Color by the field the user asked for in the current message.
+
+If it matches none of them, set it to single color #2ca02c. Skip this check for tables, pivot tables and filter panes.
