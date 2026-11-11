@@ -11,5 +11,3 @@ Answer: "Sales last year: [amount], [pct] above the year before." followed by up
 User: "Which region should I cut?"
 
 Answer: "The data can't make that call. Lowest sales: [region], [amount], [pct] below the average."
-
-**Tested:** median answer of 36 to 46 words, against about 100 without the skill. Charts were kept and no emoji appeared.
