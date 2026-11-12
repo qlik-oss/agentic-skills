@@ -34,8 +34,12 @@ Users of this app often leave selections active on their sheets. Those selection
   - "Orders over 500" is `Count({1<Amount={">500"}>} OrderID)`.
   - "In 2025" uses the year field if the app has one, `{1<Year={2025}>}`, or a literal range on the date field written in that field's own format, such as `{1<OrderDate={">=01/01/2025<=31/12/2025"}>}`. Check the format with a field value lookup first.
 - Never write a set expression without the leading `1`. `{<Country={'Germany'}>}` still keeps every other selection, which is wrong here.
-- Inside a set modifier, use only literal values, literal lists or literal ranges. Never use a search that starts with `=`, such as `Field={"=Year(Field)=2025"}`, `Field={"=Sum(Amount)>1000"}` or `Field={"=Rank(Sum(Amount))<=5"}`. Those searches are evaluated against the current selections and silently bring them back. Put the condition in an `If()` inside the aggregation instead: `Sum({1} If(Year(OrderDate)=2025, Amount))`.
-- Nested aggregations need the `1` at every level: `Avg({1} Aggr(Sum({1} Amount), Customer))`.
+- Inside a set modifier, use only literal values, literal lists or literal ranges. Never use a search that starts with `=`, such as `Field={"=Year(Field)=2025"}`, `Field={"=Sum(Amount)>1000"}` or `Field={"=Rank(Sum(Amount))<=5"}`. Those searches are evaluated against the current selections and silently bring them back. Instead:
+  - Row-level conditions (a value on each record) go in an `If()` inside the aggregation: `Sum({1} If(Year(OrderDate)=2025, Amount))`.
+  - Conditions on grouped totals or rankings ("customers with sales over 1000", "top 5 products") need `Aggr()` over the grouping field, with the `1` at every level. Never put one aggregation inside another without `Aggr()`.
+    - Sales from customers whose total is over 1000: `Sum({1} Aggr({1} If(Sum({1} Amount)>1000, Sum({1} Amount)), Customer))`.
+    - Sales from the top 5 products: `Sum({1} Aggr({1} If(Rank(Sum({1} Amount))<=5, Sum({1} Amount)), Product))`.
+- `Aggr()` needs the `1` too, on itself as well as on the aggregations inside and around it: `Avg({1} Aggr({1} Sum({1} Amount), Customer))`. Without `Aggr({1} ...)`, the customer values that build the virtual table still follow the current selections.
 - Master measures inherit selections. Do not use a master measure by name. Read its definition and add the `1` to every aggregation in it, keeping any set modifiers it already has:
   - `Sum(Revenue) - Sum(Cost)` becomes `Sum({1} Revenue) - Sum({1} Cost)`.
   - `Count({<Status={'Open'}>} TicketID)` becomes `Count({1<Status={'Open'}>} TicketID)`.
@@ -53,7 +57,8 @@ If the user asks in the question to use their selections ("within my current sel
 
 ## Final check before sending
 
-1. Does every aggregation in every expression, including inside Aggr() and master measure definitions, start with `{1` (or carry `{1}`)?
+1. Unless the user asked to use their selections (see the exception above), does every aggregation and every Aggr() in every expression, including master measure definitions, start with `{1` (or carry `{1}`)?
 2. Does any set modifier contain a search starting with `=`? Replace it with a literal value or range, or an `If()` inside the aggregation.
 3. Were master measures rewritten from their definitions instead of called by name?
-4. Are the only filters the ones the user stated in this question?
+4. Are the only filters the ones the user stated in this question, plus the current selections only when the user asked for them?
+5. Is every condition on a grouped total or a ranking written with `Aggr()`, not as one aggregation inside another?
