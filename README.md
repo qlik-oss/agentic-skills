@@ -26,6 +26,9 @@ agentic-skills/
 │   ├── skills/
 │   │   └── README.md
 │   └── .claude-plugin/plugin.json
+├── answers/                         # Skills that run inside Qlik Answers (no plugin)
+│   ├── skills/
+│   └── README.md
 ├── spec/
 │   └── README.md
 ├── template/skill                   # Starter template for new skills

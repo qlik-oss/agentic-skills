@@ -39,12 +39,13 @@ Thank you for contributing to the Qlik Agent Skills repository. This repo is the
 
 ## What lives here
 
-This repository contains four top-level areas:
+This repository contains five top-level areas:
 
 | Type | Location | Purpose |
 |---|---|---|
 | **Official skills** | `official/skills/` | Qlik-owned SKILL.md packages maintained by Qlik engineering |
 | **Community skills** | `community/skills/` | Community-contributed SKILL.md packages reviewed before merge |
+| **Qlik Answers skills** | `answers/skills/` | Skills that run inside Qlik Answers, uploaded to an app or assistant. Not bundled in any plugin |
 | **Specification docs** | `spec/` | Repository guidance for the Agent Skills format used here |
 | **Templates** | `template/skill/` | Starter files contributors can copy when creating a new skill |
 
@@ -68,7 +69,7 @@ Skills contributed by Qlik customers, partners, or the broader developer communi
 
 ## Before you start
 
-1. **Check for an existing skill.** Search `official/skills/` and `community/skills/` before creating a new one — you may be able to extend an existing skill rather than duplicate it.
+1. **Check for an existing skill.** Search `official/skills/`, `community/skills/` and `answers/skills/` before creating a new one — you may be able to extend an existing skill rather than duplicate it.
 
 2. **Open an issue first for large contributions.** If you're planning a skill that introduces new patterns, new schema fields, or a new category, open a GitHub issue to discuss the approach before writing code. This saves everyone time.
 
@@ -98,6 +99,9 @@ agentic-skills/
 │   ├── skills/                      # Community-contributed skills
 │   │   └── README.md
 │   └── .claude-plugin/plugin.json
+├── answers/
+│   ├── skills/                      # Skills that run inside Qlik Answers
+│   └── README.md
 ├── spec/                            # Repository spec and format guidance
 │   └── README.md
 ├── template/
@@ -281,7 +285,7 @@ Official skills require a Qlik engineering team member as the PR author or revie
 
 Before opening a PR, confirm:
 
-- [ ] Skill lives in the correct tier (`official/skills/` or `community/skills/`)
+- [ ] Skill lives in the correct tier (`official/skills/`, `community/skills/` or `answers/skills/`)
 - [ ] `name` in frontmatter matches the folder name exactly
 - [ ] `description` includes concrete trigger phrases
 - [ ] `SKILL.md` is under 500 lines
