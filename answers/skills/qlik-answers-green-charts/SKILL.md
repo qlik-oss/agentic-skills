@@ -9,7 +9,7 @@ description: >
 license: Apache-2.0
 metadata:
   author: Adipai1
-  version: 1.0.0
+  version: 1.0.1
   tags:
     - qlik-answers
     - charts
