@@ -1,6 +1,6 @@
-# CODEOWNERS - Qlik Agentic Skills
-# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
-*                                   @qlik-oss/agentic-skills-maintainers
-/official/                          @qlik-oss/agentic-skills-maintainers @qlik-oss/agentic-skills-official-maintainers
-/community/                         @qlik-oss/agentic-skills-maintainers @qlik-oss/agentic-skills-official-maintainers @qlik-oss/agentic-skills-community-maintainers
-/answers/                           @qlik-oss/agentic-skills-maintainers @qlik-oss/agentic-skills-official-maintainers
+# Base maintainers own everything; community maintainers also review skill areas.
+*                       @qlik-oss/agentic-skills-maintainers
+/analytics/             @qlik-oss/agentic-skills-maintainers @qlik-oss/agentic-skills-community-maintainers
+/automate/              @qlik-oss/agentic-skills-maintainers @qlik-oss/agentic-skills-community-maintainers
+/embedded-analytics/    @qlik-oss/agentic-skills-maintainers @qlik-oss/agentic-skills-community-maintainers
+/answers/               @qlik-oss/agentic-skills-maintainers @qlik-oss/agentic-skills-community-maintainers

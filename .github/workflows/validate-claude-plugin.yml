@@ -1,14 +1,14 @@
 name: Validate Claude plugin
 
-# Claude-only. Scoped to marketplace.json/plugin.json so it doesn't re-run
-# on every SKILL.md edit — see validate-skill-spec.yml for that.
+# Claude manifests and marketplace. Source membership changes are checked
+# separately by validate-agent-plugins.yml; skill content by validate-skill-spec.yml.
 on:
   push:
     branches: [main]
     paths:
       - ".claude-plugin/**"
-      - "official/.claude-plugin/**"
-      - "community/.claude-plugin/**"
+      - "*/.claude-plugin/**"
+      - "*/plugin.json"
       - "scripts/validate-claude-plugin.mjs"
       - "scripts/lib/**"
       - "package.json"
@@ -17,8 +17,8 @@ on:
   pull_request:
     paths:
       - ".claude-plugin/**"
-      - "official/.claude-plugin/**"
-      - "community/.claude-plugin/**"
+      - "*/.claude-plugin/**"
+      - "*/plugin.json"
       - "scripts/validate-claude-plugin.mjs"
       - "scripts/lib/**"
       - "package.json"

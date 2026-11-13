@@ -1,0 +1,11 @@
+{
+  "name": "qlik-embedded-analytics",
+  "description": "Embed Qlik analytics in applications and migrate visualization extensions to nebula.js.",
+  "version": "1.0.0",
+  "author": {
+    "name": "QlikTech International AB",
+    "url": "https://github.com/qlik-oss/agentic-skills"
+  },
+  "license": "Apache-2.0",
+  "repository": "https://github.com/qlik-oss/agentic-skills"
+}

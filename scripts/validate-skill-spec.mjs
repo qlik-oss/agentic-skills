@@ -3,16 +3,17 @@
 // Destination-agnostic — one check covers Claude, Codex, Copilot, Cursor,
 // Gemini CLI, and the rest. Claude's plugin marketplace is checked
 // separately in validate-claude-plugin.mjs.
-import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, realpathSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { ROOT, createReporter } from "./lib/reporter.mjs";
-import { SEMVER_RE, SKILL_TIERS, parseFrontmatter } from "./lib/skill-frontmatter.mjs";
+import { SEMVER_RE, parseFrontmatter } from "./lib/skill-frontmatter.mjs";
+
+import { discoverCategories, listSkills, repositoryFiles, skillDirOf } from "./lib/skill-paths.mjs";
 
 const NAME_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
-const TIERS = SKILL_TIERS.map(({ label, dir }) => ({ label, skillsDir: join(ROOT, ...dir.split("/")) }));
-
-function validateSkillMd(skillMdPath, folderName, { fail, warn, relPath }, seenNamesInTier) {
+function validateSkillMd(skillMdPath, folderName, { fail, warn, relPath }, seenNames) {
   const label = relPath(skillMdPath);
   const raw = readFileSync(skillMdPath, "utf8");
 
@@ -41,10 +42,10 @@ function validateSkillMd(skillMdPath, folderName, { fail, warn, relPath }, seenN
     if (frontmatter.name !== folderName) {
       fail(`${label}: frontmatter name "${frontmatter.name}" does not match folder name "${folderName}"`);
     }
-    if (seenNamesInTier.has(frontmatter.name)) {
-      fail(`${label}: skill name "${frontmatter.name}" is already used by another skill in this tier`);
+    if (seenNames.has(frontmatter.name)) {
+      fail(`${label}: skill name "${frontmatter.name}" is already used by another canonical skill`);
     }
-    seenNamesInTier.add(frontmatter.name);
+    seenNames.add(frontmatter.name);
   }
 
   const desc = frontmatter.description;
@@ -62,25 +63,37 @@ function validateSkillMd(skillMdPath, folderName, { fail, warn, relPath }, seenN
   }
 }
 
-function main() {
-  const ctx = createReporter();
-  for (const { label, skillsDir } of TIERS) {
+export function validateSkills(root, ctx) {
+  const seenNames = new Set();
+  const discovered = new Set();
+  // Use Git's tracked/non-ignored inventory rather than traversing caches,
+  // dependencies, build output or another checkout.
+  const paths = repositoryFiles(root);
+  for (const { label, dir } of discoverCategories(root, paths)) {
+    const skillsDir = join(root, dir);
     if (!existsSync(skillsDir)) continue;
 
-    const seenNamesInTier = new Set();
-    const folders = readdirSync(skillsDir, { withFileTypes: true })
-      .filter((d) => d.isDirectory())
-      .map((d) => d.name);
+    const folders = listSkills(root, dir, paths);
     for (const folder of folders) {
-      const skillMdPath = join(skillsDir, folder, "SKILL.md");
-      if (!existsSync(skillMdPath)) continue; // supporting folder, not an installable skill
-      validateSkillMd(skillMdPath, folder, ctx, seenNamesInTier);
+      discovered.add(`${dir}/${folder}/SKILL.md`);
+      validateSkillMd(join(skillsDir, folder, "SKILL.md"), folder, ctx, seenNames);
     }
-    if (folders.length && seenNamesInTier.size === 0) {
+    if (!folders.length && readdirSync(skillsDir, { withFileTypes: true }).some((d) => d.isDirectory())) {
       ctx.warn(`${label}/skills has no skills yet`);
     }
   }
+  // Deleted paths are not source files.
+  for (const path of new Set(paths)) {
+    if (!path.endsWith("/SKILL.md") && path !== "SKILL.md") continue;
+    if (!existsSync(join(root, path)) || path === "template/skill/SKILL.md") continue;
+    if (!discovered.has(path) || `${skillDirOf(path)}/SKILL.md` !== path) ctx.fail(`${path}: expected <category>/skills/<skill>/SKILL.md`);
+  }
+}
+
+function main() {
+  const ctx = createReporter();
+  validateSkills(ROOT, ctx);
   ctx.report();
 }
 
-main();
+if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) main();

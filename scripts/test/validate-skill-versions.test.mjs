@@ -306,3 +306,69 @@ test("throws a clear error for an unknown revision", (t) => {
   seed(repo);
   assert.throws(() => repo.check("does-not-exist"), /unknown revision "does-not-exist"/);
 });
+
+// Area names are arbitrary: any <area>/skills/<skill>/ path is versioned.
+for (const area of ["first-area", "another-area"]) {
+  test(`${area}: reference-only changes require a version increase`, (t) => {
+    const repo = makeRepo(t);
+    const dir = `${area}/skills/skill-a`;
+    repo.skill(dir, "1.0.0");
+    const base = repo.commit();
+    repo.write(`${dir}/references/new.md`, "New resource.\n");
+    assert.equal(checkSkillVersions({ cwd: repo.cwd, base }).errors.length, 1);
+    repo.skill(dir, "1.0.1");
+    assert.deepEqual(checkSkillVersions({ cwd: repo.cwd, base }).errors, []);
+  });
+}
+
+for (const oldArea of ["official", "community"]) {
+  test(`${oldArea} to analytics move retains version history without Git rename detection`, (t) => {
+    const repo = makeRepo(t);
+    const from = `${oldArea}/skills/skill-a`;
+    const to = "analytics/skills/skill-a";
+    repo.skill(from, "2.0.0");
+    const base = repo.commit();
+    repo.remove(from);
+    repo.skill(to, "1.0.0", "Rewritten.\n".repeat(100));
+    const failed = checkSkillVersions({ cwd: repo.cwd, base });
+    assert.equal(failed.errors.length, 1);
+    assert.ok(failed.errors[0].includes(`moved from ${from}`));
+    repo.skill(to, "2.0.1");
+    repo.commit();
+    assert.deepEqual(repo.check(base).checked, [{ dir: to, base: "2.0.0", head: "2.0.1" }]);
+  });
+}
+
+test("a content-identical canonical move still requires a bump", (t) => {
+  const repo = makeRepo(t);
+  repo.skill("analytics/skills/skill-a", "1.0.0");
+  const base = repo.commit();
+  repo.remove("analytics/skills/skill-a");
+  repo.skill("automation/skills/skill-a", "1.0.0");
+  assert.equal(checkSkillVersions({ cwd: repo.cwd, base }).errors.length, 1);
+});
+
+test("a category unknown to the validator still requires version increases", (t) => {
+  const repo = makeRepo(t);
+  const dir = "data-quality/skills/quality-check";
+  repo.skill(dir, "1.0.0");
+  const base = repo.commit();
+  repo.write(`${dir}/references/new.md`, "Added.\n");
+  assert.equal(checkSkillVersions({ cwd: repo.cwd, base }).errors.length, 1);
+  repo.skill(dir, "1.0.1");
+  assert.deepEqual(checkSkillVersions({ cwd: repo.cwd, base }).errors, []);
+});
+
+test("moves from a removed category are discovered from the base revision", (t) => {
+  const repo = makeRepo(t);
+  repo.skill("old-category/skills/quality-check", "2.0.0");
+  const base = repo.commit();
+  repo.remove("old-category");
+  repo.skill("new-category/skills/quality-check", "2.0.0");
+  repo.commit();
+  const result = repo.check(base);
+  assert.equal(result.errors.length, 1);
+  assert.ok(result.errors[0].includes("moved from old-category/skills/quality-check"));
+  repo.skill("new-category/skills/quality-check", "2.0.1");
+  assert.deepEqual(checkSkillVersions({ cwd: repo.cwd, base }).errors, []);
+});

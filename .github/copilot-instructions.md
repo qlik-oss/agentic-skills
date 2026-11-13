@@ -11,6 +11,8 @@ corepack pnpm install --frozen-lockfile
 corepack pnpm run validate:spec
 corepack pnpm run validate:versions
 corepack pnpm run validate:claude
+corepack pnpm run validate:plugins
+corepack pnpm run test:scripts
 ```
 
 ## Rules to follow

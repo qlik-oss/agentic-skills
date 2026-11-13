@@ -1,393 +1,92 @@
 # Contributing to Qlik Agent Skills
 
-Thank you for contributing to the Qlik Agent Skills repository. This repo is the central source of truth for skills and Claude plugins that extend Qlik's AI agents. The content follows the open [Agent Skills standard](https://agentskills.io) and is designed for Agent Skills-compatible runtimes; each host tool should still verify installation and behavior in its own environment.
+Anyone can contribute to any area. All contributions follow the same review process.
 
----
+## Choose a location
 
-## Table of contents
+Put each skill in `<area>/skills/<skill-name>/`, choosing the area that matches the task. Every area uses this layout:
 
-- [Contributing to Qlik Agent Skills](#contributing-to-qlik-agent-skills)
-  - [Table of contents](#table-of-contents)
-  - [What lives here](#what-lives-here)
-  - [Trust tiers](#trust-tiers)
-    - [`official/`](#official)
-    - [`community/`](#community)
-  - [Before you start](#before-you-start)
-  - [Repository structure](#repository-structure)
-  - [Writing a skill](#writing-a-skill)
-    - [The SKILL.md format](#the-skillmd-format)
-    - [The description field is critical](#the-description-field-is-critical)
-    - [Spec constraints](#spec-constraints)
-    - [Progressive disclosure](#progressive-disclosure)
-    - [Scripts](#scripts)
-    - [Versioning](#versioning)
-    - [Validate before submitting](#validate-before-submitting)
-  - [Submitting a skill](#submitting-a-skill)
-    - [For community skills](#for-community-skills)
-    - [For official skills](#for-official-skills)
-    - [PR checklist](#pr-checklist)
-  - [Review process](#review-process)
-    - [Automated checks (all PRs)](#automated-checks-all-prs)
-    - [Human review (community tier)](#human-review-community-tier)
-    - [Human review (official tier)](#human-review-official-tier)
-  - [Publishing to the ecosystem](#publishing-to-the-ecosystem)
-  - [Security](#security)
-  - [Code of conduct](#code-of-conduct)
-  - [Questions?](#questions)
-
----
-
-## What lives here
-
-This repository contains five top-level areas:
-
-| Type | Location | Purpose |
-|---|---|---|
-| **Official skills** | `official/skills/` | Qlik-owned SKILL.md packages maintained by Qlik engineering |
-| **Community skills** | `community/skills/` | Community-contributed SKILL.md packages reviewed before merge |
-| **Qlik Answers skills** | `answers/skills/` | Skills that run inside Qlik Answers, uploaded to an app or assistant. Not bundled in any plugin |
-| **Specification docs** | `spec/` | Repository guidance for the Agent Skills format used here |
-| **Templates** | `template/skill/` | Starter files contributors can copy when creating a new skill |
-
-Skills are the most commonly contributed artifact. If you're new here, start with a skill.
-
----
-
-## Trust tiers
-
-Skills in this repository are organized into two trust tiers that determine how they are distributed and what review they require. Shared docs and templates live alongside those tiers in `spec/` and `template/`.
-
-### `official/`
-Skills owned and maintained by Qlik engineering teams, the standard, versioned way to work with Qlik Cloud through an AI agent. Changes require a PR review from a `@qlik-oss/agentic-skills-official-maintainers` team member and pass all automated validation checks.
-
-### `community/`
-Skills contributed by Qlik customers, partners, or the broader developer community. These are opt-in at the tenant level and carry a **Community** badge in the UI. They should pass the repo's validation checks and a basic quality review before merging, but do not require Qlik engineering sign-off. Host-specific security review and runtime verification remain the responsibility of the consumer environment when relevant.
-
-> **Note for enterprise users:** Tenant administrators control which community skills are available to their users. No community skill is silently enabled.
-
----
-
-## Before you start
-
-1. **Check for an existing skill.** Search `official/skills/`, `community/skills/` and `answers/skills/` before creating a new one — you may be able to extend an existing skill rather than duplicate it.
-
-2. **Open an issue first for large contributions.** If you're planning a skill that introduces new patterns, new schema fields, or a new category, open a GitHub issue to discuss the approach before writing code. This saves everyone time.
-
-3. **Read the security rules.** Skills execute instructions and can run scripts inside a VM. Read the [Security](#security) section before contributing any skill that touches network calls, file I/O, or external APIs.
-
-4. **Use the `skill-creator` skill to bootstrap.** The fastest way to create a well-structured skill is to let the agent do it:
-   ```bash
-   # In Claude Code
-   /skill-creator
-   ```
-   Or install it first if you haven't:
-   ```bash
-   npx skills add anthropics/skills --skill skill-creator
-   ```
-
----
-
-## Repository structure
-
-```
-agentic-skills/
-├── official/
-│   ├── skills/                      # Qlik-owned skills
-│   │   └── README.md
-│   └── .claude-plugin/plugin.json
-├── community/
-│   ├── skills/                      # Community-contributed skills
-│   │   └── README.md
-│   └── .claude-plugin/plugin.json
-├── answers/
-│   ├── skills/                      # Skills that run inside Qlik Answers
-│   └── README.md
-├── spec/                            # Repository spec and format guidance
-│   └── README.md
-├── template/
-│   └── skill/                       # Starter template for new skills
-│       ├── README.md
-│       └── SKILL.md
-├── scripts/                         # CI validation scripts (SKILL.md spec, version bump, plugin manifest checks)
-├── .github/workflows/               # CI: runs the scripts above on relevant file changes
-├── .claude-plugin/
-│   └── marketplace.json
-├── package.json / pnpm-lock.yaml    # Node tooling for the validation scripts
-└── CONTRIBUTING.md
+```text
+<area>/
+  README.md
+  plugin.json
+  .claude-plugin/plugin.json
+  LICENSE
+  NOTICE
+  skills/
+    <skill-name>/
+      SKILL.md
+      references/           # Optional
+      scripts/              # Optional
+      assets/               # Optional
 ```
 
----
+`answers/skills/` uses the same skill layout for Qlik Answers and is not part of any plugin. `template/skill/` is a starter, not an area.
 
-## Writing a skill
+Search for an existing skill before adding one. Each skill has one location; link to related skills instead of copying them.
 
-### The SKILL.md format
+## Write a skill
 
-Every skill is a folder containing a `SKILL.md` file. This is the open [Agent Skills standard](https://agentskills.io), the same format used by Anthropic, OpenAI, Google, and 20+ other tools.
+Start from [template/skill](template/skill/). Frontmatter fields are defined in [spec/README.md](spec/README.md).
 
-```markdown
----
-name: qlik-app-analysis
-description: >-
-  Analyzes a Qlik Sense application to identify performance bottlenecks,
-  unused fields, and optimization opportunities. Use when asked to review,
-  audit, or optimize a Qlik app or data model.
-license: Apache-2.0
-metadata:
-  author: your-name
-  version: 1.0.0
-  tags:
-    - qlik
-    - analytics
-    - performance
-allowed-tools: read bash
----
+- The directory name must match the frontmatter `name`, and names must be unique across the repository.
+- Write a `description` that states the task and when to use the skill. Avoid broad triggers.
+- Include your authorship and an SPDX licence identifier.
+- Keep `SKILL.md` focused. Put supporting detail in `references/`, helpers in `scripts/` and output resources in `assets/`.
+- Keep required resources inside the skill directory. If a skill depends on another skill, name it and make sure both are in the same plugin.
+- Document prerequisites, file writes, external dependencies and network access. Request the least tool access needed.
+- Include a realistic example. Update the area README when its skills change.
 
-# Qlik app analysis
+Adding a skill to an area adds it to that area's plugin, so increase the plugin version. Do not add skills to the legacy `qlik-cloud-skills` or `qlik-cloud-community-skills` plugins.
 
-## When to activate
-Activate this skill when the user asks to:
-- Review or audit a Qlik app
-- Identify performance issues in a data model
-- Optimize load script or set analysis expressions
+## Versioning
 
-## Steps
+Every skill has a semver `metadata.version`. Any change to a file in an existing skill directory requires a higher version than on `main`. Patch, minor and major increases are all accepted.
 
-### Step 1: Gather context
-...
+- Each changed skill needs its own bump, including changes to references, scripts or assets only.
+- Moving a skill without renaming it keeps its version history and requires a bump.
+- New skills, deleted skills and `template/` are exempt. A renamed skill counts as a new skill.
+- To roll back, revert the content and set a version above the one on `main`.
 
-### Step 2: Analyze
-...
+Plugin versions are separate from skill versions. Increase a plugin's version when its content or membership changes, and keep `plugin.json` and `.claude-plugin/plugin.json` aligned.
 
-## Output format
-...
-```
-
-### The description field is critical
-
-The `description` is what the agent reads to decide whether to activate your skill. Write it like a search query — include the actual phrases users are likely to type. A vague description like "helps with Qlik" will either never trigger or trigger on irrelevant prompts.
-
-**Good:**
-```
-Use when asked to optimize a Qlik app load script, reduce data model complexity,
-fix set analysis expressions, or improve app performance.
-```
-
-**Bad:**
-```
-Helps with Qlik development tasks.
-```
-
-### Spec constraints
-
-| Field | Constraint |
-|---|---|
-| `name` | 1–64 chars, lowercase alphanumeric and hyphens only (`^[a-z0-9]+(-[a-z0-9]+)*$`) |
-| `description` | 1–1024 chars. Target ~100 tokens for discovery efficiency |
-| `SKILL.md` | Max 500 lines / ~5,000 tokens for the activation context |
-| Subdirectories | Only `scripts/`, `references/`, `assets/` are recognized |
-
-### Progressive disclosure
-
-Keep `SKILL.md` focused on activation logic and high-level steps. Move detailed reference material into `references/` subdirectory files and link to them from `SKILL.md`. The agent loads reference files only when needed — this keeps context usage efficient for everyone.
-
-```
-├── SKILL.md                    # Core instructions (~200 lines max)
-└── references/
-    ├── set-analysis-patterns.md
-    ├── load-script-best-practices.md
-    └── data-model-checklist.md
-```
-
-### Scripts
-
-If your skill needs to execute code, place scripts in `scripts/`. Scripts run but their source code never loads into the model's context — only their output does. This is efficient and avoids token waste.
-
-```
-├── SKILL.md
-└── scripts/
-    └── validate-app.sh
-```
-
-Reference them in `SKILL.md` by path:
-```markdown
-Run `scripts/validate-app.sh` to check the app structure before analysis.
-```
-
-**Security checklist for scripts:**
-
-- do not embed secrets, tokens, credentials, or personal account identifiers
-- prefer local validation and static checks over remote fetches
-- avoid network calls unless the purpose is explicit, necessary, and reviewed
-- keep file access narrow and document why the script needs it
-- prefer `allowed-tools` entries that are as restrictive as possible
-
-### Versioning
-
-Every skill carries a semver `metadata.version`. When you change **any file** in an existing skill folder (`SKILL.md`, `references/`, `assets/`, `scripts/`, or anything else in it), bump that skill's version above the version on `main`:
-
-- Any increase is accepted. Pick patch, minor, or major to match the change; reviewers check the choice.
-- If a PR changes several skills, each one needs its own bump.
-- New skills (start at `1.0.0`, as in the template), fully deleted skills, and `template/` are exempt.
-- A skill moved between tiers under the same name keeps its version history, so it still needs a bump. A renamed skill counts as a new skill.
-
-**Rollbacks roll forward.** Revert the content, but give it a new, higher version — never reuse an older one. Consumers that already installed the bad version would not see a lower version as an update.
-
-| Step | Content | Version |
-|---|---|---|
-| Good release | A | `1.2.0` |
-| Bad change merged | B | `1.3.0` |
-| Rollback | A | `1.3.1` (not `1.2.0`) |
-
-GitHub's **Revert** button and `git revert` restore the old version too, so edit `metadata.version` in the revert PR before merging.
-
-Check locally (compares your working tree with the merge base of `origin/main`):
+## Validate before review
 
 ```bash
+corepack pnpm install --frozen-lockfile
+corepack pnpm run validate:spec
 corepack pnpm run validate:versions
+corepack pnpm run validate:claude
+corepack pnpm run validate:plugins
+corepack pnpm run test:scripts
 ```
 
-### Validate before submitting
+These checks need no Claude, Codex, Kiro or Qlik account. `validate:spec` checks skill frontmatter and locations, and `validate:versions` checks version increases against `main`. `validate:claude` and `validate:plugins` check the manifests and marketplaces.
 
-Use the official validator to catch spec violations before opening a PR:
+You can also run the upstream validator: `skills-ref validate <area>/skills/<skill-name>/`.
 
-```bash
-# Install the validator
-uv tool install git+https://github.com/agentskills/agentskills#subdirectory=skills-ref
+## Review and CI
 
-# Validate your skill
-skills-ref validate community/skills/your-skill-name/
-```
+Open a PR that describes the task, the affected skills and plugins, and your validation results. [CODEOWNERS](.github/CODEOWNERS) assigns reviewers.
 
-Or with uvx (no install):
-```bash
-uvx --from git+https://github.com/agentskills/agentskills#subdirectory=skills-ref \
-  skills-ref validate community/skills/your-skill-name/
-```
+- [Skill validation](.github/workflows/validate-skill-spec.yml) runs on `*/skills/**`, the spec and validation scripts. On PRs it also checks version increases.
+- [Claude validation](.github/workflows/validate-claude-plugin.yml) runs on the Claude marketplace and manifests.
+- [Package validation](.github/workflows/validate-agent-plugins.yml) runs on package files, both marketplaces and packaging scripts.
+- [Skill lint](.github/workflows/lint-skills.yml) is advisory.
 
----
+Treat any failing validation as blocking.
 
-## Submitting a skill
+## Add an area
 
-### For community skills
+1. Create `<area>/` using the layout above, with a README describing what the plugin does and its prerequisites.
+2. Set the plugin identifier as `name` in both manifests.
+3. Add the plugin to `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`.
+4. Add `/<area>/` to `.github/CODEOWNERS` with the base and community maintainers, as for the other areas. Without it, only the base maintainers are asked to review.
 
-1. Fork the repository.
-2. Create your skill under `community/skills/your-skill-name/`.
-3. Validate it locally (see above).
-4. Open a pull request describing the skill, what it does, when it should activate, and why it is needed.
-5. CI runs the repo-local validation automatically (see [Automated checks](#automated-checks-all-prs)). Run the repo-local checks and any relevant host-specific verification before asking for review.
-6. A maintainer will review within 5 business days.
-
-### For official skills
-
-Official skills require a Qlik engineering team member as the PR author or reviewer. If you have a skill idea that should be official, open an issue to discuss with `@qlik-oss/agentic-skills-official-maintainers` first.
-
-### PR checklist
-
-Before opening a PR, confirm:
-
-- [ ] Skill lives in the correct tier (`official/skills/`, `community/skills/` or `answers/skills/`)
-- [ ] `name` in frontmatter matches the folder name exactly
-- [ ] `description` includes concrete trigger phrases
-- [ ] `SKILL.md` is under 500 lines
-- [ ] `license` field is set (use `Apache-2.0` for community skills)
-- [ ] `metadata.author` is set to your GitHub username
-- [ ] `metadata.version` follows semver (`1.0.0`)
-- [ ] `metadata.version` is higher than on `main` for every existing skill you changed (see [Versioning](#versioning))
-- [ ] `skills-ref validate` passes with no errors
-- [ ] No hardcoded API keys, tokens, or credentials anywhere in the skill
-- [ ] No network calls to external URLs from scripts (community tier)
-- [ ] `README.md` or inline `SKILL.md` examples show at least one realistic use case
-
----
-
-## Review process
-
-### Automated checks (all PRs)
-
-One CI check per destination, not one monolith:
-
-- **Frontmatter check** — [`validate-skill-spec.yml`](.github/workflows/validate-skill-spec.yml) validates every `SKILL.md` against the fields [`spec/README.md`](./spec/README.md) documents (name/description/license/metadata, naming, folder match, uniqueness). Same format across every destination, so one check covers all of them.
-- **Version bump check** — on pull requests, the same workflow runs `validate:versions`, which fails if an existing skill changed without a higher `metadata.version` (see [Versioning](#versioning)). It runs when any file in a skill folder changes, not just `SKILL.md`.
-- **Claude plugin check** — [`validate-claude-plugin.yml`](.github/workflows/validate-claude-plugin.yml) validates `.claude-plugin/marketplace.json` and each `plugin.json`. Claude-specific — it's the only destination with a plugin marketplace layer on top of `SKILL.md`, so it's a separate workflow, scoped to Claude-only files.
-
-These checks are not required status checks: a failure is shown on the PR but does not block merging, so reviewers treat a failing check as blocking.
-
-New destination has its own manifest format? Give it its own `validate-<destination>.mjs` + workflow, don't fold it into either of the above.
-
-Two checks described elsewhere in this guide are **not yet wired into CI** —
-run them locally before opening a PR:
-- **`skills-ref validate`** — the fuller upstream `agentskills` spec validator
-  (Python/uv, not our Node CI); see [Validate before submitting](#validate-before-submitting).
-  Overlaps with the frontmatter check above but checks more of the spec.
-- **Security scan** — SkillCheck, for prompt injection patterns, unexpected
-  network calls, and credential exposure
-
-### Human review (community tier)
-
-A maintainer checks:
-- Does the description trigger accurately?
-- Are instructions clear enough for the agent to follow without ambiguity?
-- Does the skill avoid duplicating an existing official skill?
-- Are scripts minimal and purposeful?
-
-### Human review (official tier)
-
-In addition to the above, a `@qlik-oss/agentic-skills-official-maintainers` member checks:
-- Alignment with Qlik product terminology and APIs
-- Consistency with existing official skill patterns
-- No overlap with the Supervisor agent's built-in capabilities
-
----
-
-## Publishing to the ecosystem
-
-Once merged, skills are automatically available via:
-
-```bash
-# Install any skill from this repo
-npx skills add qlik-oss/agentic-skills
-
-# Install a specific skill
-npx skills add qlik-oss/agentic-skills --skill <skill-name>
-
-# Install to a specific agent
-npx skills add qlik-oss/agentic-skills --skill <skill-name> -a claude-code
-```
-
-The `npx skills` CLI (maintained by Vercel / [skills.sh](https://skills.sh)) routes skills to the correct directory for each agent automatically — Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, and others.
-
-Official skills are also distributed through:
-- The Claude marketplace via `.claude-plugin/marketplace.json` (Claude only)
-
----
+Validation and CI pick up new areas automatically.
 
 ## Security
 
-Skills are executable instructions. A malicious or poorly written skill can cause data exfiltration, unexpected API calls, or unauthorized file access. Please take the following seriously.
+Never add secrets, credentials, personal tenant data or instructions that bypass host controls. Explain why a skill needs scripts, file access or external resources. Changes that fetch external content need maintainer review.
 
-**Never include in a skill:**
-- Hardcoded API keys, tokens, passwords, or secrets
-- Scripts that make outbound network calls to URLs outside Qlik's domains (community tier)
-- Instructions that tell the agent to ignore its system prompt or safety constraints
-- `eval`-style patterns that execute dynamically constructed code
-
-**Be explicit about scope.** Use `allowed-tools` in your frontmatter to declare the minimum set of tools your skill requires. Do not request `bash` or `write` access unless your skill genuinely needs it.
-
-**External dependencies.** If your script fetches from an external URL, that URL becomes a supply chain risk. Skills that fetch external content at runtime require explicit approval from `@qlik-oss/agentic-skills-official-maintainers` regardless of tier.
-
-**Reporting a vulnerability.** If you discover a security issue in an existing skill, do not open a public GitHub issue. Email `security@qlik.com` with the subject line `[Agent Skills] Vulnerability Report`.
-
----
-
-## Code of conduct
-
-This project follows Qlik's standard [Code of Conduct](./CODE_OF_CONDUCT.md). Be respectful, be constructive, and assume good intent. Maintainers reserve the right to close PRs or issues that violate these standards.
-
----
-
-## Questions?
-
-- **GitHub Discussions:** use the Discussions tab for design questions
-- **Issues:** use GitHub Issues for bugs and feature requests
-
-We're actively building this ecosystem and welcome your input.
+Report vulnerabilities privately to `security@qlik.com` with the subject `[Agent Skills] Vulnerability Report`. Use issues for bugs and suggestions, and discussions for design questions. This project follows the [Code of Conduct](CODE_OF_CONDUCT.md).

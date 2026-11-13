@@ -1,0 +1,44 @@
+{
+  "name": "qlik-task-skills",
+  "interface": {
+    "displayName": "Qlik task-focused plugins"
+  },
+  "plugins": [
+    {
+      "name": "qlik-analytics",
+      "source": {
+        "source": "local",
+        "path": "./analytics"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "qlik-automate",
+      "source": {
+        "source": "local",
+        "path": "./automate"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "qlik-embedded-analytics",
+      "source": {
+        "source": "local",
+        "path": "./embedded-analytics"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
