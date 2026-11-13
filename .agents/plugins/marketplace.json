@@ -20,7 +20,7 @@
       "name": "qlik-automate",
       "source": {
         "source": "local",
-        "path": "./automation"
+        "path": "./automate"
       },
       "policy": {
         "installation": "AVAILABLE",

@@ -5,7 +5,7 @@ Each area of this repository is a plugin package:
 | Plugin | Package directory | Covers |
 |---|---|---|
 | `qlik-analytics` | `analytics/` | Exploring Qlik data, expressions, load scripts, charts and AI readiness |
-| `qlik-automate` | `automation/` | Qlik Automate workflows and connector configuration |
+| `qlik-automate` | `automate/` | Qlik Automate workflows and connector configuration |
 | `qlik-embedded-analytics` | `embedded-analytics/` | Embedding Qlik analytics and migrating extensions to nebula.js |
 
 Each area README lists its skills and prerequisites. The plugins contain skills only. Workflows that need live tenant access require a separately configured Qlik MCP connection.
@@ -56,5 +56,5 @@ Skill names are unchanged. The skills from `official/skills/` and `community/ski
 | Skills | Plugin |
 |---|---|
 | `qlik-data-analyst`, `qlik-ai-readiness-optimizer`, `qlik-load-script`, `qlik-sense-app-analysis`, `qlik-talk-to-data` | `qlik-analytics` (`analytics/skills/`) |
-| `qlik-automation-builder` | `qlik-automate` (`automation/skills/`) |
+| `qlik-automation-builder` | `qlik-automate` (`automate/skills/`) |
 | `qlik-embed`, `qlik-extension-nebula-migration` | `qlik-embedded-analytics` (`embedded-analytics/skills/`) |

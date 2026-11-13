@@ -81,8 +81,9 @@ Treat any failing validation as blocking.
 1. Create `<area>/` using the layout above, with a README describing what the plugin does and its prerequisites.
 2. Set the plugin identifier as `name` in both manifests.
 3. Add the plugin to `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`.
+4. Add `/<area>/` to `.github/CODEOWNERS` with the base and community maintainers, as for the other areas. Without it, only the base maintainers are asked to review.
 
-Validation and CI pick up new areas automatically. Add a CODEOWNERS entry only if the area needs different reviewers.
+Validation and CI pick up new areas automatically.
 
 ## Security
 

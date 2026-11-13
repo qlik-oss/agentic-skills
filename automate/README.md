@@ -16,7 +16,7 @@ Generating workspace JSON is different from deploying or running an automation. 
 
 ## Install and skills
 
-Install **Qlik Automate** (`qlik-automate`) from `automation/`. In Claude Code:
+Install **Qlik Automate** (`qlik-automate`) from `automate/`. In Claude Code:
 
 ```text
 /plugin marketplace add qlik-oss/agentic-skills

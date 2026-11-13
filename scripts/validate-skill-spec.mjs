@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { ROOT, createReporter } from "./lib/reporter.mjs";
 import { SEMVER_RE, parseFrontmatter } from "./lib/skill-frontmatter.mjs";
 
-import { discoverCategories, repositoryFiles, skillDirOf } from "./lib/skill-paths.mjs";
+import { discoverCategories, listSkills, repositoryFiles, skillDirOf } from "./lib/skill-paths.mjs";
 
 const NAME_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -66,26 +66,23 @@ function validateSkillMd(skillMdPath, folderName, { fail, warn, relPath }, seenN
 export function validateSkills(root, ctx) {
   const seenNames = new Set();
   const discovered = new Set();
-  for (const { label, dir } of discoverCategories(root)) {
+  // Use Git's tracked/non-ignored inventory rather than traversing caches,
+  // dependencies, build output or another checkout.
+  const paths = repositoryFiles(root);
+  for (const { label, dir } of discoverCategories(root, paths)) {
     const skillsDir = join(root, dir);
     if (!existsSync(skillsDir)) continue;
 
-    const folders = readdirSync(skillsDir, { withFileTypes: true })
-      .filter((d) => d.isDirectory())
-      .map((d) => d.name);
+    const folders = listSkills(root, dir, paths);
     for (const folder of folders) {
-      const skillMdPath = join(skillsDir, folder, "SKILL.md");
-      if (!existsSync(skillMdPath)) continue; // supporting folder, not an installable skill
       discovered.add(`${dir}/${folder}/SKILL.md`);
-      validateSkillMd(skillMdPath, folder, ctx, seenNames);
+      validateSkillMd(join(skillsDir, folder, "SKILL.md"), folder, ctx, seenNames);
     }
-    if (folders.length && !folders.some((folder) => existsSync(join(skillsDir, folder, "SKILL.md")))) {
+    if (!folders.length && readdirSync(skillsDir, { withFileTypes: true }).some((d) => d.isDirectory())) {
       ctx.warn(`${label}/skills has no skills yet`);
     }
   }
-  // Use Git's tracked/non-ignored inventory rather than traversing caches,
-  // dependencies or another checkout. Deleted paths are not source files.
-  const paths = repositoryFiles(root);
+  // Deleted paths are not source files.
   for (const path of new Set(paths)) {
     if (!path.endsWith("/SKILL.md") && path !== "SKILL.md") continue;
     if (!existsSync(join(root, path)) || path === "template/skill/SKILL.md") continue;

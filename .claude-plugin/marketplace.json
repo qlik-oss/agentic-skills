@@ -14,7 +14,7 @@
     {
       "name": "qlik-automate",
       "description": "Build and maintain Qlik Automate workflows and their connector configuration.",
-      "source": "./automation/"
+      "source": "./automate/"
     },
     {
       "name": "qlik-embedded-analytics",
@@ -30,7 +30,7 @@
       "skills": [
         "./analytics/skills/qlik-ai-readiness-optimizer/",
         "./analytics/skills/qlik-data-analyst/",
-        "./automation/skills/qlik-automation-builder/",
+        "./automate/skills/qlik-automation-builder/",
         "./embedded-analytics/skills/qlik-embed/",
         "./embedded-analytics/skills/qlik-extension-nebula-migration/"
       ]

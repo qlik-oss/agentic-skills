@@ -1,17 +1,38 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 
 const CATEGORY_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 // Every category has the same layout. Answers uses a separate runtime, while
 // template/ is authoring material rather than a published category.
-export function discoverCategories(root) {
-  return readdirSync(root, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && CATEGORY_RE.test(entry.name) && entry.name !== "template")
-    .filter(({ name }) => ["skills", "plugin.json", ".claude-plugin/plugin.json"].some((path) => existsSync(join(root, name, path))))
-    .map(({ name }) => ({ label: name, dir: `${name}/skills` }))
+// Discovery reads Git's tracked/non-ignored inventory, so ignored build output
+// (for example dist/skills/) is never treated as a category or a skill.
+export function discoverCategories(root, files = repositoryFiles(root)) {
+  const present = files.filter((path) => existsSync(join(root, path)));
+  const names = new Set();
+  for (const path of present) {
+    const [name, ...rest] = path.split("/");
+    const tail = rest.join("/");
+    if (!CATEGORY_RE.test(name) || name === "template") continue;
+    if (tail.startsWith("skills/") || tail === "plugin.json" || tail === ".claude-plugin/plugin.json") names.add(name);
+  }
+  return [...names]
+    .map((name) => ({ label: name, dir: `${name}/skills` }))
     .sort((a, b) => a.label.localeCompare(b.label));
+}
+
+// Skill folder names directly under a category's skills/ directory whose
+// SKILL.md is tracked or untracked-but-not-ignored.
+export function listSkills(root, dir, files = repositoryFiles(root)) {
+  const prefix = `${dir}/`;
+  const names = new Set();
+  for (const path of files) {
+    if (!path.startsWith(prefix)) continue;
+    const parts = path.slice(prefix.length).split("/");
+    if (parts.length === 2 && parts[1] === "SKILL.md" && existsSync(join(root, path))) names.add(parts[0]);
+  }
+  return [...names].sort();
 }
 
 // Pure path matching also works against historical categories that no longer

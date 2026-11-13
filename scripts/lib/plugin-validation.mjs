@@ -1,9 +1,9 @@
 // Repository packaging checks, not a substitute for each host's loader.
-import { existsSync, readFileSync, readdirSync, realpathSync, statSync } from "node:fs";
+import { existsSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { SEMVER_RE } from "./skill-frontmatter.mjs";
 
-import { discoverCategories } from "./skill-paths.mjs";
+import { discoverCategories, listSkills, repositoryFiles } from "./skill-paths.mjs";
 
 export const PLUGIN_SCHEMA = "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json";
 
@@ -21,9 +21,9 @@ function readJSON(root, path, errors) {
   }
 }
 
-function discoverPluginRoots(root, errors) {
+function discoverPluginRoots(root, errors, files) {
   const seen = new Set();
-  return discoverCategories(root).filter(({ label }) => label !== "answers").flatMap((area) => {
+  return discoverCategories(root, files).filter(({ label }) => label !== "answers").flatMap((area) => {
     const manifest = readJSON(root, `${area.label}/plugin.json`, errors);
     if (!manifest) return [];
     if (seen.has(manifest.name)) errors.push(`duplicate plugin identity ${manifest.name}`);
@@ -60,7 +60,8 @@ function directory(root, path, errors, label) {
 
 export function validatePortablePlugins(root) {
   const errors = [];
-  const pluginRoots = discoverPluginRoots(root, errors);
+  const files = repositoryFiles(root);
+  const pluginRoots = discoverPluginRoots(root, errors, files);
   for (const { dir } of pluginRoots) {
     const area = dirname(dir);
     const path = `${area}/plugin.json`;
@@ -79,7 +80,7 @@ export function validatePortablePlugins(root) {
     }
     const skills = directory(join(root, area), "./skills/", errors, path);
     if (skills) {
-      const names = readdirSync(skills).filter((name) => existsSync(join(skills, name, "SKILL.md")));
+      const names = listSkills(root, dir, files);
       if (!names.length) errors.push(`${path}: package must contain skills`);
       for (const name of names) directory(join(root, area), `./skills/${name}/`, errors, path);
     }
@@ -103,7 +104,8 @@ export function validatePortablePlugins(root) {
         seen.add(entry.name);
         if (entry.source?.source !== "local" || entry.source.path !== `./${dirname(area.dir)}`) errors.push(`Codex marketplace: ${entry.name} must select its area folder`);
         if (entry.policy?.installation !== "AVAILABLE" || entry.policy?.authentication !== "ON_INSTALL") errors.push(`Codex marketplace: ${entry.name} must remain opt-in with explicit authentication policy`);
-        if (!["Productivity", "Data & Analytics", "Developer Tools"].includes(entry.category)) errors.push(`Codex marketplace: ${entry.name} needs a supported category`);
+        // Codex documents category by example only, so require a value without fixing the list.
+        if (typeof entry.category !== "string" || !entry.category.trim()) errors.push(`Codex marketplace: ${entry.name} needs a category`);
       }
       for (const { plugin } of pluginRoots) if (!seen.has(plugin)) errors.push(`Codex marketplace: missing plugin ${plugin}`);
     }
@@ -113,7 +115,8 @@ export function validatePortablePlugins(root) {
 
 export function validateClaudePlugins(root) {
   const errors = [];
-  const pluginRoots = discoverPluginRoots(root, errors);
+  const files = repositoryFiles(root);
+  const pluginRoots = discoverPluginRoots(root, errors, files);
   const marketplace = readJSON(root, ".claude-plugin/marketplace.json", errors);
   if (!marketplace) return { errors };
   for (const field of ["name", "description"]) {
@@ -123,11 +126,7 @@ export function validateClaudePlugins(root) {
   const seen = new Set();
   const canonical = new Set();
   for (const { dir } of pluginRoots) {
-    const abs = join(root, dir);
-    if (!existsSync(abs)) continue;
-    for (const name of readdirSync(abs)) {
-      if (existsSync(join(abs, name, "SKILL.md"))) canonical.add(realpathSync(join(abs, name)));
-    }
+    for (const name of listSkills(root, dir, files)) canonical.add(realpathSync(join(root, dir, name)));
   }
   for (const entry of marketplace.plugins) {
     if (!entry || typeof entry !== "object" || Array.isArray(entry)) { errors.push("marketplace: plugin entry must be an object"); continue; }

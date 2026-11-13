@@ -156,6 +156,17 @@ test("misplaced and nested skills are rejected; template and ignored copies are 
   assert.ok(errors.every((e) => e.includes("expected <category>/skills/<skill>/SKILL.md")));
 });
 
+test("an ignored package root with skills/ directly beneath it is not a category", (t) => {
+  const f = fixture(t);
+  f.write(".gitignore", "dist/\nanalytics/skills/scratch/\n");
+  // Same name as a canonical skill: would collide if discovered.
+  f.skill("dist/skills", "test-analytics");
+  f.skill("analytics/skills", "scratch");
+  assert.deepEqual(f.spec(), []);
+  assert.deepEqual(validatePortablePlugins(f.root).errors, []);
+  assert.deepEqual(validateClaudePlugins(f.root).errors, []);
+});
+
 test("real legacy bundles retain exactly the pre-migration skill membership", () => {
   const { plugins } = JSON.parse(readFileSync(join(ROOT, ".claude-plugin/marketplace.json")));
   const membership = (name) => plugins.find((p) => p.name === name).skills.map((p) => p.split("/").filter(Boolean).at(-1)).sort();
