@@ -1,7 +1,7 @@
 name: Lint Skills
 
 # Best-practice lint for changed skills, wherever they live in the repo
-# (official/skills/, community/skills/, answers/skills/, template/skill/). Two steps:
+# (canonical area roots, answers/skills/ and template/skill/). Two steps:
 #   1. scripts/lint-skill-structure.mjs: reference chains deeper than one level,
 #      long reference files without a table of contents, Windows-style paths.
 #   2. claudelint: name/description rules, body length, broken file references,

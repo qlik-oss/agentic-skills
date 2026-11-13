@@ -2,13 +2,6 @@ import { load as loadYaml } from "js-yaml";
 
 export const SEMVER_RE = /^\d+\.\d+\.\d+$/;
 
-// Installable skill tiers. template/ is a starter, not a published skill.
-export const SKILL_TIERS = [
-  { label: "official", dir: "official/skills" },
-  { label: "community", dir: "community/skills" },
-  { label: "answers", dir: "answers/skills" },
-];
-
 const FRONTMATTER_RE = /^(?:\uFEFF)?---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/;
 
 export function parseFrontmatter(raw) {

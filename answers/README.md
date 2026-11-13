@@ -2,7 +2,7 @@
 
 Skills in this folder run inside Qlik Answers, not in a coding agent. You upload a skill to a Qlik Answers app or assistant in Qlik Cloud, and it changes how Qlik Answers responds there.
 
-They use the same SKILL.md format and checks as `official/` and `community/`, but no `.claude-plugin` manifest lists them, so they don't install into Claude Code, Cursor or Codex.
+They use the same SKILL.md format as the agent plugins but are not included in them.
 
 **Before you use these skills**
 
