@@ -5,8 +5,8 @@ description: >-
   Talend Cloud Platform) project — response style, file-editing
   conventions, the AI edit marker, and how to handle an unavailable
   Qlik MCP server. Apply this skill's rules whenever any other
-  qtcp-plugin skill creates, edits, or reports on a QTCP project file,
-  in addition to that skill's own instructions.
+  skill in this plugin creates, edits, or reports on a QTCP project 
+  file,  in addition to that skill's own instructions.
 license: Apache-2.0
 metadata:
   author: eyalros1
@@ -20,11 +20,11 @@ metadata:
 
 # QTCP Project Rules
 
-These are the rules every other skill in this plugin builds on. This skill is not itself a workflow a user asks for by name — it is the baseline every other `qtcp-*`-adjacent skill in this plugin (project-management, replication, data-pipeline, source-selection, transformations, scheduling, binding-synchronization, resource-discovery, binding-resolution, project-validation) should be read together with whenever it creates or edits a project file, or reports something to the user.
+These are the rules every other skill in this plugin builds on. This skill is not itself a workflow a user asks for by name — it is the baseline every other skill in this plugin (project-management, replication, data-pipeline, source-selection, transformations, scheduling, binding-synchronization, resource-discovery, binding-resolution, project-validation) should be read together with whenever it creates or edits a project file, or reports something to the user.
 
 > **Portability note:** the Agent Skills spec has no mechanism for one skill to force another to load. Because of this, the short rules below that matter most if silently skipped — no comments in generated files, minimal files, don't invent values, the AI edit marker, and the response-style line — are **duplicated verbatim** into the top of every file-writing skill in this plugin, rather than left as a "see project-rules" cross-reference. This file remains the canonical copy of those rules and the home for the two longer, stateful procedures below (Qlik MCP availability, resolving the project ID) that are referenced rather than duplicated, since copying multi-step cached logic into many files is a worse maintenance trade than the small risk of it not being co-loaded.
 >
-> **Duplication ledger — keep in sync.** If you change one of the five short rules above, update the copy in each of: `project-management`, `replication`, `data-pipeline`, `source-selection`, `transformations`, `scheduling`, `binding-synchronization` (that last one carries a lightly adapted version, since `qtcp_bindings_definition.json` itself isn't schema-governed and isn't subject to the AI edit marker). `resource-discovery` and `binding-resolution` don't write project files, so they only need the response-style line, not the full block.
+> **Duplication ledger — keep in sync.** If you change one of the five short rules above, update the copy in each of: `qlik-data-pipelines-project-management`, `qlik-data-pipelines-replication`, `qlik-data-pipelines-data-pipeline`, `qlik-data-pipelines-source-selection`, `qlik-data-pipelines-transformations`, `qlik-data-pipelines-scheduling`, `qlik-data-pipelines-binding-synchronization` (that last one carries a lightly adapted version, since `qtcp_bindings_definition.json` itself isn't schema-governed and isn't subject to the AI edit marker). `qlik-data-pipelines-resource-discovery` and `qlik-data-pipelines-binding-resolution` don't write project files, so they only need the response-style line, not the full block.
 
 ## Response style
 
@@ -58,11 +58,11 @@ modifiedByAi:
 - If `modifiedByAi` already exists, update its `lastUpdated` and `model` values and move the object to the end of the file if necessary. Never add a duplicate. If it was already updated earlier in this same session, it does not need to be updated again.
 - This rule does **not** apply to `qtcp_bindings_definition.json` or documentation files.
 
-**Minimal files.** Task and project templates should include only the fields required by the relevant schema (see Schema Reference below) — do not add optional properties speculatively. Existing tasks already present in the workspace are examples only; never copy or infer structure from them. If an existing task's structure conflicts with a qtcp-plugin skill's instructions, the skill wins.
+**Minimal files.** Task and project templates should include only the fields required by the relevant schema (see Schema Reference below) — do not add optional properties speculatively. Existing tasks already present in the workspace are examples only; never copy or infer structure from them. If an existing task's structure conflicts with this plugin's skill instructions, the skill wins.
 
 ## Qlik MCP availability
 
-Several skills in this plugin depend on Qlik MCP tools (`qlik_search`, `qlik_get_pipeline_project_details`, `qlik_search_connection_objects` — declared in this plugin's `mcp.json` as the `qlik-mcp` server). Wherever a skill says "if Qlik MCP is available," use this procedure:
+Several skills in this plugin depend on Qlik MCP tools (`qlik_search`, `qlik_get_pipeline_project_details`, `qlik_search_connection_objects`), provided by the user's connected Qlik MCP server. Wherever a skill says "if Qlik MCP is available," use this procedure:
 
 1. If availability was already determined earlier in this session, reuse the cached result — do not re-check.
 2. Otherwise, check once whether the Qlik MCP tools are reachable, and cache the result for the session:
