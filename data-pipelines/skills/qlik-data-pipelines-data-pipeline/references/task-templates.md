@@ -31,13 +31,19 @@ Based on the chosen `platformType`, add the corresponding settings block under `
 
 Note the property name alias: `snowflakeCatalogIntegration` must bind to variable suffix `snowflakeOpenCatalog`, not `snowflakeCatalogIntegration` — see the `binding-synchronization` skill's property-alias table.
 
+## LANDING: Update Method
+
+When the user asks to change a `LANDING` task's update method, set `settings.fullLoadOnly` in `task.yaml`:
+- "CDC" or "Change Data Capture" → do not set `settings.fullLoadOnly`. (default is false for LANDING)
+- "Reload and Compare" or "full load" → `settings.fullLoadOnly: true`.
+
 ## REGISTERED_DATA: Update Method
 
 When creating a `REGISTERED_DATA` task, after asking for the task name also ask: "What is the Update method?"
 1. Compare with current storage
 2. Incremental using high watermark
 
-- **Compare with current storage** → do not set `settings.fullLoadOnly`.
+- **Compare with current storage** → do not set `settings.fullLoadOnly`. (default is true for REGISTERED_DATA)
 - **Incremental using high watermark** → set `settings.fullLoadOnly: false`, then also ask: "What are the incremental load settings?"
   1. Qlik replicate default settings → `settings.incrementalSettings.registeredType: REPLICATE`
   2. Stitch default settings → `settings.incrementalSettings.registeredType: STITCH`
