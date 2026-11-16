@@ -1,0 +1,75 @@
+# Data Pipelines Skills
+
+Skills in this directory are owned and maintained by Qlik engineering. They cover building and managing QTCP (Qlik Talend Cloud Platform) data pipeline and replication projects through an AI agent — project scaffolding, source selection, transformations, scheduling, and binding management.
+
+---
+
+## Who maintains these skills
+
+These skills are authored and reviewed by members of the `@qlik-oss/agentic-skills-official-maintainers` team. Every change goes through a pull request, passes the repo-local validation checks, and requires at least one team member review before merging. Host-specific security or runtime verification remains the responsibility of the consuming environment when relevant.
+
+If you find a bug or want to suggest an improvement to a skill here, open a GitHub issue — do not open a PR directly against this directory unless you are a member of `@qlik-oss/agentic-skills-official-maintainers`.
+
+---
+
+## Available skills
+
+Skills in this directory are listed by their folder name. Each folder contains a `SKILL.md` with the full description and trigger phrases.
+
+---
+
+## Install
+
+```bash
+# Install all data pipelines skills
+npx skills add qlik-oss/agentic-skills --skill '*' --agent '*'
+
+# Install a specific skill
+npx skills add qlik-oss/agentic-skills --skill <skill-name>
+```
+
+---
+
+## Structure
+
+Each skill follows this layout:
+
+```
+skill-name/
+├── SKILL.md            # Required — frontmatter + activation instructions
+├── scripts/            # Optional — executable scripts (output only enters context)
+├── references/         # Optional — detailed docs loaded on demand
+└── assets/             # Optional — templates and static resources
+```
+
+All skills in this directory:
+
+- Keep `SKILL.md` under 300 lines, with detailed material in `references/`
+- Declare `allowed-tools` explicitly in the frontmatter
+- Use Qlik's official product terminology
+- Include at least one worked example in `SKILL.md` or `references/`
+- Are versioned using semver in `metadata.version`
+
+---
+
+## Versioning
+
+Skills in this directory follow semantic versioning:
+
+- **Patch** (`1.0.x`) — wording fixes, clarifications, minor instruction improvements
+- **Minor** (`1.x.0`) — new steps, new reference files, expanded coverage
+- **Major** (`x.0.0`) — breaking changes to skill behavior, renamed trigger phrases, structural rewrites
+
+The version is set in the `metadata.version` field of `SKILL.md`. Changelog entries are maintained in each skill's directory as `CHANGELOG.md`.
+
+---
+
+## Suggesting changes
+
+To propose a change to a skill in this directory:
+
+1. Open a GitHub issue describing the problem or improvement.
+2. A member of `@qlik-oss/agentic-skills-official-maintainers` will triage and, if approved, either implement it or invite you to submit a PR.
+3. PRs against `/data-pipelines/` from non-team members will be closed and converted to issues.
+
+For net-new workflows that don't fit an existing skill, consider contributing to [`/community/skills/`](../../community/skills/) first. Community skills can be promoted to official if they see significant adoption and meet quality standards.

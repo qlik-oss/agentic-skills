@@ -10,7 +10,10 @@ import { SEMVER_RE, SKILL_TIERS, parseFrontmatter } from "./lib/skill-frontmatte
 
 const NAME_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
-const TIERS = SKILL_TIERS.map(({ label, dir }) => ({ label, skillsDir: join(ROOT, ...dir.split("/")) }));
+const TIERS = [
+  ...SKILL_TIERS.map(({ label, dir }) => ({ label, skillsDir: join(ROOT, ...dir.split("/")) })),
+  { label: "data-pipelines", skillsDir: join(ROOT, "data-pipelines", "skills") },
+];
 
 function validateSkillMd(skillMdPath, folderName, { fail, warn, relPath }, seenNamesInTier) {
   const label = relPath(skillMdPath);

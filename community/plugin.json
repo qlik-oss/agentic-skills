@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "qlik-cloud-community-skills",
+  "description": "Community-contributed skills for Qlik Cloud — integration recipes, industry-specific workflows, and team conventions from partners and customers. Reviewed by community maintainers before publishing.",
+  "version": "1.0.0",
+  "author": {
+    "name": "QlikTech International AB",
+    "url": "https://github.com/qlik-oss/agentic-skills/community"
+  },
+  "keywords": [
+    "qlik",
+    "qlik answers",
+    "qlik app",
+    "automation",
+    "qtcp",
+    "data-pipeline",
+    "replication",
+    "data-integration"
+  ]
+}
