@@ -10,7 +10,7 @@ This directory documents the `SKILL.md` frontmatter format used in this reposito
 | description | string | Trigger description the agent uses to decide when to load this skill. |
 | license | string | SPDX identifier (e.g. `Apache-2.0`). |
 | metadata.author | string | Skill author (use your GitHub username for contributions). |
-| metadata.version | string | Semver string e.g. `1.0.0`. |
+| metadata.version | string | Semver string e.g. `1.0.0`. Must increase whenever any file in the skill changes — see [Versioning](../CONTRIBUTING.md#versioning). |
 
 ## Optional frontmatter fields
 

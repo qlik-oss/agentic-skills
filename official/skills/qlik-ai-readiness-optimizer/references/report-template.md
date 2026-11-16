@@ -110,7 +110,7 @@ Significance: Master Items are extremely important for consistent and accurate u
 
 **Coverage gap**: [dimensions/measures the app is missing that users will likely ask about].
 
-**Group assignment** — can't be checked via MCP. For each of the [N] items above: *does it have a group assigned in the Logical Model?* If not, Qlik Answers will never surface it regardless of description quality.
+**Group assignment** — can't be checked via MCP. For each of the [N] items above: *does it have a group assigned in the Logical Model?* If not, Qlik Answers will never surface it regardless of description quality. "Default … group" shown at creation is a placeholder, not a group: check that the *Group* column in *AI optimization → Fields and master items* shows a group name, not *Not in a group*.
 ```
 
 The `Master Item | Type | Description | Expression | Score` columns and the two bold callouts (**Coverage gap**, **Group assignment**) are required. Description/Expression severity and per-item scoring follow [layer-analysis-guide.md](layer-analysis-guide.md) Layer 3 (including the C2 set-identifier rule).

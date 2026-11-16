@@ -84,6 +84,11 @@ via MCP.
 ⚠️ **Variable resolution limitation**: MCP cannot retrieve variable definitions from the app. If you recommend inlining a variable-heavy expression and the user wants you to create the inlined version via `qlik_create_measure`, you'll need the user to provide the resolved variable values. Ask explicitly: "I can see this expression uses `$(vMarginCalc)` — what does that variable resolve to? I need the full expression to create the inlined version."
 
 4. **Group assignment (manual step, every time)**: for every item you create or edit, remind the user to confirm/assign its group in the Logical Model UI afterward — MCP cannot do this and cannot verify it was already done. Word it explicitly: "I've created/updated '[name]', but I can't see or set its group from here — please confirm it's assigned to a group in the Logical Model, or Qlik Answers won't surface it."
+   The "Default dimension group" / "Default measure group" text shown when creating a Master Item is a placeholder: unless a group was explicitly picked from the dropdown, the item is *Not in a group* and counted as Excluded, even though Visibility shows "visible". Give the user the fix steps:
+   1. Edit the Master Item, open the *Logical model group* dropdown, and explicitly select a group (the default group is fine).
+   2. Save.
+   3. In *AI optimization → Fields and master items*, confirm the *Group* column shows a group name (e.g. `__MasterLib_Dimensions`), not *Not in a group*.
+   4. Run *AI optimization → Overview → Sync application*, and check that the *Excluded* count drops (to 0 if no other items are meant to be ungrouped).
 5. For missing Master Items (key metrics not yet created): propose new Master Items with expression and description — present for user approval before creating via MCP, then apply the same group reminder as step 4
 6. **Optional: Linked Glossary Term Alignment** (only if Phase 1, Step 2 confirmed linked Glossary
    Terms and an export was retrieved): present the alignment table from
@@ -157,8 +162,8 @@ Note: Must be applied manually in the load script editor.
 ```
 Action: Generate suggested synonym import file on user request
 Tools: qlik_list_measures, qlik_list_dimensions → generate synonym suggestions
-Note: MCP cannot read existing synonyms. MCP cannot write synonyms. Upload must be done via
-Qlik Answers admin UI.
+Note: MCP cannot read existing synonyms (an empty `synonyms` array in tool output is not evidence
+of none). MCP cannot write synonyms. Upload must be done via Qlik Answers admin UI.
 ```
 
 > ⚠️ Layer 5 is not scored. Only execute this step if the user has accepted the offer to generate a synonym file (see the Layer 5 report format in [references/layer-analysis-guide.md](layer-analysis-guide.md)).

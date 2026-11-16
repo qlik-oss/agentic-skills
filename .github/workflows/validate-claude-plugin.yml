@@ -27,12 +27,15 @@ on:
       - "pnpm-lock.yaml"
       - ".github/workflows/validate-claude-plugin.yml"
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6.1.0
+      - uses: pnpm/action-setup@v6.1.1
         with:
           version: 10.6.5
       - uses: actions/setup-node@v7
