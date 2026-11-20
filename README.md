@@ -7,6 +7,7 @@ Agent skills for working with Qlik, packaged as plugins by area. Install a plugi
 | [Qlik Analytics](analytics/README.md) (`qlik-analytics`) | Explore Qlik data, write expressions and load scripts, build charts and prepare apps for AI |
 | [Qlik Automate](automate/README.md) (`qlik-automate`) | Build and maintain Qlik Automate workflows |
 | [Qlik Embedded Analytics](embedded-analytics/README.md) (`qlik-embedded-analytics`) | Embed Qlik analytics and migrate extensions to nebula.js |
+| [Qlik Data Pipelines](data-pipelines/README.md) (`qlik-data-pipelines-skills`) | Build and manage QTCP data pipeline and replication projects |
 
 [Qlik Answers skills](answers/README.md) are a separate collection that you upload inside Qlik Answers.
 

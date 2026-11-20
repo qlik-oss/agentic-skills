@@ -7,6 +7,7 @@ Each area of this repository is a plugin package:
 | `qlik-analytics` | `analytics/` | Exploring Qlik data, expressions, load scripts, charts and AI readiness |
 | `qlik-automate` | `automate/` | Qlik Automate workflows and connector configuration |
 | `qlik-embedded-analytics` | `embedded-analytics/` | Embedding Qlik analytics and migrating extensions to nebula.js |
+| `qlik-data-pipelines-skills` | `data-pipelines/` | QTCP data pipeline and replication projects |
 
 Each area README lists its skills and prerequisites. The plugins contain skills only. Workflows that need live tenant access require a separately configured Qlik MCP connection.
 

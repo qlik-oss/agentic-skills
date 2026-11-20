@@ -1,6 +1,6 @@
 {
   "name": "qlik-cloud-skills",
-  "description": "Task-focused Qlik plugins for analytics, automation, and embedded analytics.",
+  "description": "Task-focused Qlik plugins for analytics, automation, embedded analytics and data pipelines.",
   "owner": {
     "name": "QlikTech International AB",
     "url": "https://github.com/qlik-oss/agentic-skills"
@@ -20,6 +20,11 @@
       "name": "qlik-embedded-analytics",
       "description": "Embed Qlik analytics in applications and migrate visualization extensions to nebula.js.",
       "source": "./embedded-analytics/"
+    },
+    {
+      "name": "qlik-data-pipelines-skills",
+      "description": "Skills for building and managing QTCP (Qlik Talend Cloud Platform) data pipeline and replication projects — project scaffolding, source selection, transformations, scheduling, and binding management. Built and maintained by Qlik staff.",
+      "source": "./data-pipelines/"
     },
     {
       "name": "qlik-cloud-skills",
