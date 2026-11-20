@@ -1,0 +1,11 @@
+{
+  "name": "qlik-automate",
+  "description": "Build and maintain Qlik Automate workflows and their connector configuration.",
+  "version": "1.0.0",
+  "author": {
+    "name": "QlikTech International AB",
+    "url": "https://github.com/qlik-oss/agentic-skills"
+  },
+  "license": "Apache-2.0",
+  "repository": "https://github.com/qlik-oss/agentic-skills"
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "qlik-analytics",
+  "description": "Explore Qlik data, write expressions and load scripts, build charts, and improve apps for AI.",
+  "version": "1.0.0",
+  "author": {
+    "name": "QlikTech International AB",
+    "url": "https://github.com/qlik-oss/agentic-skills"
+  },
+  "license": "Apache-2.0",
+  "repository": "https://github.com/qlik-oss/agentic-skills",
+  "keywords": [
+    "qlik",
+    "analytics",
+    "load-script",
+    "charts"
+  ]
+}

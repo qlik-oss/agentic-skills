@@ -1,0 +1,62 @@
+name: Validate agent packages
+
+# Explicit packaging policy: selected source membership, portable manifests,
+# Claude identities and legacy bundle paths. No host login or tenant operations.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "*/skills/**"
+      - "*/plugin.json"
+      - "*/.claude-plugin/**"
+      - "*/LICENSE"
+      - "*/NOTICE"
+      - ".claude-plugin/marketplace.json"
+      - ".agents/plugins/marketplace.json"
+      - "LICENSE"
+      - "NOTICE"
+      - "scripts/validate-agent-plugins.mjs"
+      - "scripts/validate-claude-plugin.mjs"
+      - "scripts/lib/**"
+      - "scripts/test/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/validate-agent-plugins.yml"
+  pull_request:
+    paths:
+      - "*/skills/**"
+      - "*/plugin.json"
+      - "*/.claude-plugin/**"
+      - "*/LICENSE"
+      - "*/NOTICE"
+      - ".claude-plugin/marketplace.json"
+      - ".agents/plugins/marketplace.json"
+      - "LICENSE"
+      - "NOTICE"
+      - "scripts/validate-agent-plugins.mjs"
+      - "scripts/validate-claude-plugin.mjs"
+      - "scripts/lib/**"
+      - "scripts/test/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/validate-agent-plugins.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6.1.1
+        with:
+          version: 10.6.5
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run validate:plugins
+      - run: pnpm run validate:claude
+      - run: pnpm run test:scripts

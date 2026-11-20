@@ -36,16 +36,18 @@ corepack pnpm install --frozen-lockfile
 corepack pnpm run validate:spec
 corepack pnpm run validate:versions
 corepack pnpm run validate:claude
+corepack pnpm run validate:plugins
+corepack pnpm run test:scripts
 ```
 
 ### Required for every skill change
 
 - [ ] Every existing skill changed in this PR has a higher `metadata.version` than on `main` (any file in the skill folder counts; rollbacks also bump)
 
-Run `skills-ref validate` for the skill you added or modified:
+Optional upstream check for the skill you added or modified:
 
 ```bash
-skills-ref validate community/skills/your-skill-name/
+skills-ref validate <category>/skills/<skill-name>/
 ```
 
 ### Optional: host-specific runtime verification

@@ -6,7 +6,7 @@ This directory documents the `SKILL.md` frontmatter format used in this reposito
 
 | Field | Type | Description |
 |---|---|---|
-| name | string | Unique identifier. Lowercase, hyphens only. Must match folder name. |
+| name | string | Identifier unique across all canonical skill roots. Lowercase alphanumeric with hyphens. Must match folder name. |
 | description | string | Trigger description the agent uses to decide when to load this skill. |
 | license | string | SPDX identifier (e.g. `Apache-2.0`). |
 | metadata.author | string | Skill author (use your GitHub username for contributions). |
@@ -21,3 +21,7 @@ This directory documents the `SKILL.md` frontmatter format used in this reposito
 | metadata.deprecated | boolean | Set to true to mark the skill as deprecated. |
 
 For the upstream Agent Skills spec, see https://agentskills.io/specification.
+
+## Skill location
+
+Skills live in `<area>/skills/<name>/SKILL.md`. Qlik Answers skills live in `answers/skills/<name>/SKILL.md`. See [CONTRIBUTING.md](../CONTRIBUTING.md#choose-a-location).
