@@ -22,7 +22,7 @@ In Claude Code:
 
 See the [installation guide](INSTALLATION.md) for Codex, Kiro and individual skills. Installing a plugin does not connect your Qlik tenant; workflows that need live access require a Qlik MCP connection.
 
-The legacy `qlik-cloud-skills` and `qlik-cloud-community-skills` plugins are available until 30 November 2026. See [legacy plugins](INSTALLATION.md#legacy-plugins) to switch.
+The legacy `qlik-cloud-skills` and `qlik-cloud-community-skills` plugins are available until 15 December 2026. See [legacy plugins](INSTALLATION.md#legacy-plugins) to switch.
 
 ## Repository layout
 

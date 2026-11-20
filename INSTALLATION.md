@@ -43,7 +43,7 @@ Qlik Answers skills are uploaded inside Qlik Answers; see [answers/README.md](an
 
 ## Legacy plugins
 
-The `qlik-cloud-skills` and `qlik-cloud-community-skills` Claude plugins are available until **30 November 2026**. After that date they will be removed from the marketplace.
+The `qlik-cloud-skills` and `qlik-cloud-community-skills` Claude plugins are available until **15 December 2026**. After that date they will be removed from the marketplace.
 
 To switch, install the area plugins that contain the skills you use, then uninstall the legacy plugin:
 

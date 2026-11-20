@@ -52,7 +52,7 @@ Do not widen those workflows unless the repo policy explicitly changes.
 - Category packages use `<category>/` as their root and contain `plugin.json`, `.claude-plugin/plugin.json` and `skills/`. Keep manifest identities, descriptions and versions aligned.
 - Increase plugin versions when packaged content or membership changes, including affected legacy entries. This release decision is reviewed separately from automated skill-version checks.
 - Discover categories from the shared folder convention; do not add category allowlists to tooling or CI. Version comparisons discover skill locations from each Git revision, including removed categories.
-- The legacy Claude plugins `qlik-cloud-skills` and `qlik-cloud-community-skills` keep their original membership until they are removed after 30 November 2026. Do not add skills to them.
+- The legacy Claude plugins `qlik-cloud-skills` and `qlik-cloud-community-skills` keep their original membership until they are removed after 15 December 2026. Do not add skills to them.
 - Generated/custom bundles must not introduce a second editable skill copy.
 
 ## Documentation standards
