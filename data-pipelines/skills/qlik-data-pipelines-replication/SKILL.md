@@ -51,7 +51,6 @@ Apply `binding-synchronization`'s mandatory gate after any file change — that 
 properties:
   exportVersion: '1.0'
   name: '{{projectName}}'
-  space: 'ref{project.current.spaceId}'
   type: DATA_MOVEMENT
 ```
 

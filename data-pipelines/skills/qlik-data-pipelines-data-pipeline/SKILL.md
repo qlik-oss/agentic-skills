@@ -74,7 +74,6 @@ Regardless of landing target, when first creating the project: do **not** create
 properties:
   exportVersion: '1.0'
   name: '{{projectName}}'
-  space: 'ref{project.current.spaceId}'
   type: DATA_PIPELINE
   platformType: <PLATFORM_TYPE>
   platformConnection: '{{platformConnection}}'
