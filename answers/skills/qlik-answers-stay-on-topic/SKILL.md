@@ -12,9 +12,11 @@ description: >
 license: Apache-2.0
 metadata:
   author: Adipai1
-  version: 1.0.1
+  version: 1.0.2
+  provenance: qlik
   tags:
     - qlik-answers
+    - qlik-contributed
     - scope
     - guardrail
 ---

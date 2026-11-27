@@ -29,7 +29,7 @@
     {
       "name": "qlik-cloud-skills",
       "description": "Legacy plugin, available until 15 December 2026. Install the area plugins instead; see INSTALLATION.md.",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "source": "./",
       "strict": false,
       "skills": [
@@ -43,7 +43,7 @@
     {
       "name": "qlik-cloud-community-skills",
       "description": "Legacy plugin, available until 15 December 2026. Install the area plugins instead; see INSTALLATION.md.",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "source": "./",
       "strict": false,
       "skills": [

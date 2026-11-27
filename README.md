@@ -48,6 +48,8 @@ Skills follow the [Agent Skills specification](https://agentskills.io/specificat
 
 Anyone can contribute to any area. See [CONTRIBUTING.md](CONTRIBUTING.md). Each skill keeps its author and licence, and [CODEOWNERS](.github/CODEOWNERS) assigns reviewers. This project follows the [Code of Conduct](CODE_OF_CONDUCT.md).
 
+Every skill identifies whether it is **Qlik-contributed** or **community-contributed** in its metadata and area listing. This label records origin and primary stewardship, not support coverage; support is determined by the applicable Qlik terms and notices.
+
 Support coverage is determined by applicable Qlik terms and any notice in a skill, not by inclusion in this repository. Use GitHub issues for bugs and suggestions.
 
 ## Security

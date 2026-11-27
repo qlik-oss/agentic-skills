@@ -25,7 +25,9 @@ Install **Qlik Automate** (`qlik-automate`) from `automate/`. In Claude Code:
 
 For other clients, see the [installation guide](../INSTALLATION.md).
 
-- [qlik-automation-builder](skills/qlik-automation-builder/SKILL.md): automation construction, connector configuration and authorised management through available tools.
+| Skill | Contribution | When it helps |
+|---|---|---|
+| [qlik-automation-builder](skills/qlik-automation-builder/SKILL.md) | Qlik | Automation construction, connector configuration and authorised management through available tools |
 
 ## Support
 

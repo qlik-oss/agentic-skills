@@ -18,9 +18,11 @@ license: Apache-2.0
 allowed-tools: read write qlik_search qlik_list_sheets qlik_get_sheet_details qlik_get_chart_info qlik_get_fields qlik_list_dimensions qlik_list_measures qlik_list_bookmarks qlik_get_current_selections qlik_add_chart
 metadata:
   author: withdave
-  version: 1.0.1
+  version: 1.0.2
+  provenance: qlik
   tags:
     - qlik
+    - qlik-contributed
     - embedded-analytics
     - qlik-embed
     - oauth

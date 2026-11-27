@@ -13,9 +13,11 @@ license: Apache-2.0
 allowed-tools: read write edit bash
 metadata:
   author: withdave
-  version: 1.0.1
+  version: 1.0.2
+  provenance: qlik
   tags:
     - qlik
+    - qlik-contributed
     - nebula
     - extensions
     - migration

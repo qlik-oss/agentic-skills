@@ -4,9 +4,11 @@ description: "Write, complete, or extend Qlik Sense load scripts (.qvs) for data
 license: Apache-2.0
 metadata:
   author: nabeel-oz
-  version: 1.6.2
+  version: 1.6.3
+  provenance: qlik
   tags:
     - qlik
+    - qlik-contributed
     - load-script
     - qvs
     - etl

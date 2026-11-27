@@ -14,9 +14,11 @@ license: Apache-2.0
 compatibility: Requires a Qlik Cloud tenant with the Qlik MCP server connected (see references/qlik-mcp-tool-reference.md for the tool list).
 metadata:
   author: nabeel-oz
-  version: 1.4.1
+  version: 1.4.2
+  provenance: qlik
   tags:
     - qlik
+    - qlik-contributed
     - mcp
     - analytics
     - governance

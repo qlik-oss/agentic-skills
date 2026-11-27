@@ -12,6 +12,10 @@ import { SEMVER_RE, parseFrontmatter } from "./lib/skill-frontmatter.mjs";
 import { discoverCategories, listSkills, repositoryFiles, skillDirOf } from "./lib/skill-paths.mjs";
 
 const NAME_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+const PROVENANCE_TAGS = {
+  qlik: "qlik-contributed",
+  community: "community-contributed",
+};
 
 function validateSkillMd(skillMdPath, folderName, { fail, warn, relPath }, seenNames) {
   const label = relPath(skillMdPath);
@@ -29,6 +33,20 @@ function validateSkillMd(skillMdPath, folderName, { fail, warn, relPath }, seenN
     if (!frontmatter[field]) fail(`${label}: missing required frontmatter field "${field}"`);
   }
   if (!frontmatter.metadata?.author) fail(`${label}: missing required frontmatter field "metadata.author"`);
+  const provenance = frontmatter.metadata?.provenance;
+  if (!Object.hasOwn(PROVENANCE_TAGS, provenance)) {
+    fail(`${label}: metadata.provenance must be "qlik" or "community"`);
+  }
+  const tags = frontmatter.metadata?.tags;
+  if (tags != null && (!Array.isArray(tags) || tags.some((tag) => typeof tag !== "string"))) {
+    fail(`${label}: metadata.tags must be a list of strings`);
+  } else if (provenance && Object.hasOwn(PROVENANCE_TAGS, provenance)) {
+    const contributionTags = Object.values(PROVENANCE_TAGS).filter((tag) => tags?.includes(tag));
+    const expectedTag = PROVENANCE_TAGS[provenance];
+    if (contributionTags.length !== 1 || contributionTags[0] !== expectedTag) {
+      fail(`${label}: metadata.tags must contain exactly "${expectedTag}" for metadata.provenance "${provenance}"`);
+    }
+  }
   if (!frontmatter.metadata?.version) {
     fail(`${label}: missing required frontmatter field "metadata.version"`);
   } else if (!SEMVER_RE.test(String(frontmatter.metadata.version))) {

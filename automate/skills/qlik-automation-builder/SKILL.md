@@ -6,9 +6,11 @@ license: Apache-2.0
 allowed-tools: qlik_skill_view qlik_search qlik_create_automation qlik_update_automation qlik_delete_automation qlik_get_automation_by_id qlik_list_automation_connectors qlik_get_automation_connector qlik_list_automation_connections bash
 metadata:
   author: yeshQ
-  version: 0.3.2
+  version: 0.3.3
+  provenance: qlik
   tags:
   - qlik
+  - qlik-contributed
   - analytics
   - workflow-automation
 ---

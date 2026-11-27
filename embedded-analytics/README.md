@@ -25,10 +25,10 @@ Install **Qlik Embedded Analytics** (`qlik-embedded-analytics`) from `embedded-a
 
 For other clients, see the [installation guide](../INSTALLATION.md).
 
-| Skill | When it helps |
-|---|---|
-| [qlik-embed](skills/qlik-embed/SKILL.md) | Embedding, authentication, framework integration and resource discovery |
-| [qlik-extension-nebula-migration](skills/qlik-extension-nebula-migration/SKILL.md) | Assessing and migrating extensions, with local inspection and compatibility helpers |
+| Skill | Contribution | When it helps |
+|---|---|---|
+| [qlik-embed](skills/qlik-embed/SKILL.md) | Qlik | Embedding, authentication, framework integration and resource discovery |
+| [qlik-extension-nebula-migration](skills/qlik-extension-nebula-migration/SKILL.md) | Qlik | Assessing and migrating extensions, with local inspection and compatibility helpers |
 
 ## Support
 

@@ -13,9 +13,11 @@ description: >-
 license: Apache-2.0
 metadata:
   author: ybl74
-  version: "1.0.1"
+  version: "1.0.2"
+  provenance: qlik
   tags:
     - qlik
+    - qlik-contributed
     - mcp
     - query
     - talk-to-data

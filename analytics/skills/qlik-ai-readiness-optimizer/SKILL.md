@@ -17,9 +17,11 @@ description: >-
 license: Apache-2.0
 metadata:
   author: JoshQlikDesign
-  version: 2.0.4
+  version: 2.0.5
+  provenance: qlik
   tags:
     - qlik
+    - qlik-contributed
     - ai-readiness
     - qlik-answers
     - mcp

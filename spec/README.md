@@ -11,14 +11,37 @@ This directory documents the `SKILL.md` frontmatter format used in this reposito
 | license | string | SPDX identifier (e.g. `Apache-2.0`). |
 | metadata.author | string | Skill author (use your GitHub username for contributions). |
 | metadata.version | string | Semver string e.g. `1.0.0`. Must increase whenever any file in the skill changes — see [Versioning](../CONTRIBUTING.md#versioning). |
+| metadata.provenance | string | Contribution origin: `qlik` or `community`. |
+| metadata.tags | list | Searchable tags. Must contain `qlik-contributed` or `community-contributed`, matching `metadata.provenance`, and not both. |
 
 ## Optional frontmatter fields
 
 | Field | Type | Description |
 |---|---|---|
 | allowed-tools | string | Space-separated list of required tools (e.g. `read bash`). |
-| metadata.tags | list | Searchable tags e.g. `["qlik", "analytics"]`. |
 | metadata.deprecated | boolean | Set to true to mark the skill as deprecated. |
+
+## Contribution provenance
+
+`qlik` means the skill originated as a Qlik contribution. `community` means it originated as a community contribution. Provenance records origin and primary stewardship; it does not determine licence, package membership or Qlik Support coverage.
+
+Keep the structured field and its matching discovery tag aligned:
+
+```yaml
+metadata:
+  provenance: qlik
+  tags:
+    - qlik-contributed
+```
+
+or:
+
+```yaml
+metadata:
+  provenance: community
+  tags:
+    - community-contributed
+```
 
 For the upstream Agent Skills spec, see https://agentskills.io/specification.
 

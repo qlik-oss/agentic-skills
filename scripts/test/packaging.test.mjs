@@ -16,7 +16,7 @@ function fixture(t) {
     mkdirSync(dirname(join(root, path)), { recursive: true });
     writeFileSync(join(root, path), typeof value === "string" ? value : JSON.stringify(value));
   };
-  const skill = (dir, name) => write(`${dir}/${name}/SKILL.md`, `---\nname: ${name}\ndescription: A test workflow.\nlicense: Apache-2.0\nmetadata:\n  author: fixture\n  version: 1.0.0\n---\nInstructions.\n`);
+  const skill = (dir, name) => write(`${dir}/${name}/SKILL.md`, `---\nname: ${name}\ndescription: A test workflow.\nlicense: Apache-2.0\nmetadata:\n  author: fixture\n  version: 1.0.0\n  provenance: qlik\n  tags:\n    - qlik-contributed\n---\nInstructions.\n`);
   const plugins = [];
   const codex = [];
   write("LICENSE", "Fixture licence.\n");
@@ -142,6 +142,25 @@ test("global skill names cannot collide between areas or with Answers", (t) => {
   const f = fixture(t);
   f.skill("answers/skills", "test-analytics");
   assert.ok(f.spec().some((e) => e.includes("already used by another canonical skill")));
+});
+
+test("skill provenance and contribution tags must agree", (t) => {
+  const f = fixture(t);
+  f.write("analytics/skills/test-analytics/SKILL.md", `---
+name: test-analytics
+description: A test workflow.
+license: Apache-2.0
+metadata:
+  author: fixture
+  version: 1.0.0
+  provenance: community
+  tags:
+    - qlik-contributed
+    - community-contributed
+---
+Instructions.
+`);
+  assert.ok(f.spec().some((e) => e.includes('must contain exactly "community-contributed"')));
 });
 
 test("misplaced and nested skills are rejected; template and ignored copies are excluded", (t) => {

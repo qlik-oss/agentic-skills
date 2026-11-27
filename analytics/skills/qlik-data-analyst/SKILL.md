@@ -4,9 +4,11 @@ description: Assist with Qlik Sense and QlikView data analysis tasks — authori
 license: Apache-2.0
 metadata:
   author: mreimitz
-  version: 1.1.1
+  version: 1.1.2
+  provenance: qlik
   tags:
     - qlik
+    - qlik-contributed
     - analytics
     - set-analysis
     - data-insights

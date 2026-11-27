@@ -32,6 +32,7 @@ Start from [template/skill](template/skill/). Frontmatter fields are defined in 
 - The directory name must match the frontmatter `name`, and names must be unique across the repository.
 - Write a `description` that states the task and when to use the skill. Avoid broad triggers.
 - Include your authorship and an SPDX licence identifier.
+- Set `metadata.provenance` to `qlik` or `community` and add the matching `qlik-contributed` or `community-contributed` tag. See [the skill specification](spec/README.md#contribution-provenance). Maintainers confirm the classification during review.
 - Keep `SKILL.md` focused. Put supporting detail in `references/`, helpers in `scripts/` and output resources in `assets/`.
 - Keep required resources inside the skill directory. If a skill depends on another skill, name it and make sure both are in the same plugin.
 - Document prerequisites, file writes, external dependencies and network access. Request the least tool access needed.

@@ -25,13 +25,13 @@ For other clients, see the [installation guide](../INSTALLATION.md).
 
 ## Included skills
 
-| Skill | When it helps |
-|---|---|
-| [qlik-data-analyst](skills/qlik-data-analyst/SKILL.md) | Expressions, charts and interpretation of analytical results |
-| [qlik-talk-to-data](skills/qlik-talk-to-data/SKILL.md) | Questions about existing Qlik data and governed context |
-| [qlik-sense-app-analysis](skills/qlik-sense-app-analysis/SKILL.md) | MCP-based app exploration, chart/sheet authoring and governance workflows |
-| [qlik-load-script](skills/qlik-load-script/SKILL.md) | Qlik Sense load scripting, data preparation and ML feature preparation |
-| [qlik-ai-readiness-optimizer](skills/qlik-ai-readiness-optimizer/SKILL.md) | Assessing and improving apps for Qlik Answers and MCP use |
+| Skill | Contribution | When it helps |
+|---|---|---|
+| [qlik-data-analyst](skills/qlik-data-analyst/SKILL.md) | Qlik | Expressions, charts and interpretation of analytical results |
+| [qlik-talk-to-data](skills/qlik-talk-to-data/SKILL.md) | Qlik | Questions about existing Qlik data and governed context |
+| [qlik-sense-app-analysis](skills/qlik-sense-app-analysis/SKILL.md) | Qlik | MCP-based app exploration, chart/sheet authoring and governance workflows |
+| [qlik-load-script](skills/qlik-load-script/SKILL.md) | Qlik | Qlik Sense load scripting, data preparation and ML feature preparation |
+| [qlik-ai-readiness-optimizer](skills/qlik-ai-readiness-optimizer/SKILL.md) | Qlik | Assessing and improving apps for Qlik Answers and MCP use |
 
 ## Support
 
