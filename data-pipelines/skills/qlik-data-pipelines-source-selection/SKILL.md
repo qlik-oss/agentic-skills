@@ -9,9 +9,11 @@ license: Apache-2.0
 allowed-tools: qlik_search qlik_get_pipeline_project_details qlik_search_connection_objects
 metadata:
   author: eyalros1
-  version: 1.0.0
+  version: 1.0.1
+  provenance: qlik
   tags:
     - qlik
+    - qlik-contributed
     - data pipeline
     - data integration
     - QTCP

@@ -2,11 +2,11 @@
 
 Skills in this folder run inside Qlik Answers, not in a coding agent. You upload a skill to a Qlik Answers app or assistant in Qlik Cloud, and it changes how Qlik Answers responds there.
 
-They use the same SKILL.md format and checks as `official/` and `community/`, but no `.claude-plugin` manifest lists them, so they don't install into Claude Code, Cursor or Codex.
+They use the same SKILL.md format as the agent plugins but are not included in them.
 
 **Before you use these skills**
 
-These skills are community examples, shared as a starting point. They are not official Qlik product features, and Qlik Support does not cover them.
+These Qlik-contributed skills are shared as starting points. They are not official Qlik product features, and Qlik Support does not cover them.
 
 - **No guarantee a skill is applied.** Qlik Answers decides when to load a skill from the question and the skill's `description`. It may skip a skill for some questions. Results can also change when the model or Qlik Answers is updated.
 - **General, not tailored to your app.** The skills don't reference any field names, but nobody has tested them on your app. Your data model, master items and other skills can change how they behave.
@@ -16,10 +16,12 @@ These skills are community examples, shared as a starting point. They are not of
 
 **Skills**
 
-- [qlik-answers-stay-on-topic](skills/qlik-answers-stay-on-topic/): answers only from the app's data and declines general-knowledge questions.
-- [qlik-answers-executive-brief](skills/qlik-answers-executive-brief/): answer and number first, up to three bullets, under 60 words.
-- [qlik-answers-green-charts](skills/qlik-answers-green-charts/): every chart and KPI in one solid green.
-- [qlik-answers-ignore-selections](skills/qlik-answers-ignore-selections/): calculates on all data and ignores the user's current selections, unless the question asks for them.
+| Skill | Contribution | When it helps |
+|---|---|---|
+| [qlik-answers-stay-on-topic](skills/qlik-answers-stay-on-topic/) | Qlik | Answers only from the app's data and declines general-knowledge questions |
+| [qlik-answers-executive-brief](skills/qlik-answers-executive-brief/) | Qlik | Puts the answer and number first, with up to three bullets and fewer than 60 words |
+| [qlik-answers-green-charts](skills/qlik-answers-green-charts/) | Qlik | Uses one solid green for every chart and KPI |
+| [qlik-answers-ignore-selections](skills/qlik-answers-ignore-selections/) | Qlik | Calculates on all data and ignores current selections unless requested |
 
 None of them reference field names, so you can use them in any app. You can use several on the same app, but see **Keep the set small** above.
 

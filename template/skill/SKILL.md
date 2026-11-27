@@ -8,7 +8,9 @@ license: Apache-2.0
 metadata:
   author: your-github-username
   version: 1.0.0
-  tags: []
+  provenance: community
+  tags:
+    - community-contributed
 allowed-tools: read
 ---
 

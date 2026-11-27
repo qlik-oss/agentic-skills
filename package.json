@@ -7,7 +7,8 @@
     "validate:spec": "node scripts/validate-skill-spec.mjs",
     "validate:versions": "node scripts/validate-skill-versions.mjs",
     "validate:claude": "node scripts/validate-claude-plugin.mjs",
-    "test:scripts": "node --test scripts/test/validate-skill-versions.test.mjs"
+    "test:scripts": "node --test scripts/test/*.test.mjs",
+    "validate:plugins": "node scripts/validate-agent-plugins.mjs"
   },
   "devDependencies": {
     "js-yaml": "^5.5.0"

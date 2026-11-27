@@ -11,10 +11,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "official/skills/**"
-      - "community/skills/**"
-      - "answers/skills/**"
-      - "data-pipelines/skills/**/SKILL.md"
+      - "*/skills/**"
       - "spec/**"
       - "scripts/validate-skill-spec.mjs"
       - "scripts/validate-skill-versions.mjs"
@@ -25,10 +22,7 @@ on:
       - ".github/workflows/validate-skill-spec.yml"
   pull_request:
     paths:
-      - "official/skills/**"
-      - "community/skills/**"
-      - "answers/skills/**"
-      - "data-pipelines/skills/**/SKILL.md"
+      - "*/skills/**"
       - "spec/**"
       - "scripts/validate-skill-spec.mjs"
       - "scripts/validate-skill-versions.mjs"

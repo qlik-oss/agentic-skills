@@ -16,7 +16,10 @@ import { existsSync, readFileSync, realpathSync } from "node:fs";
 import { basename, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ROOT, createReporter } from "./lib/reporter.mjs";
-import { SEMVER_RE, SKILL_TIERS, parseFrontmatter } from "./lib/skill-frontmatter.mjs";
+import { SEMVER_RE, parseFrontmatter } from "./lib/skill-frontmatter.mjs";
+
+import { repositoryFiles, skillDirOf } from "./lib/skill-paths.mjs";
+export { skillDirOf } from "./lib/skill-paths.mjs";
 
 const MAX_LISTED_FILES = 10;
 
@@ -35,19 +38,6 @@ function verifyRevision(cwd, rev) {
   } catch {
     throw new Error(`unknown revision "${rev}" — fetch more history or pass a valid --base/--head`);
   }
-}
-
-// Maps a repo-relative path to its skill folder, e.g.
-// community/skills/foo/references/a.md -> community/skills/foo.
-// Files directly in a tier folder (like its README) belong to no skill.
-export function skillDirOf(path) {
-  for (const { dir } of SKILL_TIERS) {
-    const prefix = `${dir}/`;
-    if (!path.startsWith(prefix)) continue;
-    const parts = path.slice(prefix.length).split("/");
-    return parts.length >= 2 ? `${dir}/${parts[0]}` : null;
-  }
-  return null;
 }
 
 export function parseVersion(value) {
@@ -120,17 +110,17 @@ function listFiles(files) {
   return more > 0 ? `${shown}, … and ${more} more` : shown;
 }
 
-// A skill moved between tiers under the same name (e.g. community -> official)
+// A skill moved between roots under the same name (including legacy roots)
 // keeps its version history. Rather than rely on git's similarity-based rename
 // detection, which reports a move plus a large SKILL.md rewrite as delete + add,
-// look for the same-named skill in another tier at the base revision that no
+// look for the same-named skill in another root at the base revision that no
 // longer exists at the head revision.
-function findMovedFrom(cwd, baseRev, headRev, dir) {
+function findMovedFrom(cwd, headRev, dir, baseDirs) {
   const name = basename(dir);
-  for (const { dir: tierDir } of SKILL_TIERS) {
-    const candidate = `${tierDir}/${name}`;
+  for (const candidate of baseDirs) {
+    if (basename(candidate) !== name) continue;
     if (candidate === dir) continue;
-    if (readSkillMd(cwd, baseRev, candidate) !== null && readSkillMd(cwd, headRev, candidate) === null) {
+    if (readSkillMd(cwd, headRev, candidate) === null) {
       return candidate;
     }
   }
@@ -146,6 +136,9 @@ export function checkSkillVersions({ cwd, base, head = null }) {
   const baseRev = verifyRevision(cwd, base);
   const headRev = head === null ? null : verifyRevision(cwd, head);
 
+  const baseDirs = repositoryFiles(cwd, baseRev)
+    .filter((path) => path.endsWith("/SKILL.md"))
+    .map(skillDirOf).filter(Boolean);
   const skills = new Map();
   const touch = (path) => {
     const dir = skillDirOf(path);
@@ -172,7 +165,7 @@ export function checkSkillVersions({ cwd, base, head = null }) {
     let baseDir = dir;
     let baseRaw = readSkillMd(cwd, baseRev, dir);
     if (baseRaw === null) {
-      const movedFrom = findMovedFrom(cwd, baseRev, headRev, dir);
+      const movedFrom = findMovedFrom(cwd, headRev, dir, baseDirs);
       if (movedFrom) {
         baseDir = movedFrom;
         baseRaw = readSkillMd(cwd, baseRev, movedFrom);
